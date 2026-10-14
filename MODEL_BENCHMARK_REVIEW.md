@@ -22,10 +22,12 @@
 | 참고문헌 | 원문에서 확인한 평가 | 현재 모델 선정에 주는 기준 |
 |---|---|---|
 | [Hinton v1, §3·4·6](https://arxiv.org/pdf/1503.02531v1) | MNIST 오류 수, 음성 frame accuracy 등 과제별 평가 | soft target·온도의 신호를 이해하는 근거. 이 점수로 현재 생성 LLM을 순위화하지 않음 |
-| [MiniLLM v4, §3.1·3.3·Appendix B](https://arxiv.org/html/2306.08543v4) | DollyEval, SelfInst, VicunaEval, S-NI, U-NI의 ROUGE-L·GPT-4 feedback; 별도 human evaluation·exposure bias·calibration 분석 | 생성과 prefix의 영향이 질문이면 실제 응답 생성과 길이·동작 분석이 필요. 객관식 지식 점수만으로 대체하지 않음 |
+| [MiniLLM v4, §3.1·3.3·Appendix B](https://arxiv.org/html/2306.08543v4) | DollyEval, SelfInst, VicunaEval, S-NI, U-NI의 ROUGE-L; 앞 세 집합의 GPT-4 feedback; 별도 human evaluation·exposure bias·calibration 분석 | 생성과 prefix의 영향이 질문이면 실제 응답 생성과 길이·동작 분석이 필요. 객관식 지식 점수만으로 대체하지 않음 |
 | [CaRE v1, §4·부록 D/G](https://arxiv.org/html/2609.36734v1) | instruction/chat의 ROUGE-L·LLM judge 사실성, HumanEval·MBPP의 실행 평가, GSM8K·CollegeMath의 정답 평가, BALD·ECE 분석 | confidence가 실제 정오나 지도 효과와 연결되는지 과제별로 확인. ROUGE-L·낮은 BALD를 사실성의 직접 증거로 사용하지 않음 |
 
 학습 데이터와 benchmark 이름이 겹치면 원문의 held-out split·중복 제거·평가 prompt를 확인한다. Dolly 학습과 DollyEval 평가는 같은 이름만으로 독립성이 확보되지 않는다. 원문 재현을 선택한다면 원문 설정을 따르고, benchmark나 지표를 추가·변경하면 그 목적과 차이를 기록한다.
+
+[데이터 선정 문서](DATA_SELECTION.md)에서 학습 후보·분할·전처리와 평가 자료의 연결을 함께 검토한다. 모델의 공개 benchmark 점수와 새 학습 데이터의 적합성은 별도 근거로 남긴다.
 
 ## 3. 능력별로 검토할 벤치마크
 
