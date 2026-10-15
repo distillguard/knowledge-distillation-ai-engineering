@@ -4,7 +4,7 @@
 
 상태: **두 기반 모델의 적재·추론을 확인하고, 공개 SFT 완료 XL/base의 로컬 benchmark 평가를 추가했다. 직접 학습·KD 비교는 미실행.** 실측과 지표별 해석은 [SFT 기준선 평가](SFT_BASELINE_EVALUATION.md), 선정 원칙은 [연구계획서](RESEARCH_PLAN.md) §6을 따른다. 연구의 중심은 문헌 인사이트의 적용·검증이며, 메모리·시간은 실행 제약이다.
 
-2026-10-15에 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM·CaRE를 근거로 KL·Hard/Soft의 손실 적응과 Revival의 갱신 거절을 비교하며, 모델 선정에서는 MiniLLM의 원래 모델·초기 학습·과제·언어·평가 조건을 우선 검토한다. 전체 재현은 필수 목표가 아니며 실제 실험 범위와 로컬 실행 가능성을 확인해 선정한다. 현재 주요 대상은 Dolly-15K의 공통 조건에서 증류 방식별 학습 신호·분포·생성 응답을 시각화하는 것이다. 아래 공개 점수는 참고 근거다. CaRE의 gate·Revival과 결합은 현재 비교에 포함하고 한국어 적용은 후속 탐구 자료로 둔다.
+2026-10-15에 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM·CaRE를 근거로 KL·Hard/Soft의 손실 적응과 Revival의 갱신 거절을 비교하며, 모델 선정에서는 MiniLLM의 원래 모델·초기 학습·과제·언어·평가 조건을 우선 검토한다. 전체 재현은 필수 목표가 아니며 실제 실험 범위와 로컬 실행 가능성을 확인해 선정한다. 현재는 Dolly·UltraChat·MetaMathQA를 같은 기반 모델에서 각각 SFT해 비교한다. 선정한 데이터의 공통 조건에서 증류 방식별 학습 신호·분포·생성 응답을 시각화한다. 아래 공개 점수는 참고 근거다. CaRE의 gate·Revival과 결합은 현재 비교에 포함하고 한국어 적용은 후속 탐구 자료로 둔다.
 
 ## 1. 벤치마크를 선정에 사용하는 순서
 
@@ -33,11 +33,11 @@
 
 ### 2.1. 현재 연구 목적의 모델 추천
 
-**1차 추천은 Dolly에 맞춰 준비한 GPT-2 XL 교사 → GPT-2 base 학생이다.** MiniLLM §3.1·Table 1과 CaRE §4에 공통으로 연결되는 조합이며, 같은 모델에서 KL·gate·Revival을 여러 조건으로 비교·계측할 출발점으로 추천한다. [MiniLLM 원문](https://arxiv.org/html/2306.08543v4), [CaRE 원문](https://arxiv.org/html/2609.36734v1).
+**초기 공통 비교는 GPT-2 XL → GPT-2 base로 수행한다. 세 데이터의 SFT 수행·오류 조합을 확인해 최종 선정한다.** MiniLLM §3.1·Table 1과 CaRE §4에 공통으로 연결되는 조합이며, 같은 모델에서 KL·gate·Revival을 여러 조건으로 비교·계측할 출발점으로 추천한다. [MiniLLM 원문](https://arxiv.org/html/2306.08543v4), [CaRE 원문](https://arxiv.org/html/2609.36734v1).
 
 | 우선순위 | 기반 모델 조합 | 근거·현재 상태 |
 |---|---|---|
-| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) → [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 revision 고정·동시 적재·짧은 입력 추론 확인. Dolly 준비 checkpoint·학습은 미확인 |
+| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) → [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 revision 고정·동시 적재·짧은 입력 추론 확인. 새 데이터별 SFT checkpoint·장기 학습은 미검증 |
 | 대안 | [facebook/opt-2.7b](https://huggingface.co/facebook/opt-2.7b) → [facebook/opt-125m](https://huggingface.co/facebook/opt-125m) | CaRE의 원문 조합. 더 큰 교사의 메모리·MC forward 부담 확인 필요 |
 | 이후 확장 | 같은 GPT-2 XL → [openai-community/gpt2-medium](https://huggingface.co/openai-community/gpt2-medium) | 초기 결과 이후 학생 크기 차이를 볼 후보. 초기 필수 실험은 아님 |
 
@@ -47,7 +47,7 @@
 
 [설계] 종합 benchmark 최고점보다 같은 교사·학생에서 손실·gate·불확실성·수용/거절·생성을 반복해 계측할 수 있는지 우선한다. 직접 토큰 KL 비교를 위해 tokenizer·어휘 ID·특수 토큰과 같은 prefix를 확인한다. MC 추정이 0으로 퇴화하면 dropout 경로·원문 설정을 대조한다. GPU 16GB급이라는 정보만으로 실제 학습 가능성을 확정하지 않는다.
 
-위 ID는 기반 모델이다. 교사의 Dolly 준비 상태와 학생의 SFT 초기 상태를 확보·기록해야 하며 공개 최종 SFT baseline과 MiniLLM 초기 checkpoint를 같다고 가정하지 않는다. 평가용 공개 SFT checkpoint·revision과 결과는 SFT 기준선 문서에 고정했다. 향후 KD의 공통 초기 상태·prompt·분할 이력 선정은 별도 확인 사항이다. 기반 모델의 짧은 추론과 공개 SFT 모델의 평가를 완료했으며 직접 학습·MC 추정은 시험하지 않았다. 초기에는 두 모델만 사용하고 대안·확장 모델은 적재하지 않는다.
+위 ID는 기반 모델이다. 선정 데이터로 준비한 교사·학생의 SFT 초기 상태를 확보·기록해야 하며 공개 최종 SFT baseline과 MiniLLM 초기 checkpoint를 같다고 가정하지 않는다. 평가용 공개 SFT checkpoint·revision과 결과는 SFT 기준선 문서에 고정했다. 향후 KD의 공통 초기 상태·prompt·분할 이력 선정은 별도 확인 사항이다. 기반 모델의 짧은 추론과 공개 SFT 모델의 평가를 완료했다. 일회성 optimizer 갱신은 통과했지만 데이터별 본 SFT·MC 추정은 미실행이다. [데이터별 비교 프로토콜](DATASET_SFT_COMPARISON.md)을 따른다. 초기에는 두 모델만 사용하고 대안·확장 모델은 적재하지 않는다.
 
 ## 3. 능력별로 검토할 벤치마크
 
@@ -120,4 +120,4 @@ RTX 5060 Ti 16GB급에서 **모델별 평가를 차례로 실행할 수 있는�
 
 지금은 평가 축과 공개 비교 사례를 확보했다. 다음은 MiniLLM의 원문 구성·평가 조건과 이번에 관찰할 응답 변화의 범위를 확인하는 것이다. **문헌에서 설명할 원리 → 원문 모델·평가 근거 → 같은 development 조건의 초기 학생·증류 후 학생 비교 설계 → 로컬 실행 가능성**을 연결해 선정한다. 교사 응답은 해석의 참고로 사용한다. 핵심 비교는 FKL/RKL/Hard/Soft와 같은 손실의 Revival 유무·결합이다. SFT 학생은 초기 상태의 참고 기준선이다. 같은 초기화에서 손실·불확실성·수용/거절·실제 갱신을 계측할 수 있는지 확인한다. 실행 목록은 자원과 설정 근거를 확인한 뒤 확정하며 한국어 평가는 후속 참고로 둔다.
 
-초기 기반 모델은 GPT-2 XL/base로 정했고 revision·어휘·동시 GPU 적재·짧은 입력 추론을 확인했다. 이어 저자의 Dolly SFT 완료 checkpoint를 확보해 Dolly·SST-2·BoolQ 기준선 평가를 추가했다. 이 평가용 revision·protocol과 향후 KD의 공통 초기 상태·최종 평가 선정은 구분한다. KD 통과 기준·설정 탐색·최종 평가 규모는 미정이다. 공개 점수의 완전한 실행 재현, 전체 학습 이력·오염 감사와 직접 학습은 수행하지 않았다.
+초기 기반 모델은 GPT-2 XL/base로 정했고 revision·어휘·동시 GPU 적재·짧은 입력 추론을 확인했다. 이어 저자의 Dolly SFT 완료 checkpoint를 확보해 Dolly·SST-2·BoolQ 기준선 평가를 추가했다. 이 평가용 revision·protocol과 향후 KD의 공통 초기 상태·최종 평가 선정은 구분한다. KD 통과 기준·설정 탐색·최종 평가 규모는 미정이다. 공개 점수의 완전한 실행 재현, 전체 학습 이력·오염 감사와 데이터별 본 SFT는 수행하지 않았다.

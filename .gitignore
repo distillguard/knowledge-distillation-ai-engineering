@@ -1,3 +1,4 @@
 .sources/
 tmp/
+__pycache__/
 results/sft_baselines/*_progress.json

@@ -1,10 +1,10 @@
 # 연구 데이터 선정 근거와 후보
 
-기준일: 2026-10-14, Asia/Seoul
+갱신일: 2026-10-15, Asia/Seoul
 
-상태: **Dolly-15K를 공통 instruction 데이터로 우선 선정했다. 정확한 revision·전처리·공통 분할·사용 규모는 미정이다.** 증류 방식별 시각화와 모델 실행 조건에 맞춰 세부 조건을 정한다. [연구계획서](RESEARCH_PLAN.md) §6.2와 [벤치마크 검토](MODEL_BENCHMARK_REVIEW.md)를 따른다.
+상태: **Dolly-15K·UltraChat 200k·MetaMathQA를 현재 선정 후보로 비교한다. 같은 원본 GPT-2 XL/base에서 데이터별로 각각 SFT한 뒤 평가하는 방식을 사용자와 확정했다.** Dolly를 자동 확정하지 않는다. 원자료 감사와 학습 실행 점검은 [비교 프로토콜](DATASET_SFT_COMPARISON.md)에 기록한다. 최종 분할·학습 토큰 예산·설정과 데이터별 SFT 점수는 아직 없다.
 
-2026-10-15에 [계획서 §5](RESEARCH_PLAN.md)의 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM을 기초·KL의 근거로, CaRE의 gate·Revival을 손실 적응과 갱신 거절 비교의 근거로 사용하며 MiniLLM의 원래 데이터·분할을 우선 확인한다. Dolly-15K를 기준으로 같은 원본 record와 공통 분할에서 증류 방식별 차이를 관찰한다. 실제 분할·길이 필터·사용 규모는 원문 근거와 로컬 실행 범위를 확인한 뒤 정한다. Dolly에서 FKL/RKL/Hard/Soft와 Revival 유무·결합을 비교하고 다른 과제별 데이터·한국어 자료는 후속 탐구용으로 보관한다.
+2026-10-15에 [계획서 §5](RESEARCH_PLAN.md)의 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM을 기초·KL의 근거로, CaRE의 gate·Revival을 손실 적응과 갱신 거절 비교의 근거로 사용하며 MiniLLM의 원래 데이터·분할을 우선 확인한다. 선정한 데이터의 같은 원본 record와 공통 분할에서 증류 방식별 차이를 관찰한다. 실제 분할·길이 필터·사용 규모는 원문 근거와 로컬 실행 범위를 확인한 뒤 정한다. 먼저 세 데이터의 SFT 수행과 관측 가능성을 비교해 증류용 데이터를 정한다. 한국어와 WizardCoder는 후속 조사로 남긴다.
 
 ## 1. 데이터의 역할부터 정한다
 
@@ -20,7 +20,7 @@
 
 ## 2. 참고문헌과 연결되는 학습 후보
 
-현재 기준 데이터는 MiniLLM과 연결되는 Dolly-15K다. 다음은 원문의 전처리·분할과 실제 사용할 revision을 대조하는 단계다. 아래 목록 중 UltraChat·MetaMathQA·WizardCoder는 기존 CaRE 조사에서 확보한 후속 탐구 자료이며 현재 선정 대상 과제로 확장한 것은 아니다. 한국어 자료 비교도 후속 탐구로 둔다.
+Dolly는 MiniLLM과 연결되는 기준 후보이고 UltraChat·MetaMathQA도 현재 선정 대상이다. 원문과의 연결, 정오 판정 가능성, 모델 문맥 길이와 로컬 실행 범위를 함께 확인한다. WizardCoder와 한국어는 이번 SFT 비교에 추가하지 않는다.
 
 | 후보 | 확인한 자료·구조 | 문헌과 연결되는 연구 | 채택 전에 확인할 것 |
 |---|---|---|---|
@@ -33,7 +33,7 @@ MiniLLM v4는 Dolly를 사용하고, CaRE v1은 Dolly·UltraChat·WizardCoder·M
 
 ## 3. 확인한 규모·분할·버전
 
-아래 값은 2026-10-14의 공식 데이터 카드와 Hugging Face API/Viewer 메타데이터를 대조한 결과다. **원문 실행 당시의 revision이나 새 연구의 채택 규모를 뜻하지 않는다.** 메타데이터 조회이며 corpus 전체 내용·토큰 수를 검사한 결과가 아니다.
+아래 버전은 공식 카드/API와 대조하고 내려받은 원자료에 고정했다. **원문 실행 당시의 revision이나 새 연구의 채택 규모를 뜻하지 않는다.** 2026-10-15에 Dolly 전체, UltraChat SFT 두 split 전체, MetaMathQA 전체의 구조·길이를 직접 집계했다. 파일 hash와 집계는 [audit.json](results/dataset_candidates/audit.json), 렌더링 조건과 해석은 [비교 프로토콜](DATASET_SFT_COMPARISON.md)을 따른다. 정답 품질·의미상 중복 감사까지 끝난 것은 아니다.
 
 | 데이터 | 확인한 공개 split과 행 수 | 카드의 라이선스 표시 | 확인한 repository revision |
 |---|---|---|---|
@@ -43,9 +43,9 @@ MiniLLM v4는 Dolly를 사용하고, CaRE v1은 Dolly·UltraChat·WizardCoder·M
 
 UltraChat의 전체 행 수 515,311을 SFT 학습량으로 적지 않는다. 데이터 카드는 `sft`를 supervised fine-tuning, `gen`을 generation ranking 용도로 구분한다. MetaMathQA 카드는 GSM8K·MATH **train**에서 증강했으며 test에서 증강하지 않았다고 밝힌다. 이는 제공자의 설명이고, 새 연구의 누수 검사가 끝났다는 뜻은 아니다. 원본과 파생 자료의 출처·이용 조건을 유지하며 카드의 표시만으로 모든 자료의 권리를 단일 라이선스로 덮지 않는다.
 
-## 4. 기준 데이터 Dolly-15K의 사용 조건 확인
+## 4. 기준 후보 Dolly-15K의 사용 조건 확인
 
-[설계] MiniLLM의 생성 과제를 참고해 Dolly의 원문 분할·전처리를 검토한다. 원문 실험과 연결되고 category와 context를 보존해 응답을 해석할 수 있기 때문이다. 15,011행이라는 규모만으로 학습 가능성·충분한 통계 정밀도를 보장하지 않는다. Dolly-15K의 채택 방향과 실제 사용 조건을 구분한다. 분할·길이 필터·규모는 원문 조건과 실행 시험에 근거해 확정한다.
+[설계] MiniLLM의 생성 과제를 참고해 Dolly의 원문 분할·전처리를 검토한다. 원문 실험과 연결되고 category와 context를 보존해 응답을 해석할 수 있기 때문이다. 15,011행이라는 규모만으로 학습 가능성·충분한 통계 정밀도를 보장하지 않는다. Dolly도 다른 두 후보와 비교한 뒤 채택 여부를 정한다. 분할·길이 필터·규모는 원문 조건과 실행 시험에 근거해 확정한다.
 
 [원문] MiniLLM §3.1은 context 길이를 초과하는 자료를 필터링한 뒤 validation 1K, test 0.5K를 무작위 분리하고 약 12.5K로 학습했다고 기술한다. 이 숫자는 원문 protocol이며 우리의 표본 수·분할 비율로 자동 채택하지 않는다. 능력 보존용 D_PT에는 GPT-2 계열의 OpenWebText와 다른 계열의 RoBERTa corpus를 사용한다. [고정한 원문](https://arxiv.org/html/2306.08543v4).
 
@@ -64,13 +64,13 @@ UltraChat의 전체 행 수 515,311을 SFT 학습량으로 적지 않는다. 데
 
 ### 4.1. 손실 적응·학습 갱신 거절 시각화를 위한 공통 자료
 
-[설계] 같은 Dolly record ID·instruction·context·category와 train/development/test 분할을 네 비교 조건에서 공유한다. 학습 응답·prefix의 출처와 reference를 쓰는 방식을 공통으로 정하고, 같은 context에서 FKL/RKL과 gate만 비교할 수 있도록 기록한다. SFT·SeqKD·MiniLLM 전체 학습 파이프라인의 차이를 동시에 바꾸는 비교로 확대하지 않는다.
+[설계] 최종 선정 데이터의 record ID·입력·원문 속성과 train/development/test 분할을 네 비교 조건에서 공유한다. 학습 응답·prefix의 출처와 reference를 쓰는 방식을 공통으로 정하고, 같은 context에서 FKL/RKL과 gate만 비교할 수 있도록 기록한다. SFT·SeqKD·MiniLLM 전체 학습 파이프라인의 차이를 동시에 바꾸는 비교로 확대하지 않는다.
 
 시각화용 development 예제는 category·길이·context 유무와 선정 이유를 기록한다. 잘 나온 응답만 고르지 않으며 최종 평가 문항은 설정 선택에서 제외한다. 확률·confidence·gate·학습 신호는 같은 prompt·prefix·어휘 좌표에서 비교하고 자유 생성 응답은 별도로 관찰한다. 실제 student rollout은 조건에 따라 달라질 수 있으므로 입력이 동일한 고정 진단과 구분한다.
 
 Revival 비교에는 같은 입력의 teacher/student BALD, 과거 quantile·mask, 수용/거절된 record·집계 단위와 실제 갱신 여부를 연결한다. 수용된 자료만의 결과로 전체 성능을 보고하지 않고 처리한 자료·거절한 자료의 분포와 전체 평가를 함께 남긴다. 입력 노출 수와 실제 갱신 수를 구분한다. 거절을 정답 오류의 자동 판정으로 해석하지 않는다.
 
-Dolly-15K는 공통 instruction 자료의 기준이다. MiniLLM 원문의 D_PT·teacher-mixed sampling은 KL 배경을 이해하는 참고이며 이번 비교에 자동 승계하지 않는다. 학습 경로에 별도 손실·자료를 채택하면 이유와 조건별 적용을 기록한다. 원문 전체 재현과 목적함수 비교를 구분한다.
+Dolly-15K는 일반 instruction 자료의 기준 후보다. MiniLLM 원문의 D_PT·teacher-mixed sampling은 KL 배경을 이해하는 참고이며 이번 비교에 자동 승계하지 않는다. 학습 경로에 별도 손실·자료를 채택하면 이유와 조건별 적용을 기록한다. 원문 전체 재현과 목적함수 비교를 구분한다.
 
 ### 4.2. 원본 파일의 구성 확인
 
@@ -88,7 +88,7 @@ Dolly-15K는 공통 instruction 자료의 기준이다. MiniLLM 원문의 D_PT·
 | 다중 턴 대화에서의 지도 | UltraChat의 적합한 split·대화 턴 | 원문 chat 평가의 조건 또는 별도 채점 근거 | 대화 context·assistant 학습 mask·reference/judge·긴 입력 예산이 준비됨 |
 | 코드에서의 지도 | 정확한 WizardCoder 학습 자료 확인 후 검토 | HumanEval·MBPP의 해당 평가 split·테스트 버전 | 원자료와 전처리·평가 문항 중복·실행 채점 환경이 확인됨 |
 
-현재는 첫 행의 생성 응답·KL·prefix 관련 자료를 우선 검토하며, 나머지 오류 보호·수학·대화·코드 행은 후속 탐구 제안이다. 평가 집합의 출처·버전·원자료는 [벤치마크 검토](MODEL_BENCHMARK_REVIEW.md)와 MiniLLM 논문/공식 코드에서 확인한다. 학습 후보 이름만으로 최종 평가 집합을 자동 선택하지 않는다.
+현재는 일반 생성·수학·대화의 세 후보를 직접 비교한다. 오류 보호를 분석하려면 신뢰할 수 있는 정오 판정과 오류 조합을 확인해야 한다. 코드 과제는 후속 조사다. 평가 집합의 출처·버전·원자료는 [벤치마크 검토](MODEL_BENCHMARK_REVIEW.md)와 MiniLLM 논문/공식 코드에서 확인한다. 학습 후보 이름만으로 최종 평가 집합을 자동 선택하지 않는다.
 
 **후속 연구 메모:** 한국어 적용을 시작하면 [계획서 §5.3](RESEARCH_PLAN.md)의 한국어 원생 과제·번역/합성 자료와 채점 근거를 비교한다. [KIT-19](https://arxiv.org/abs/2403.16444v1)나 [KoAlpaca](https://github.com/beomi/KoAlpaca)는 후속 조사 자료이며 현재 학습 후보로 채택하지 않았다. [KMMLU-Redux/Pro](https://arxiv.org/abs/2507.08924v2)는 전문 지식 평가, [KoSimpleQA](https://arxiv.org/abs/2510.18368v1)는 짧은 사실 질문 평가로 역할이 다르다. 최종 평가용 문항을 학습 입력으로 사용하지 않는다. 번역한 Dolly·MetaMathQA 등을 쓸 경우 원문과의 변경, 번역 품질·문제 의미·동일 원문 파생 group·이용 조건을 확인한다.
 
@@ -113,8 +113,8 @@ subset이 필요하면 연구에서 관측해야 하는 과제·난도·길이·
 
 ## 8. 현재 결정 순서와 남은 확인
 
-현재는 **탐구 목표 확정 → Hinton·MiniLLM의 원리 이해와 관찰할 응답 변화 정리 → MiniLLM의 원문 데이터·모델·평가 조건과 로컬 실행 가능성 대조** 순서로 진행한다. Dolly-15K는 기준 데이터로 우선 선정했고 공통 revision·전처리·분할·사용 규모는 미정이다. 방법별 학습 신호와 생성 응답을 시각화할 수 있는 자료 구성을 우선 확인한다. MetaMathQA·UltraChat·WizardCoder와 한국어 자료는 후속 탐구 자료로 둔다.
+현재 순서는 **연구 질문·평가 사건 정의 → 세 데이터 후보의 전처리·분할 → 공통 XL/base에서 각각 SFT → 공통 평가와 과제별 평가 → 모델·데이터 최종 선정 → KD 비교**다. 모델을 먼저 영구 확정하거나 데이터부터 단독 확정하지 않는다. 현재 XL/base는 통제할 초기 비교 모델이며 문맥·수행·오류 조합이 부적합하면 재검토한다. 사용자는 첫 비교의 별도 시간 제한을 두지 않았다. 시간만을 이유로 임의의 일부 행을 추출하지 않는다.
 
 최종 산출물에는 데이터 ID·revision·파일 hash, 전처리·group·split, 입력/응답 역할·학습 mask, 모델별 token 길이·제외율, 채점 근거·오류 사례, 표집·반복 예산과 선정 이유를 남긴다.
 
-현재는 메타데이터·일부 전처리 경로와 공개 SFT 평가용 MiniLLM/dolly 파일을 확인했다. 평가 500행의 token 길이와 공개 raw와의 정규화 입력 일치를 점검했다. Databricks 원본 전체 15,011행의 전처리·의미상 중복/누수·정답 품질 감사, 새 공통 분할 생성과 학습 시험은 하지 않았다. MiniLLM의 논문 당시 분할/실행과 공개 체크포인트 학습 이력의 완전한 일치는 추가 확인이 필요하다. WizardCoder 원자료의 미확인은 후속 탐구 사항이다.
+현재는 원자료 전체 구조·길이 집계, 공개 MiniLLM/dolly 평가 파일의 입력 일치 점검, 두 기반 모델의 일회성 optimizer 갱신을 완료했다. 새 최종 분할 생성·정답 품질·의미상 누수 감사와 데이터별 본 SFT·성능 평가는 남아 있다. MiniLLM의 논문 당시 분할/실행과 공개 체크포인트 학습 이력의 완전한 일치는 추가 확인이 필요하다. WizardCoder 원자료의 미확인은 후속 탐구 사항이다.

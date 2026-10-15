@@ -9,15 +9,15 @@
 | 항목 | 현재 상태 |
 |---|---|
 | 연구 중심 | KL 방향·Hard/Soft gate의 손실 적응, Revival의 갱신 거절, 두 장치 결합의 역할 비교 |
-| 기준 instruction 데이터 | Dolly-15K 우선 선정. 실제 revision·분할·전처리·사용 규모는 미정 |
-| 초기 모델 | GPT-2 XL/base 두 기반 모델의 revision 고정·동시 적재·공통 입력 추론 확인. Dolly 준비 상태·학습 가능성은 미확인 |
+| 현재 데이터 후보 | Dolly·UltraChat·MetaMathQA. 같은 기반 모델에서 각각 SFT한 뒤 선정. 전체 구조·길이 감사 완료, 최종 분할·본 SFT는 미실행 |
+| 초기 모델 | GPT-2 XL/base 두 기반 모델의 revision 고정·동시 적재·공통 입력 추론 확인. 일회성 optimizer 갱신 통과. 데이터별 본 SFT·장기 안정성은 미검증 |
 | 추가 비교 후보 | SeqKD와 교사 응답 증강. 실제 실험 포함 여부는 미정 |
 | 실험·수치·그래프 | 기반 모델 점검과 공개 SFT 기준선 평가를 별도 기록. KD 학습·방법 비교는 미실행. §9.3은 KD 예정 자료 |
 | 후속 범위 | 한국어 적용, 다른 모델·과제로의 확장 |
 
 ## 1. 초록
 
-본 연구는 생성형 언어모델의 지식증류에서 **어떤 손실로 배울지 결정하는 것**과 **학습 갱신을 받아들일지 결정하는 것**의 역할을 비교·시각화하는 것을 목적으로 한다. Hinton의 soft target·온도 개념, MiniLLM의 KL 방향과 생성 학습 관점, CaRE-KD의 confidence gate와 Revival을 이론적 근거로 삼는다. 같은 교사·학생과 Dolly-15K의 공통 조건에서 고정 FKL/RKL, Hard/Soft gate, 같은 손실의 Revival 유무와 결합을 대조하도록 설계한다. 확률분포·gate·불확실성·갱신 수용/거절·생성 응답을 연결해 해석한다. **이 초안에는 KD 방법 비교나 개선 효과에 대한 결론이 없다.**
+본 연구는 생성형 언어모델의 지식증류에서 **어떤 손실로 배울지 결정하는 것**과 **학습 갱신을 받아들일지 결정하는 것**의 역할을 비교·시각화하는 것을 목적으로 한다. Hinton의 soft target·온도 개념, MiniLLM의 KL 방향과 생성 학습 관점, CaRE-KD의 confidence gate와 Revival을 이론적 근거로 삼는다. 같은 교사·학생과 최종 선정 데이터의 공통 조건에서 고정 FKL/RKL, Hard/Soft gate, 같은 손실의 Revival 유무와 결합을 대조하도록 설계한다. 확률분포·gate·불확실성·갱신 수용/거절·생성 응답을 연결해 해석한다. **이 초안에는 KD 방법 비교나 개선 효과에 대한 결론이 없다.**
 
 ## 2. 연구 배경과 목적
 
@@ -91,7 +91,7 @@ Revival은 MC dropout으로 추정한 교사·학생 BALD와 각각의 과거 �
 
 ### 5.4. 교사 응답 학습·증강 — 추가 후보
 
-SeqKD는 교사가 생성한 문장을 학습 대상으로 사용하는 방식이다. 같은 Dolly 학습 입력에 교사 응답을 생성하거나 여러 응답을 선별해 추가하는 구성을 관련 방법으로 설명한다. 실제 실험 포함 여부는 아직 미정이다. [SeqKD 원문](https://aclanthology.org/D16-1139/), [MiniLLM baseline](https://arxiv.org/html/2306.08543v4).
+SeqKD는 교사가 생성한 문장을 학습 대상으로 사용하는 방식이다. 같은 선정 데이터의 학습 입력에 교사 응답을 생성하거나 여러 응답을 선별해 추가하는 구성을 관련 방법으로 설명한다. 실제 실험 포함 여부는 아직 미정이다. [SeqKD 원문](https://aclanthology.org/D16-1139/), [MiniLLM baseline](https://arxiv.org/html/2306.08543v4).
 
 추가한다면 교사 응답·원본 응답의 역할, 생성·선별 기준, 같은 원본에서 파생한 group과 학습량을 기록한다. 응답 증강 효과와 단순 학습량 증가의 효과를 구분한다.
 
@@ -99,17 +99,17 @@ SeqKD는 교사가 생성한 문장을 학습 대상으로 사용하는 방식�
 
 ### 6.1. 데이터
 
-기준 instruction 자료는 [Databricks Dolly-15K](https://huggingface.co/datasets/databricks/databricks-dolly-15k)다. instruction·context·response·category를 보존하고 필요한 context를 임의로 제거하지 않는다. 최종 revision·길이 필터·공통 분할·사용 규모는 아직 미정이다. 전체 15K를 곧바로 학습용으로 지정하지 않는다.
+현재 학습 후보는 Dolly·UltraChat·MetaMathQA다. 같은 원본 XL/base에서 각각 SFT한 뒤 공통 평가와 과제별 평가로 선정한다. [비교 프로토콜](DATASET_SFT_COMPARISON.md)에 실제 전체 구조·길이·중복 집계, group 분할·assistant mask·채점과 설정 선택 절차를 정리했다. 원자료 revision은 고정했으나 최종 학습 분할·규모·설정은 검증 전이다. 사용자는 별도 시간 제한을 두지 않았다.
 
 train·development·최종 평가의 역할을 분리하며 증강 자료는 원본 문제 group을 따라 관리한다. 원문의 분할 설명과 공개 전처리 코드의 동작 차이는 [데이터 선정 문서](DATA_SELECTION.md)의 확인 사항을 따른다. MiniLLM 원문의 D_PT를 채택할지는 별도 결정이며 일부 요소의 채택을 전체 재현으로 표시하지 않는다.
 
 ### 6.2. 1차 추천: GPT-2 XL → GPT-2 base
 
-**현재 목적의 1차 추천은 Dolly에 맞춰 준비한 GPT-2 XL급 교사와 GPT-2 base 학생이다.** 이 조합은 MiniLLM과 CaRE-KD의 instruction-following 실험 모두에 연결된다. [MiniLLM §3.1](https://arxiv.org/html/2306.08543v4), [CaRE §4](https://arxiv.org/html/2609.36734v1).
+**현재 공통 비교 모델은 GPT-2 XL과 GPT-2 base다. 데이터별 SFT 수행을 확인한 후 최종 교사·학생을 정한다.** 이 조합은 MiniLLM과 CaRE-KD의 instruction-following 실험 모두에 연결된다. [MiniLLM §3.1](https://arxiv.org/html/2306.08543v4), [CaRE §4](https://arxiv.org/html/2609.36734v1).
 
 | 우선순위 | 교사 기반 모델 ID | 학생 기반 모델 ID | 추천 이유·제약 |
 |---|---|---|---|
-| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) | [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 모델의 GPU 동시 적재·짧은 입력 추론 확인. Dolly 준비·학습은 미검증 |
+| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) | [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 모델의 GPU 동시 적재·짧은 입력 추론 확인. 데이터별 본 SFT·장기 학습은 미검증 |
 | 대안 | [facebook/opt-2.7b](https://huggingface.co/facebook/opt-2.7b) | [facebook/opt-125m](https://huggingface.co/facebook/opt-125m) | CaRE의 원문 조합. 더 큰 교사의 적재·MC forward 부담을 확인해야 하며 다른 계열을 바로 추가할 필요는 없음 |
 | 이후 확장 | 같은 GPT-2 XL 교사 | [openai-community/gpt2-medium](https://huggingface.co/openai-community/gpt2-medium) | 초기 결과 이후 학생 크기에 따른 차이를 추가 관찰할 후보. 초기 필수 실험은 아님 |
 
@@ -123,7 +123,7 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 같은 vocab_size만으로 어휘 ID·tokenizer의 일치를 확정하지 않는다. 이번에 고정한 기반 revision에서는 전체 어휘 ID와 tokenizer backend, 점검 입력의 ID 일치를 실제 확인했다. 배치 학습용 특수 토큰·padding·prompt·mask는 별도 대조한다. config의 dropout 존재만으로 MC-BALD가 유효하다고 판단하지 않으며 실행 시 활성 경로를 확인한다.
 
-위 ID는 **기반 모델**이다. 원문과 연결하려면 교사의 Dolly 준비 상태와 학생의 SFT 초기 상태를 확보·기록해야 한다. 준비된 checkpoint의 데이터 분할·학습 이력을 확인하거나 공통 train 자료로 준비한다. 공개 SFT baseline을 MiniLLM의 초기 checkpoint와 같다고 가정하지 않는다. 실제 사용할 준비된 checkpoint·revision은 미정이다.
+위 ID는 **기반 모델**이다. 원문과 연결하려면 선정 데이터로 준비한 교사·학생의 SFT 초기 상태를 확보·기록해야 한다. 준비된 checkpoint의 데이터 분할·학습 이력을 확인하거나 공통 train 자료로 준비한다. 공개 SFT baseline을 MiniLLM의 초기 checkpoint와 같다고 가정하지 않는다. 실제 사용할 준비된 checkpoint·revision은 미정이다.
 
 ## 7. 실험 설계와 실행 환경
 
@@ -166,11 +166,15 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 [Dolly 데이터 구성 문서](DOLLY_DATA_OVERVIEW.md)에 원본 15,011행의 필드·과제 비중과 평가용 500행의 차이를 기록했다. 현재의 두 공개 패키지를 원본의 완전히 같은 행으로 구성한 최종 연구 분할로 취급하지 않는다.
 
+### 7.1. 데이터 비교 준비의 실측
+
+세 원자료의 전체 구조·길이를 확인했다. 검토용 포맷의 완전한 입력+응답이 GPT-2 native 1,024토큰을 넘은 비율은 Dolly 1.38%, UltraChat train_sft 59.63%, MetaMathQA 0.23%다. UltraChat은 대화 전체를 센 값이며 최종 제외율이 아니다. MetaMathQA는 원문 13,929종에서 나온 증강이므로 원문 group 분할이 필요하다. 세 데이터의 직접 SFT accuracy는 아직 측정하지 않았다. 전체 조건·hash·한계는 [비교 프로토콜](DATASET_SFT_COMPARISON.md)과 연결한 JSON을 따른다.
+
 ## 8. 설정값의 근거와 재현 기록
 
 | 설정 | 필요한 근거 | 현재 상태 |
 |---|---|---|
-| 실제 teacher/student checkpoint·revision | 원문 학습 이력·공식 배포·데이터 분할·공통 초기화 | 기반 두 모델 revision 고정. Dolly 준비·증류 초기 상태는 미정 |
+| 실제 teacher/student checkpoint·revision | 원문 학습 이력·공식 배포·데이터 분할·공통 초기화 | 기반 두 모델 revision 고정. 선정 데이터의 SFT·증류 초기 상태는 미정 |
 | 데이터 revision·분할·사용 규모 | 원문·공식 자료·전처리와 중복 검사 | 미정 |
 | KD·rollout·uncertainty·평가 온도 | 역할별 원문·코드 경로와 필요한 validation 선택 | 미정 |
 | gate margin·scale·미분 | 원문 식·그림·공식 구현 대조 | 미정 |
@@ -192,11 +196,11 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 
 ### 9.2. 두 모델부터 시작하는 표시 원칙
 
-초기에는 **GPT-2 XL과 GPT-2 base 두 모델만** 사용한다. 공통 입력의 원시 다음 토큰 분포부터 읽고, Dolly 준비 후의 분포·학습 신호, gate, Revival을 순서대로 연결한다. 초기 기반 모델의 출력은 추론 파이프라인 점검 자료이며 증류 효과의 증거가 아니다. 전체 진행 순서는 [계획서 §5.2.3](RESEARCH_PLAN.md)을 따른다.
+초기에는 **GPT-2 XL과 GPT-2 base 두 모델만** 사용한다. 공통 입력의 원시 다음 토큰 분포부터 읽고, 선정 데이터의 SFT 후의 분포·학습 신호, gate, Revival을 순서대로 연결한다. 초기 기반 모델의 출력은 추론 파이프라인 점검 자료이며 증류 효과의 증거가 아니다. 전체 진행 순서는 [계획서 §5.2.3](RESEARCH_PLAN.md)을 따른다.
 
 교사·학생 색상, 대응 패널의 축과 토큰 순서를 고정한다. 주요 토큰의 합집합을 표시하고 빠진 확률은 `기타 어휘`로 남기며, KL·entropy는 전체 어휘에서 계산한다. 표시할 토큰 수는 가독성을 위한 설정으로 기록하고 분포를 다시 정규화하지 않는다. 확률 차이는 0을 중심으로, heatmap은 공통 범례·범위·mask로 읽는다.
 
-분포 비교·gate 곡선·Revival 흐름은 각각 한 질문을 설명하는 그림으로 나눈다. 모든 그림에 실제 입력·prefix 위치·checkpoint 단계·revision·정밀도·온도 변환·계산 범위를 남긴다. 원문 인용·수식 예시·기반 모델 추론 점검·Dolly 준비 후 실측을 구분하며 아직 실행하지 않은 단계의 값을 채우지 않는다.
+분포 비교·gate 곡선·Revival 흐름은 각각 한 질문을 설명하는 그림으로 나눈다. 모든 그림에 실제 입력·prefix 위치·checkpoint 단계·revision·정밀도·온도 변환·계산 범위를 남긴다. 원문 인용·수식 예시·기반 모델 추론 점검·선정 데이터의 SFT 후 실측을 구분하며 아직 실행하지 않은 단계의 값을 채우지 않는다.
 
 ### 9.3. 예정 자료
 
@@ -231,7 +235,7 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 
 ## 12. 결론과 후속 연구 — 결과에 따라 작성
 
-현재 연구 질문·비교 구조·기준 데이터의 방향과 초기 두 기반 모델을 정했다. 모델 확보·동시 적재·짧은 입력 추론을 확인하고 시각화를 분포 → 손실·gate → Revival 순서로 정리했다. Dolly 준비 checkpoint·분할·학습 protocol은 미정이다. 실험 후 KL 방향·손실 적응·갱신 거절·결합에서 얻은 시사점과 남은 질문을 정리한다. 아직 특정 방법의 우수성이나 새로운 효과를 결론내리지 않는다.
+현재 연구 질문·비교 구조·기준 데이터의 방향과 초기 두 기반 모델을 정했다. 모델 확보·동시 적재·짧은 입력 추론을 확인하고 시각화를 분포 → 손실·gate → Revival 순서로 정리했다. 세 후보의 전체 구조·길이 감사와 일회성 갱신을 완료했다. 데이터별 본 SFT·최종 분할·검증 선택 설정은 아직 없다. 실험 후 KL 방향·손실 적응·갱신 거절·결합에서 얻은 시사점과 남은 질문을 정리한다. 아직 특정 방법의 우수성이나 새로운 효과를 결론내리지 않는다.
 
 한국어 적용, 다른 모델·과제, 교사 응답 증강 등은 관측 결과와 자원에 근거해 후속 후보로 검토한다. 결론을 먼저 정해 실험 결과를 맞추지 않는다.
 
@@ -242,6 +246,6 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 - Sengupta, Seth, Chakraborty (2026), [CaRE-KD, v1](https://arxiv.org/html/2609.36734v1).
 - Gou 외 (2021), [Knowledge Distillation: A Survey, v7](https://arxiv.org/pdf/2006.05525v7).
 - Kim, Rush (2016), [Sequence-Level Knowledge Distillation](https://aclanthology.org/D16-1139/).
-- 데이터·기반 모델·config의 출처는 §6의 직접 링크를 따른다. 원문 버전과 적재 점검용 두 기반 모델 revision은 고정했다. Dolly 준비 checkpoint·데이터·본 실험 코드의 동결은 남아 있다.
+- 데이터·기반 모델·config의 출처는 §6의 직접 링크를 따른다. 원문 버전과 적재 점검용 두 기반 모델 revision은 고정했다. 세 후보 원자료 revision은 고정했고 데이터별 SFT checkpoint·분할·본 실험 코드의 동결은 남아 있다.
 
 부록에는 실제 모델·데이터 revision, 분할·전처리, 값별 근거, 코드·환경 버전, 실행 로그, 추가 그래프·응답 사례를 남긴다. 현재 [확인 코드](scripts/load_two_models.py)와 [적재·추론 실행 기록](results/model_preflight.json)이 있다. KD 학습 로그·방법 비교 결과는 아직 없다. 공개 SFT 기준선 평가와 그림은 §7.4의 별도 기록을 따른다.

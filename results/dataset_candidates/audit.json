@@ -1,0 +1,207 @@
+{
+  "script_sha256": "a4dfac67e66b395bc7700e7f6c81b673eb81f3132969071d58ed69e5f4ddad15",
+  "tokenizer_revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+  "audit_only": true,
+  "training_performed": false,
+  "template": {
+    "single_turn": "MiniLLM pinned process_data_dolly.py instruction/input template + response + EOS",
+    "multi_turn": "Proposed audit format: shared introduction, repeated Instruction/Response headers, one final EOS",
+    "multi_turn_is_original_paper_template": false,
+    "special_tokens_added": false,
+    "truncation": false
+  },
+  "datasets": {
+    "dolly": {
+      "repo": "databricks/databricks-dolly-15k",
+      "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+      "files": [
+        {
+          "name": "databricks-dolly-15k.jsonl",
+          "bytes": 13085339,
+          "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec"
+        }
+      ],
+      "splits": {
+        "train": {
+          "counts": {
+            "empty_instruction": 0,
+            "empty_response": 0,
+            "with_context": 4467,
+            "closed_qa": 1773,
+            "classification": 2136,
+            "open_qa": 3742,
+            "information_extraction": 1506,
+            "brainstorming": 1766,
+            "general_qa": 2191,
+            "summarization": 1188,
+            "creative_writing": 709
+          },
+          "normalized_problem_groups": 14808,
+          "largest_group_rows": 9,
+          "duplicate_query_rows_beyond_first": 203,
+          "exact_serialized_duplicate_rows_beyond_first": 15,
+          "unique_prompt_ids": null,
+          "lengths_prompt_and_response_with_eos": {
+            "records": 15011,
+            "total_tokens": 3121195,
+            "min": 33,
+            "max": 5868,
+            "percentiles": {
+              "p25": 79.0,
+              "p50": 134.0,
+              "p75": 246.0,
+              "p90": 415.0,
+              "p95": 581.0,
+              "p99": 1189.5999999999985
+            },
+            "complete_records_at_most_native_1024": 14804,
+            "complete_records_over_native_1024": 207
+          }
+        }
+      }
+    },
+    "ultrachat": {
+      "repo": "HuggingFaceH4/ultrachat_200k",
+      "revision": "8049631c405ae6576f93f445c6b8166f76f5505a",
+      "files": [
+        {
+          "name": "data/test_sft-00000-of-00001-f7dfac4afe5b93f4.parquet",
+          "bytes": 81176553,
+          "sha256": "c18fd6e77395577652bdefbc5a87044ea799e989451ecfca5c6cf977ae5c6f70"
+        },
+        {
+          "name": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+          "bytes": 243999189,
+          "sha256": "afa8fa7426081b2a0e732fb50dbb5cd402a28ad5f0dbe66c0d996d63e7220727"
+        },
+        {
+          "name": "data/train_sft-00001-of-00003-0a1804bcb6ae68c6.parquet",
+          "bytes": 243897199,
+          "sha256": "c8230190bc8b29084c974ff32f05589b458fad1908fc4b2fb2b9e1e9f7921f03"
+        },
+        {
+          "name": "data/train_sft-00002-of-00003-ee46ed25cfae92c6.parquet",
+          "bytes": 244131731,
+          "sha256": "6fe7d2a5e95cf660f972ecaf304aa5632d7f53384e4b0e0d0f44d9c96733c03e"
+        }
+      ],
+      "splits": {
+        "train_sft": {
+          "counts": {
+            "invalid_role_alternation": 0,
+            "assistant_turns": 657794,
+            "empty_message_content": 31,
+            "prompt_not_first_user_message": 12091,
+            "normalized_prompt_not_first_user_message": 0
+          },
+          "normalized_problem_groups": 207861,
+          "largest_group_rows": 2,
+          "duplicate_query_rows_beyond_first": 4,
+          "exact_serialized_duplicate_rows_beyond_first": 0,
+          "unique_prompt_ids": 207865,
+          "lengths_prompt_and_response_with_eos": {
+            "records": 207865,
+            "total_tokens": 263118997,
+            "min": 90,
+            "max": 35052,
+            "percentiles": {
+              "p25": 821.0,
+              "p50": 1159.0,
+              "p75": 1594.0,
+              "p90": 2057.0,
+              "p95": 2386.0,
+              "p99": 3391.0
+            },
+            "complete_records_at_most_native_1024": 83918,
+            "complete_records_over_native_1024": 123947
+          }
+        },
+        "test_sft": {
+          "counts": {
+            "invalid_role_alternation": 0,
+            "assistant_turns": 73152,
+            "empty_message_content": 3,
+            "prompt_not_first_user_message": 1374,
+            "normalized_prompt_not_first_user_message": 0
+          },
+          "normalized_problem_groups": 23110,
+          "largest_group_rows": 1,
+          "duplicate_query_rows_beyond_first": 0,
+          "exact_serialized_duplicate_rows_beyond_first": 0,
+          "unique_prompt_ids": 23110,
+          "lengths_prompt_and_response_with_eos": {
+            "records": 23110,
+            "total_tokens": 29105912,
+            "min": 135,
+            "max": 9052,
+            "percentiles": {
+              "p25": 819.0,
+              "p50": 1151.0,
+              "p75": 1584.0,
+              "p90": 2053.100000000002,
+              "p95": 2375.5499999999993,
+              "p99": 3386.8199999999997
+            },
+            "complete_records_at_most_native_1024": 9470,
+            "complete_records_over_native_1024": 13640
+          }
+        }
+      },
+      "published_sft_train_test_overlap": {
+        "normalized_first_prompts": 0,
+        "prompt_ids": 0,
+        "normalized_first_user_messages": 0
+      }
+    },
+    "metamath": {
+      "repo": "meta-math/MetaMathQA",
+      "revision": "aa4f34d3d2d3231299b5b03d9b3e5a20da45aa18",
+      "files": [
+        {
+          "name": "MetaMathQA-395K.json",
+          "bytes": 395626321,
+          "sha256": "fb39a5d8c05c042ece92eae37dfd5ea414a5979df2bf3ad3b86411bef8205725"
+        }
+      ],
+      "splits": {
+        "train": {
+          "counts": {
+            "empty_instruction": 4,
+            "empty_response": 0,
+            "with_context": 0,
+            "MATH_AnsAug": 75000,
+            "answer_marker_present": 395000,
+            "GSM_Rephrased": 80000,
+            "GSM_SV": 40000,
+            "GSM_FOBAR": 40000,
+            "GSM_AnsAug": 80000,
+            "MATH_FOBAR": 15000,
+            "MATH_Rephrased": 50000,
+            "MATH_SV": 15000
+          },
+          "normalized_problem_groups": 13928,
+          "largest_group_rows": 147,
+          "duplicate_query_rows_beyond_first": 248946,
+          "exact_serialized_duplicate_rows_beyond_first": 8957,
+          "unique_prompt_ids": null,
+          "lengths_prompt_and_response_with_eos": {
+            "records": 395000,
+            "total_tokens": 96672481,
+            "min": 35,
+            "max": 2527,
+            "percentiles": {
+              "p25": 165.0,
+              "p50": 215.0,
+              "p75": 292.0,
+              "p90": 380.0,
+              "p95": 450.0,
+              "p99": 702.0
+            },
+            "complete_records_at_most_native_1024": 394088,
+            "complete_records_over_native_1024": 912
+          }
+        }
+      }
+    }
+  }
+}
