@@ -34,6 +34,9 @@ class ExternalTests(unittest.TestCase):
 
     def fake_probe(self, command, **kwargs):
         kind = command[-1]
+        if kind == "hardware":
+            self.write(self.local / "hardware.json", self.info)
+            return SimpleNamespace(returncode=0)
         filename = "preflight.json" if kind == "manual" else "trainer_preflight.json"
         self.write(self.out / filename, {"protocol_fingerprint": "test", "models": {external.MODEL: {
             "status": "passed", "peak_allocated_mib": 20000, "available_before_probe_bytes": 22 * 2**30}}})
@@ -61,7 +64,7 @@ class ExternalTests(unittest.TestCase):
 
     def test_only_gemma_sft_runs_and_adapter_metadata_is_portable(self):
         child = self.run_training()
-        self.assertEqual(child.call_count, 2)
+        self.assertEqual(child.call_count, 3)
         for call in child.call_args_list:
             command = call.args[0]
             self.assertIn("_probe", command)
@@ -79,20 +82,37 @@ class ExternalTests(unittest.TestCase):
     def test_resume_reuses_probes_only_on_the_same_device(self):
         self.run_training()
         same_device = self.run_training()
-        self.assertEqual(same_device.call_count, 0)
+        self.assertEqual(same_device.call_count, 1)
         self.info["gpu"] = "A different BF16 GPU"
         other_device = self.run_training()
-        self.assertEqual(other_device.call_count, 2)
+        self.assertEqual(other_device.call_count, 3)
+
+    def test_child_probes_finish_before_parent_imports_the_engine(self):
+        events = []
+        def child(command, **kwargs):
+            events.append(command[-1])
+            return self.fake_probe(command, **kwargs)
+        with patch.object(external, "validate_run", return_value=self.spec), \
+                patch.object(external, "load_engine", side_effect=lambda run_id: events.append("parent_engine") or self.engine()), \
+                patch.object(external, "hardware", return_value=self.info), \
+                patch.object(external.subprocess, "run", side_effect=child):
+            external.train(self.run_id)
+        self.assertEqual(events, ["hardware", "manual", "trainer", "parent_engine"])
 
     def test_failed_probe_never_starts_training_or_falls_back(self):
-        calls = []
-        engine = self.engine()
-        engine.train = lambda names: calls.append(names)
-        with self.assertRaisesRegex(RuntimeError, "No quantization fallback"):
-            self.run_training(engine=engine, probe=lambda *a, **kw: SimpleNamespace(returncode=20))
-        self.assertEqual(calls, [])
-        self.assertEqual(external.read(self.out / "worker_status.json")["status"], "failed")
-        self.assertFalse((self.out / "memory_check.json").exists())
+        for failing_kind in ("hardware", "manual", "trainer"):
+            def child(command, **kwargs):
+                return (SimpleNamespace(returncode=20) if command[-1] == failing_kind
+                        else self.fake_probe(command, **kwargs))
+            with self.subTest(kind=failing_kind), \
+                    patch.object(external, "validate_run", return_value=self.spec), \
+                    patch.object(external, "load_engine") as parent_engine, \
+                    patch.object(external.subprocess, "run", side_effect=child), \
+                    self.assertRaisesRegex(RuntimeError, "No quantization fallback"):
+                external.train(self.run_id)
+            parent_engine.assert_not_called()
+            self.assertEqual(external.read(self.out / "worker_status.json")["status"], "failed")
+            self.assertFalse((self.out / "memory_check.json").exists())
 
     def test_cached_probes_must_also_fit_current_free_vram(self):
         self.run_training()
@@ -104,6 +124,8 @@ class ExternalTests(unittest.TestCase):
     def test_dedicated_budget_uses_child_probe_free_memory(self):
         def over_budget(command, **kwargs):
             result = self.fake_probe(command, **kwargs)
+            if command[-1] == "hardware":
+                return result
             name = "preflight.json" if command[-1] == "manual" else "trainer_preflight.json"
             report = external.read(self.out / name)
             report["models"][external.MODEL]["available_before_probe_bytes"] = 19 * 2**30

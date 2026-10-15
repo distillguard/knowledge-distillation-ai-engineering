@@ -255,22 +255,34 @@ def hardware(engine):
 
 
 def probe(run_id, kind):
-    from preflight_external_gemma import run_manual, run_trainer
     engine = load_engine(run_id)
-    hardware(engine)
+    info = hardware(engine)
+    if kind == "hardware":
+        local, _ = paths(run_id)
+        write_json(local / "hardware.json", info)
+        return
+    from preflight_external_gemma import run_manual, run_trainer
     (run_manual if kind == "manual" else run_trainer)(engine)
 
 
 def train(run_id):
     spec = validate_run(run_id)
-    engine = load_engine(run_id)
     local, out = paths(run_id)
-    info = hardware(engine)
-    hardware_fingerprint = digest(json.dumps({key: info[key] for key in
-        ("gpu", "total_memory_bytes", "cuda", "python", "platform", "versions")}, sort_keys=True).encode())
-    write_json(out / "runtime.json", {**info, "protocol_fingerprint": spec["fingerprint"]})
     status = {"run_id": run_id, "model": MODEL, "protocol_fingerprint": spec["fingerprint"], "status": "running"}
     try:
+        # Keep this coordinator free of CUDA contexts while child probes run.
+        # Importing the engine/bitsandbytes can itself initialize CUDA; overlapping
+        # parent/child contexts otherwise consume hundreds of MiB on a 24GB GPU.
+        write_json(out / "worker_status.json", {**status, "stage": "hardware_preflight"})
+        with (local / "hardware_probe.log").open("w", encoding="utf-8") as log:
+            result = subprocess.run([sys.executable, "-u", "-B", "-X", "utf8", __file__, "_probe",
+                                     "--run-id", run_id, "--kind", "hardware"], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+        if result.returncode:
+            raise RuntimeError(f"BF16 hardware check failed. No quantization fallback. Inspect {local / 'hardware_probe.log'}")
+        info = read(local / "hardware.json")
+        hardware_fingerprint = digest(json.dumps({key: info[key] for key in
+            ("gpu", "total_memory_bytes", "cuda", "python", "platform", "versions")}, sort_keys=True).encode())
+        write_json(out / "runtime.json", {**info, "protocol_fingerprint": spec["fingerprint"]})
         for kind, filename in (("manual", "preflight.json"), ("trainer", "trainer_preflight.json")):
             path = out / filename
             previous = read(path) if path.is_file() else {}
@@ -289,10 +301,13 @@ def train(run_id):
             write_json(path, report)
         reports = [read(out / name)["models"][MODEL] for name in ("preflight.json", "trainer_preflight.json")]
         peak = max(report["peak_allocated_mib"] for report in reports) * 2**20
-        fits = peak <= info["free_memory_bytes"] and all(
+        engine = load_engine(run_id)
+        current = hardware(engine)
+        fits = peak <= current["free_memory_bytes"] and all(
             report["peak_allocated_mib"] * 2**20 <= report["available_before_probe_bytes"] for report in reports)
         write_json(out / "memory_check.json", {"protocol_fingerprint": spec["fingerprint"],
-                   "available_before_probe_bytes": info["free_memory_bytes"], "peak_allocated_bytes": peak,
+                   "available_before_probe_bytes": info["free_memory_bytes"], "available_before_training_bytes": current["free_memory_bytes"],
+                   "peak_allocated_bytes": peak,
                    "probe_budgets": [{"available_bytes": report["available_before_probe_bytes"],
                                        "peak_allocated_bytes": report["peak_allocated_mib"] * 2**20} for report in reports],
                    "fits_dedicated_budget": fits, "quantization_fallback": False})
@@ -337,7 +352,7 @@ def main(argv=None):
     incoming.add_argument("--bundle", type=Path, required=True)
     internal = commands.add_parser("_probe")
     internal.add_argument("--run-id", required=True)
-    internal.add_argument("--kind", choices=("manual", "trainer"), required=True)
+    internal.add_argument("--kind", choices=("hardware", "manual", "trainer"), required=True)
     args = parser.parse_args(argv)
     from dolly_handoff import import_result_bundle, pack_inputs, write_result_bundle
     if args.command == "pack-inputs":
