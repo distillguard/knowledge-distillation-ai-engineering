@@ -1,3 +1,15 @@
 # Dolly 모델 SFT 평가 결과
 
-SFT 선택 완료 1/10. 아직 완료된 선정 평가가 없다. [모델별 학습 상태](../../docs/SFT_PROGRESS.md)를 따른다.
+5개 계열·10개 모델 중 SFT 선택 완료 1/10, 선정 평가 완료 1/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
+
+| 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |
+|---|---|---|---|
+| GPT-2 base | 65.94 / 63.95 | 50.35 / 49.40 | 14.68 |
+
+모델 선정 단계는 생성 seed 10 한 개를 사용해 seed 간 변동을 추정하지 않는다. 최종 선정 모델의 본 실험에서는 생성 seed 10/20/30/40/50을 사용한다. 학습 seed 반복과 생성 seed 반복은 별개다. 모델 선정 자료이므로 독립적인 최종 test가 아니다.
+
+![분류 점수](classification.png)
+
+![Dolly ROUGE-L](dolly_rouge.png)
+
+![검증 손실](development_nll.png)
