@@ -1,0 +1,61 @@
+{
+  "protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "models": {
+    "gpt2_base": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 9437184,
+      "sequence_tokens": 511,
+      "loss": 3.8566648960113525,
+      "reload_logits_equal": true,
+      "quantized_linear_layers": 0,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "peak_allocated_mib": 589.05,
+      "peak_reserved_mib": 884.0,
+      "seconds_including_load_and_checks": 2.541
+    },
+    "gpt2_xl": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 78643200,
+      "sequence_tokens": 511,
+      "loss": 3.2459499835968018,
+      "reload_logits_equal": true,
+      "quantized_linear_layers": 0,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "peak_allocated_mib": 4995.97,
+      "peak_reserved_mib": 5020.0,
+      "seconds_including_load_and_checks": 9.875
+    },
+    "qwen_08b": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 43290624,
+      "sequence_tokens": 502,
+      "loss": 1.6806771755218506,
+      "reload_logits_equal": true,
+      "quantized_linear_layers": 0,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "peak_allocated_mib": 3073.64,
+      "peak_reserved_mib": 4142.0,
+      "seconds_including_load_and_checks": 5.419
+    },
+    "qwen_9b": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 173113344,
+      "sequence_tokens": 502,
+      "loss": 1.2402364015579224,
+      "reload_logits_equal": true,
+      "quantized_linear_layers": 248,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "peak_allocated_mib": 13131.16,
+      "peak_reserved_mib": 17112.0,
+      "seconds_including_load_and_checks": 34.834
+    }
+  }
+}

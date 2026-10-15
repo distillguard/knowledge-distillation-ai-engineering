@@ -2,3 +2,5 @@
 tmp/
 __pycache__/
 results/sft_baselines/*_progress.json
+results/dolly_sft_v1/*_progress.json
+results/dolly_sft_v1/worker_status.json

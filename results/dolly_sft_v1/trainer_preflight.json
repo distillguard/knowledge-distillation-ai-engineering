@@ -1,0 +1,86 @@
+{
+  "protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "probe_script_sha256": "af41cb31b4630fda914a178231aa05da230fddbc66cc5d75cd44b92bc343ccba",
+  "models": {
+    "gpt2_base": {
+      "status": "passed",
+      "optimizer_updates": 1,
+      "real_training_baseline": false,
+      "accumulated_examples": 16,
+      "checkpoint_has_optimizer_and_adapter": true,
+      "lora_weights_changed": true,
+      "probe_warmup_steps": 0,
+      "training_metrics": {
+        "train_runtime": 2.3109,
+        "train_samples_per_second": 6.924,
+        "train_steps_per_second": 0.433,
+        "train_loss": 3.4881749153137207,
+        "epoch": 1.0
+      },
+      "probe_validation_loss": 0.7665419578552246,
+      "peak_allocated_mib": 634.8,
+      "peak_reserved_mib": 1162.0,
+      "seconds": 2.581
+    },
+    "gpt2_xl": {
+      "status": "passed",
+      "optimizer_updates": 1,
+      "real_training_baseline": false,
+      "accumulated_examples": 16,
+      "checkpoint_has_optimizer_and_adapter": true,
+      "lora_weights_changed": true,
+      "probe_warmup_steps": 0,
+      "training_metrics": {
+        "train_runtime": 6.6548,
+        "train_samples_per_second": 2.404,
+        "train_steps_per_second": 0.15,
+        "train_loss": 2.8125627040863037,
+        "epoch": 1.0
+      },
+      "probe_validation_loss": 0.6541452407836914,
+      "peak_allocated_mib": 4542.78,
+      "peak_reserved_mib": 4804.0,
+      "seconds": 7.106
+    },
+    "qwen_08b": {
+      "status": "passed",
+      "optimizer_updates": 1,
+      "real_training_baseline": false,
+      "accumulated_examples": 16,
+      "checkpoint_has_optimizer_and_adapter": true,
+      "lora_weights_changed": true,
+      "probe_warmup_steps": 0,
+      "training_metrics": {
+        "train_runtime": 9.4756,
+        "train_samples_per_second": 1.689,
+        "train_steps_per_second": 0.106,
+        "train_loss": 2.1786906719207764,
+        "epoch": 1.0
+      },
+      "probe_validation_loss": 0.4515484869480133,
+      "peak_allocated_mib": 3238.64,
+      "peak_reserved_mib": 4614.0,
+      "seconds": 9.857
+    },
+    "qwen_9b": {
+      "status": "passed",
+      "optimizer_updates": 1,
+      "real_training_baseline": false,
+      "accumulated_examples": 16,
+      "checkpoint_has_optimizer_and_adapter": true,
+      "lora_weights_changed": true,
+      "probe_warmup_steps": 0,
+      "training_metrics": {
+        "train_runtime": 15.5819,
+        "train_samples_per_second": 1.027,
+        "train_steps_per_second": 0.064,
+        "train_loss": 1.7121772766113281,
+        "epoch": 1.0
+      },
+      "probe_validation_loss": 0.3011387288570404,
+      "peak_allocated_mib": 10863.24,
+      "peak_reserved_mib": 12834.0,
+      "seconds": 16.469
+    }
+  }
+}
