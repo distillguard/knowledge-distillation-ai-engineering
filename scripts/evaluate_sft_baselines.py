@@ -27,8 +27,9 @@ import torch
 import torch.nn.functional as F
 from huggingface_hub import hf_hub_download, snapshot_download
 from rouge_score import rouge_scorer
+from safetensors.torch import load_file, load_model
 from sklearn import metrics
-from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig, set_seed
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, GenerationConfig, set_seed
 
 MODELS = {
     "teacher": ("MiniLLM/teacher-gpt2-1.5B", "4a8d07d52ad67b7b87fec9aba25b1521173eb658"),
@@ -271,6 +272,7 @@ def main():
     RAW.mkdir(parents=True, exist_ok=True)
     for role in args.model:
         started = perf_counter()
+        write_json(OUT / f"{role}_protocol.json", protocol)
         model_id, revision = MODELS[role]
         print(f"Loading {role}: {model_id}@{revision}", flush=True)
         patterns = ["*.json", "merges.txt", "vocab.json"] + (["pytorch_model*.bin"] if role == "teacher" else ["model.safetensors"])
@@ -280,12 +282,27 @@ def main():
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.padding_side = "left"
         torch.cuda.reset_peak_memory_stats()
-        model = AutoModelForCausalLM.from_pretrained(snapshot, local_files_only=True, trust_remote_code=False,
-                                                   use_safetensors=(role != "teacher"), weights_only=True,
-                                                   torch_dtype=torch.float16, low_cpu_mem_usage=True,
-                                                   device_map={"": "cuda:0"}, attn_implementation="eager").eval().requires_grad_(False)
+        if role == "student":
+            # The published safetensors file stores the shared embedding as lm_head.weight.
+            config = AutoConfig.from_pretrained(snapshot, local_files_only=True, trust_remote_code=False)
+            model = AutoModelForCausalLM.from_config(config, torch_dtype=torch.float16, attn_implementation="eager")
+            weights = Path(snapshot) / "model.safetensors"
+            load_model(model, weights, strict=True)
+            saved = load_file(weights)
+            assert all(torch.equal(model.state_dict()[key], value.half()) for key, value in saved.items())
+            assert torch.equal(model.get_input_embeddings().weight, saved["lm_head.weight"].half())
+            assert model.get_input_embeddings().weight.data_ptr() == model.get_output_embeddings().weight.data_ptr()
+            del saved
+            model = model.to("cuda:0")
+        else:
+            model = AutoModelForCausalLM.from_pretrained(snapshot, local_files_only=True, trust_remote_code=False,
+                                                       use_safetensors=False, weights_only=True,
+                                                       torch_dtype=torch.float16, low_cpu_mem_usage=True,
+                                                       device_map={"": "cuda:0"}, attn_implementation="eager")
+        model = model.eval().requires_grad_(False)
         fingerprint = hashlib.sha256(json.dumps([protocol, model_id, revision], sort_keys=True).encode()).hexdigest()
         result = {"model_id": model_id, "revision": revision, "fingerprint": fingerprint,
+                  "protocol_file": f"{role}_protocol.json",
                   "parameters": sum(p.numel() for p in model.parameters()), "classification": {}}
         for name in ["sst2", "boolq"]:
             score, records = classify(model, tokenizer, data[name], name)
