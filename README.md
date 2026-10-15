@@ -1,101 +1,54 @@
-# Knowledge Distillation · AI Engineering
+# 지식증류 · AI Engineering
 
-지식증류 인공지능공학: 생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화를 탐구하는 학습 저장소.
+**큰 교사 모델의 예측을 작은 학생 모델이 배우는 지식증류에서, 학습 방식에 따라 학생의 응답과 성능이 어떻게 달라지는지 탐구한다.**
 
-연구 방향은 **참고문헌의 인사이트를 수식·그래프·표·사례로 인용하고, 그 적용 조건을 설명·검증하는 것**이다. 학습 시간과 메모리는 이 컴퓨터에서 연구를 수행할 수 있는지 판단하는 제약으로 기록한다.
+## 어떤 실험을 하는가
 
-**현재 목표는 ‘생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구’다.** 2026-10-15에 확정했다. Hinton을 기초로, MiniLLM을 KL 방향의 근거로, CaRE의 gate와 Revival을 손실 적응·학습 갱신 거절 비교의 근거로 사용한다. **Dolly·UltraChat·MetaMathQA를 같은 기반 XL/base에서 각각 SFT해 비교한 뒤 데이터를 선정한다. 선정한 공통 데이터에서 Forward/Reverse KL·Hard/Soft gate·Revival과 결합을 비교·시각화한다.** 초기 기반 모델은 GPT-2 XL/base 두 개로 정해 revision 고정·적재·추론을 확인했다. 세 데이터 원자료의 revision·전체 구조·길이 감사와 일회성 SFT 갱신 점검을 완료했다. 최종 분할·학습 설정과 데이터별 SFT 점수는 아직 없다. 이전 LightJudge 실험은 필요할 때 대조할 기존 근거이며, 이 저장소의 출발 가설이나 실행 계획으로 자동 승계하지 않는다.
+1. **데이터별 SFT 비교:** 같은 사전학습 모델을 데이터 3종으로 각각 지도 미세조정(SFT)한다. 입력에 대한 기준 응답을 배우는 단계이며, 데이터 3종 × 모델 2종의 총 6개 조건을 비교한다.
+2. **모델·데이터 선정:** 공통 평가와 데이터별 과제 평가로 성능, 교사·학생의 오류 유형, 문맥 길이와 실행 가능성을 확인한다. 결과에 따라 초기 모델 조합을 변경하거나 유지하고 연구용 데이터를 확정한다.
+3. **지식증류 비교:** 선정한 같은 모델·데이터에서 KL 방향, confidence gate, Revival의 개별 역할과 결합을 비교한다. 확률분포·학습 신호·실제 갱신·생성 응답의 변화를 시각화하고 해석한다.
 
-**기초 이해 → MiniLLM의 KL·CaRE의 gate/Revival 분석 → 같은 모델·데이터에서 손실 적응과 갱신 거절 비교·시각화** 순서로 진행한다. MiniLLM의 원문 구성을 먼저 검토하되 전체 재현을 필수 목표로 삼지 않는다. 구현할 방법과 변경 사항을 밝히고, 일부 요소만 적용한 실험을 MiniLLM 전체 재현으로 표시하지 않는다. **CaRE의 gate와 Revival은 현재 범위에 포함하고 한국어 적용은 후속 탐구로 둔다.** 전체 MiniLLM·CaRE-KD 재현을 필수 목표로 삼지 않는다. [계획서 §5](RESEARCH_PLAN.md)에 목표와 범위를 정리했다.
+## 초기 모델과 데이터
 
-[연구보고서 초안](RESEARCH_REPORT.md)에 연구 질문·이론·비교 방법·초기 모델·시각화·결과 작성 틀을 정리했다. GPT-2 XL/base 두 기반 모델의 GPU 동시 적재와 공통 입력 forward를 확인했으며 KD 학습·평가 결과는 아직 없다.
+- **교사:** GPT-2 XL, 약 15억 파라미터.
+- **학생:** GPT-2 base, 약 1.24억 파라미터.
+- 두 모델은 tokenizer와 어휘 ID가 같아 다음 토큰의 확률분포를 직접 비교할 수 있다. 최종 모델 선정은 SFT 비교 이후에 진행한다.
 
-시각화는 **두 모델의 같은 입력 분포 → 손실·gate → Revival과 실제 갱신** 순서로 정리한다. [계획서 §5.2.3](RESEARCH_PLAN.md)에 공통 색상·축·토큰 순서와 표시하지 않은 확률질량의 보존 원칙을 적었다. 기반 모델 추론 점검과 선정 데이터의 SFT 후 실험을 구분하며, 실제 그림 작성은 다음 단계다.
+| 데이터 | 내용과 구성 | 공개 원자료 규모 |
+|---|---|---:|
+| **Dolly-15K** | 사람이 작성한 영어 지시·응답. 지시 + 필요한 참고 본문 → 응답. 질의응답·분류·추출·요약·창작 등 8개 과제 | 15,011건 |
+| **UltraChat 200k** | 합성 다중 턴 대화. 사용자·assistant의 역할과 이전 대화 맥락을 보존하고 assistant 응답을 학습 | SFT용 train 207,865개 / test 23,110개 대화 |
+| **MetaMathQA** | GSM8K·MATH 학습 문제를 증강한 수학 자료. 질문 → 풀이와 최종 답. 원문 문제와 증강 유형도 보존 | 395,000건 |
 
-[적재·추론 확인 코드](scripts/load_two_models.py)는 CUDA 환경에서 `python scripts/load_two_models.py`로 실행한다. 환경 버전·모델 revision·실측은 [실행 기록](results/model_preflight.json)에 있다. 가중치와 마지막 위치 logits는 Git에서 제외한 로컬 `tmp/`에 보관한다. 확인 명령이 끝나면 GPU에서 모델을 해제하며 상시 서버는 시작하지 않는다. 짧은 추론 통과가 학습 가능성을 보장하지 않는다.
+각 데이터의 XL/base는 같은 사전학습 가중치에서 독립적으로 출발한다. 표의 수량은 원자료 규모이며 최종 학습량은 전처리 후 정한다. 같은 문제의 변형·중복이 학습과 평가에 나뉘지 않도록 분할하고, 대화 맥락과 수학의 최종 답을 보존하는 길이 처리 방침을 확정한다.
 
-[논문 기반 연구계획서](RESEARCH_PLAN.md)에 논문별 가정·근거, 연구 질문 선정 기준, 모델·데이터 선정 절차와 T를 비롯한 설정의 검증·선택 방법을 정리했다. 원문 사용값과 현재 조건의 최적값을 구분하며, 미검증 수치는 미정으로 남긴다.
+## 비교 방법을 쉽게 설명하면
 
-[모델 선정용 벤치마크 검토](MODEL_BENCHMARK_REVIEW.md)에 능력별 평가 후보, 공식 보고서의 소형 모델 비교 사례와 교사·학생을 같은 문제에서 확인하는 절차를 정리했다. 공개 점수는 선정 근거로 기록하고, 로컬 실측과 구분한다.
+| 개념 | 역할 |
+|---|---|
+| **KL** | 교사와 학생의 확률분포 차이를 측정하는 학습 기준. Forward KL은 교사가 지지하는 후보를 학생이 놓치는 데, Reverse KL은 학생이 고르는 후보를 교사가 지지하지 않는 데 민감하다. |
+| **Confidence gate** | 다음 토큰 확률이 얼마나 집중되는지를 나타내는 confidence를 비교해 KL 방식을 조절한다. Hard gate는 하나를 선택하고 Soft gate는 두 KL을 연속적인 비중으로 섞는다. |
+| **Revival** | 모델 일부를 무작위로 끄며 여러 번 예측해 불확실성을 추정하고, 각 모델의 과거 기준과 비교한다. 교사가 상대적으로 불확실하고 학생이 상대적으로 안정적인 조건에서 해당 증류 갱신을 억제한다. |
 
-[데이터 선정 근거](DATA_SELECTION.md)와 [데이터별 SFT 비교 프로토콜](DATASET_SFT_COMPARISON.md)에 세 후보의 실제 구성·길이·중복, 전처리·평가 기준과 학습 점검을 정리했다. **같은 기반 모델에서 데이터별로 각각 SFT**하는 비교이며 별도 시간 제한은 없다. UltraChat·MetaMathQA는 현재 후보, WizardCoder·한국어는 후속 조사다. 원자료 전체 집계가 정답 품질·누수 감사를 대체하지 않는다.
+높은 confidence가 정답을 보장하지는 않는다. 이번 연구에서는 각 장치의 동작과 실제 응답·성능 변화를 함께 확인한다. Hinton은 지식증류의 기초, MiniLLM은 KL 방향, CaRE-KD는 gate와 Revival의 근거로 사용한다.
 
-## 공개 SFT 기준선 평가
+## 현재 진행 상황
 
-[SFT 평가 결과](SFT_BASELINE_EVALUATION.md)에 저자의 SFT 완료 XL/base를 이 장치에서 평가한 수치·CSV·그림·protocol을 정리했다. 두 모델 모두 Dolly 500문항 × 5개 생성 seed와 SST-2·BoolQ 분류 평가를 완료했다. 직접 SFT를 재학습한 결과나 KD 비교 결과는 아니다.
+2026-10-15 기준, **본 SFT 학습 전 준비 단계**다.
 
-![SFT 모델 분류 평가](results/sft_baselines/classification.png)
+- [x] 참고논문 해설과 실험 비교 방향 정리.
+- [x] GPT-2 XL/base의 GPU 적재·추론 및 일회성 학습 갱신 점검.
+- [x] 데이터 3종의 원자료 확보·버전 고정·전체 구조와 길이·정확한 중복 집계.
+- [x] 저자가 공개한 Dolly-SFT XL/base 모델의 기준선 평가와 결과 시각화.
+- [ ] 최종 전처리·학습/검증/평가 분할·학습 설정 확정.
+- [ ] 데이터별 본 SFT 6개 조건 학습·평가 후 모델과 데이터 선정.
+- [ ] 지식증류 비교 실험과 응답 변화 분석·시각화.
 
-![SFT 모델 Dolly 생성 평가](results/sft_baselines/dolly_rouge.png)
+현재 확보한 성능 점수는 공개 SFT 모델의 평가 결과다. 직접 학습하는 6개 조건의 SFT 및 지식증류 결과는 아직 없다.
 
-Dolly ROUGE-L은 XL **27.06 ± 0.48**, base **23.00 ± 0.41**이다. ±는 생성 seed 사이의 표본 표준편차다. BoolQ는 XL의 accuracy가 높지만 macro-F1은 base가 높아 지표별 오류를 함께 읽어야 한다.
+## 자세한 기록
 
-[Dolly 데이터 구성](DOLLY_DATA_OVERVIEW.md)에 원본 15,011행의 네 필드·8개 과제, 평가용 500행의 분포와 원본과의 차이를 정리했다. 원본 전체·공개 raw·평가 파일의 개수를 곧바로 최종 학습/검증/시험 분할로 합산하지 않는다.
-
-## 읽기 순서
-
-| 순서 | 논문별 한국어 문서 | 붙잡을 질문 | 문서 상태 |
-|---|---|---|---|
-| 1 | [Hinton 외: 신경망의 지식 증류](papers/01_hinton_2015_ko.md) | 확률분포에서 무엇을 전달하며, T가 학습 신호를 어떻게 바꾸는가? | 한국어 해설·독립적인 수식 풀이. 전문 번역은 미작성 |
-| 2 | [MiniLLM: 대규모 언어모델의 지식 증류](papers/02_minillm_2024_ko.md) | 생성에서는 왜 KL 방향과 응답을 얻는 방식이 함께 중요한가? | 한국어 해설·독립적인 수식 풀이. 전문 번역은 미작성 |
-| 3 | [CaRE-KD: 중요한 것의 증류](papers/03_care_kd_2026_ko.md) | 손실을 바꾸는 것과 학습 갱신을 거르는 것은 어떻게 다른가? | gate·Revival의 개별 역할과 결합이 현재 분석 대상. 전체 benchmark 재현 범위는 미정 |
-
-문서의 `[원문 요지]`와 `[해설]`을 구분한다. 논문의 주장은 저자의 주장으로 읽고, 가정·실험 근거·해석 범위를 함께 확인한다. 수치 예시는 `[학습용 예시]`, 연구 후보는 `[열린 질문]`으로 표시한다. 예시 수치를 논문의 실측 결과로 사용하지 않는다.
-
-## 진행 흐름
-
-1. **기초 이해:** 다음 토큰 예측과 문장 생성 → 출력분포 → 교사·학생 → soft target·온도·CE/KL.
-2. **논문 분석:** Hinton의 기초, MiniLLM의 KL 방향, CaRE의 gate·Revival 정의와 근거를 수식·그림·표에 연결한다.
-3. **제한된 실험과 해석:** 선정한 같은 교사·학생·데이터 분할·학습 context에서 KL·gate를 비교하고 같은 손실의 Revival 유무를 대조한다. 초기화·불확실성 추정·실제 갱신·공통 평가·로컬 실행 가능성을 확인한 뒤 손실·gate·수용/거절·응답 변화를 시각화한다.
-
-일차 산출물은 **원리 설명, 논문 근거 정리, 증류 방식별 시각화와 응답·평가 결과의 해석**이다. [계획서 §5.2.1](RESEARCH_PLAN.md)에 비교 방법과 시각화 설계를 정리했다. 추가 기전 분석이나 새 방법 제안은 관측 결과를 바탕으로 필요할 때 후속 탐구로 검토한다.
-
-읽기는 한 개념씩 진행한다. **문장 → 모르는 개념 → 숫자 예시 → 수식 → 논문의 가정으로 돌아가기**를 반복한다. 읽기 단계에서 새 모델이나 데이터가 해결책이라고 먼저 확정하지 않는다.
-
-세 문헌의 분석 문서는 작성했으며, 공식 구현·실행 설정의 확인은 일부 남아 있다. [계획서](RESEARCH_PLAN.md)의 §4.4–4.5에 인용할 자료와 분석 상태를, §6에 향후 선정 기준을 정리했다. 2026-10-14에 확인한 장비는 **RTX 5060 Ti 16GB급, 시스템 RAM 31.62 GiB, Ryzen 5 7500F**다. 장비 확인만으로 특정 모델의 학습 가능성을 확정하지 않는다.
-
-## 세 논문을 연결하는 기준
-
-| 관점 | Hinton | MiniLLM | CaRE-KD |
-|---|---|---|---|
-| 출발 문제 | 배포하기 어려운 모델의 예측 정보를 전달 | 용량이 제한된 학생이 복잡한 생성분포를 학습 | 교사의 지도 신호가 항상 믿을 만하지 않음 |
-| 먼저 이해할 대상 | 입력에 조건부인 클래스 분포 | 입력에 조건부인 응답 시퀀스 분포 | 같은 생성 context에서의 토큰 분포와 불확실성 |
-| 핵심 이론 | softmax 온도와 soft CE의 미분 | KL 방향과 표본분포를 함께 미분 | 가중 손실의 곱미분과 선택적 갱신 |
-| 연결할 질문 | 어떤 확률 차이가 유용한 지식인가? | 어디에서 생성한 응답으로 학습하는가? | confidence가 유익한 지도 신호를 구분하는가? |
-
-이 표는 문헌을 연결하는 해설이다. 현재는 Hinton·MiniLLM과 CaRE의 gate·Revival을 연결하며 각 구성요소와 결합의 역할을 구분한다. 상세 근거는 각 논문 문서의 출처를 따른다.
-
-## 원문과 버전
-
-기준일: 2026-10-14, Asia/Seoul.
-
-| 논문 | 고정한 버전 | 공식 원문 |
-|---|---|---|
-| Hinton, Vinyals, Dean, *Distilling the Knowledge in a Neural Network* | arXiv:1503.02531v1, 2015-03-09 | [원문](https://arxiv.org/abs/1503.02531v1) · [PDF](https://arxiv.org/pdf/1503.02531v1) |
-| Gu, Dong, Wei, Huang, *MiniLLM: Knowledge Distillation of Large Language Models* | arXiv:2306.08543v4, 2024-04-10; ICLR 2024 | [원문](https://arxiv.org/abs/2306.08543v4) · [HTML](https://arxiv.org/html/2306.08543v4) · [공식 코드](https://github.com/microsoft/LMOps/tree/main/minillm) |
-| Sengupta, Seth, Chakraborty, *Distilling What Matters: Confidence-Aware Selective Distillation for Large Language Models* | arXiv:2609.36734v1, 2026-09-29 | [원문](https://arxiv.org/abs/2609.36734v1) · [HTML](https://arxiv.org/html/2609.36734v1) · [PDF](https://arxiv.org/pdf/2609.36734v1) |
-
-MiniLLM에는 더 최근 버전이 있지만 처음 제공받은 학습 맥락과 맞추어 v4를 고정했다. 버전을 바꾸면 변경 내용을 먼저 대조하고 문서에 명시한다. 논문에 적힌 설정과 공식 실행 코드에서 확인한 설정은 따로 기록한다.
-
-## 막히는 개념에 필요한 보조 논문
-
-논문 수를 늘리는 것이 목적이 아니다. 아래 문헌은 해당 개념에서 막힐 때 필요한 절만 읽는다.
-
-| 읽을 때 | 공식 문헌 | 확인할 개념 |
-|---|---|---|
-| MiniLLM의 학습 prefix가 이해되지 않을 때 | [Agarwal 외, On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes](https://arxiv.org/abs/2306.13649) | 학생이 생성한 시퀀스로 학습하는 이유와 분포 불일치 |
-| confidence와 정답률을 혼동할 때 | [Guo 외, On Calibration of Modern Neural Networks, ICML 2017](https://proceedings.mlr.press/v70/guo17a.html) | calibration의 정의; 증류 온도와 사후 temperature scaling의 구분 |
-| CaRE의 MC dropout·BALD에서 막힐 때 | [Gal·Ghahramani, Dropout as a Bayesian Approximation, ICML 2016](https://proceedings.mlr.press/v48/gal16.html) | 확률적 forward 간 불일치와 불확실성 추정의 전제 |
-
-현재는 읽기 후보와 연결 이유를 확인한 상태다. 이 보조 논문들의 전문 분석을 완료했다고 표시하지 않는다.
-
-## 번역·출처 표시
-
-- CaRE-KD 원문은 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)이다. 한국어 번역과 재구성 사실, 원저자와 원문 링크를 해당 문서에 표시한다. 번역과 해설은 원저자의 공식 번역이나 보증이 아니다.
-- 확인한 Hinton·MiniLLM arXiv판에는 [arXiv 배포 라이선스](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)가 붙어 있다. 이를 일반적인 번역·재배포 허가로 취급하지 않는다. 현재 공개 문서는 짧은 원문 요지, 수학적 사실, 직접 작성한 풀이와 읽기 질문으로 구성한다. 원문 전체 번역을 했다고 표시하지 않는다.
-- 원문 PDF·HTML과 추출 텍스트는 로컬 `.sources/`에만 보관하며 Git에서 제외한다. 공개 저장소에는 출처 링크와 작성한 학습 문서만 올린다.
-- 모든 원문의 라이선스와 작성한 해설의 권리를 한꺼번에 덮는 저장소 전체 라이선스는 지정하지 않았다.
-
-## 다음 읽기
-
-[첫 문서](papers/01_hinton_2015_ko.md)의 **“한 문제에서 학생은 어떤 신호를 받는가?”**부터 시작한다. 이어 [MiniLLM 분석](papers/02_minillm_2024_ko.md)으로 생성 LLM의 증류를 이해한다. 현재 다음 단계는 세 후보의 최종 전처리·group 분할·평가를 동결하고 공통 XL/base의 데이터별 SFT 설정을 검증하는 것이다.
+- [연구계획](RESEARCH_PLAN.md) · [연구보고서 초안](RESEARCH_REPORT.md)
+- [데이터 선정 근거](DATA_SELECTION.md) · [데이터별 SFT 비교·전처리 계획](DATASET_SFT_COMPARISON.md)
+- [공개 SFT 모델 평가 결과](SFT_BASELINE_EVALUATION.md) · [Dolly 구성](DOLLY_DATA_OVERVIEW.md)
+- 논문 해설: [Hinton](papers/01_hinton_2015_ko.md) · [MiniLLM](papers/02_minillm_2024_ko.md) · [CaRE-KD](papers/03_care_kd_2026_ko.md)
