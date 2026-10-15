@@ -99,6 +99,12 @@ class ExternalTests(unittest.TestCase):
             external.train(self.run_id)
         self.assertEqual(events, ["hardware", "manual", "trainer", "parent_engine"])
 
+    def test_allocator_change_requires_fresh_memory_probes(self):
+        self.run_training()
+        self.info["cuda_allocator_config"] = "expandable_segments:True"
+        changed = self.run_training()
+        self.assertEqual(changed.call_count, 3)
+
     def test_failed_probe_never_starts_training_or_falls_back(self):
         for failing_kind in ("hardware", "manual", "trainer"):
             def child(command, **kwargs):

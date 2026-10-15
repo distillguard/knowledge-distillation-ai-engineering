@@ -251,6 +251,7 @@ def hardware(engine):
     free, total = torch.cuda.mem_get_info()
     return {"gpu": torch.cuda.get_device_name(0), "total_memory_bytes": total, "free_memory_bytes": free,
             "cuda": torch.version.cuda, "python": platform.python_version(), "platform": platform.platform(),
+            "cuda_allocator_config": os.environ.get("PYTORCH_ALLOC_CONF", os.environ.get("PYTORCH_CUDA_ALLOC_CONF", "default")),
             "versions": versions(), "recorded_at_utc": datetime.now(timezone.utc).isoformat()}
 
 
@@ -280,8 +281,8 @@ def train(run_id):
         if result.returncode:
             raise RuntimeError(f"BF16 hardware check failed. No quantization fallback. Inspect {local / 'hardware_probe.log'}")
         info = read(local / "hardware.json")
-        hardware_fingerprint = digest(json.dumps({key: info[key] for key in
-            ("gpu", "total_memory_bytes", "cuda", "python", "platform", "versions")}, sort_keys=True).encode())
+        hardware_fingerprint = digest(json.dumps({key: info.get(key) for key in
+            ("gpu", "total_memory_bytes", "cuda", "python", "platform", "versions", "cuda_allocator_config")}, sort_keys=True).encode())
         write_json(out / "runtime.json", {**info, "protocol_fingerprint": spec["fingerprint"]})
         for kind, filename in (("manual", "preflight.json"), ("trainer", "trainer_preflight.json")):
             path = out / filename
