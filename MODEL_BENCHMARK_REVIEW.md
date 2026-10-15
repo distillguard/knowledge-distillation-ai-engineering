@@ -2,7 +2,7 @@
 
 공개 벤치마크 조사 기준일: 2026-10-14, Asia/Seoul. 모델 추천·config 확인 갱신일: 2026-10-15.
 
-상태: **공식 문헌·공개 평가 자료를 조사한 단계. 로컬 평가·모델 선정은 미실행.** [연구계획서](RESEARCH_PLAN.md) §6의 선정 근거를 보완한다. 연구의 중심은 문헌 인사이트의 적용·검증이며, 메모리·시간은 실행 제약이다.
+상태: **공식 문헌·공개 평가 자료를 조사하고 초기 GPT-2 XL/base 두 기반 모델의 동시 적재·짧은 입력 추론을 확인했다. 로컬 benchmark 평가·학습은 미실행.** [연구계획서](RESEARCH_PLAN.md) §6의 선정 근거를 보완한다. 연구의 중심은 문헌 인사이트의 적용·검증이며, 메모리·시간은 실행 제약이다.
 
 2026-10-15에 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM·CaRE를 근거로 KL·Hard/Soft의 손실 적응과 Revival의 갱신 거절을 비교하며, 모델 선정에서는 MiniLLM의 원래 모델·초기 학습·과제·언어·평가 조건을 우선 검토한다. 전체 재현은 필수 목표가 아니며 실제 실험 범위와 로컬 실행 가능성을 확인해 선정한다. 현재 주요 대상은 Dolly-15K의 공통 조건에서 증류 방식별 학습 신호·분포·생성 응답을 시각화하는 것이다. 아래 공개 점수는 참고 근거다. CaRE의 gate·Revival과 결합은 현재 비교에 포함하고 한국어 적용은 후속 탐구 자료로 둔다.
 
@@ -37,17 +37,17 @@
 
 | 우선순위 | 기반 모델 조합 | 근거·현재 상태 |
 |---|---|---|
-| 1차 추천 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) → [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 정확한 Dolly 준비 checkpoint·revision과 학습 가능성은 미확인 |
+| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) → [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 revision 고정·동시 적재·짧은 입력 추론 확인. Dolly 준비 checkpoint·학습은 미확인 |
 | 대안 | [facebook/opt-2.7b](https://huggingface.co/facebook/opt-2.7b) → [facebook/opt-125m](https://huggingface.co/facebook/opt-125m) | CaRE의 원문 조합. 더 큰 교사의 메모리·MC forward 부담 확인 필요 |
 | 이후 확장 | 같은 GPT-2 XL → [openai-community/gpt2-medium](https://huggingface.co/openai-community/gpt2-medium) | 초기 결과 이후 학생 크기 차이를 볼 후보. 초기 필수 실험은 아님 |
 
 논문은 base 학생을 120M급으로 표시하며 위 GPT-2 모델 카드는 124M으로 안내한다. 실제 선정은 모델 ID·revision을 기준으로 기록한다. 상세 추천과 해석 범위는 [연구보고서 §6](RESEARCH_REPORT.md)을 따른다.
 
-2026-10-15에 확인한 GPT-2 XL/base config에는 vocab_size=50,257과 attention·embedding·residual dropout 설정이 있다. 이는 배포 config 확인이며 tokenizer의 어휘 ID 전체 일치, 실제 MC-BALD의 유효성이나 최적 dropout을 검증한 결과가 아니다. [XL config](https://huggingface.co/openai-community/gpt2-xl/raw/main/config.json), [base config](https://huggingface.co/openai-community/gpt2/resolve/main/config.json).
+2026-10-15에 확인한 GPT-2 XL/base config에는 vocab_size=50,257과 attention·embedding·residual dropout 설정이 있다. 이후 고정한 기반 revision의 tokenizer backend·어휘 ID 전체 일치와 공통 입력 forward를 확인했다. MC-BALD의 유효성이나 최적 dropout을 검증한 결과는 아니다. [XL config](https://huggingface.co/openai-community/gpt2-xl/raw/main/config.json), [base config](https://huggingface.co/openai-community/gpt2/resolve/main/config.json), [로컬 적재·추론 기록](results/model_preflight.json).
 
 [설계] 종합 benchmark 최고점보다 같은 교사·학생에서 손실·gate·불확실성·수용/거절·생성을 반복해 계측할 수 있는지 우선한다. 직접 토큰 KL 비교를 위해 tokenizer·어휘 ID·특수 토큰과 같은 prefix를 확인한다. MC 추정이 0으로 퇴화하면 dropout 경로·원문 설정을 대조한다. GPU 16GB급이라는 정보만으로 실제 학습 가능성을 확정하지 않는다.
 
-위 ID는 기반 모델이다. 교사의 Dolly 준비 상태와 학생의 SFT 초기 상태를 확보·기록해야 하며 공개 최종 SFT baseline과 MiniLLM 초기 checkpoint를 같다고 가정하지 않는다. 실제 준비된 checkpoint·revision·prompt와 분할 이력은 아직 미정이다. 모델 적재·학습·MC 추정 실행 시험은 수행하지 않았다.
+위 ID는 기반 모델이다. 교사의 Dolly 준비 상태와 학생의 SFT 초기 상태를 확보·기록해야 하며 공개 최종 SFT baseline과 MiniLLM 초기 checkpoint를 같다고 가정하지 않는다. 실제 준비된 checkpoint·revision·prompt와 분할 이력은 아직 미정이다. 기반 모델의 짧은 입력 추론만 통과했으며 학습·MC 추정은 시험하지 않았다. 초기에는 두 모델만 사용하고 대안·확장 모델은 적재하지 않는다.
 
 ## 3. 능력별로 검토할 벤치마크
 
@@ -120,4 +120,4 @@ RTX 5060 Ti 16GB급에서 **모델별 평가를 차례로 실행할 수 있는�
 
 지금은 평가 축과 공개 비교 사례를 확보했다. 다음은 MiniLLM의 원문 구성·평가 조건과 이번에 관찰할 응답 변화의 범위를 확인하는 것이다. **문헌에서 설명할 원리 → 원문 모델·평가 근거 → 같은 development 조건의 초기 학생·증류 후 학생 비교 설계 → 로컬 실행 가능성**을 연결해 선정한다. 교사 응답은 해석의 참고로 사용한다. 핵심 비교는 FKL/RKL/Hard/Soft와 같은 손실의 Revival 유무·결합이다. SFT 학생은 초기 상태의 참고 기준선이다. 같은 초기화에서 손실·불확실성·수용/거절·실제 갱신을 계측할 수 있는지 확인한다. 실행 목록은 자원과 설정 근거를 확인한 뒤 확정하며 한국어 평가는 후속 참고로 둔다.
 
-최종 모델·benchmark 조합, 통과 점수, 탐색 범위, 평가 표본 수는 미정이다. 공개 점수의 완전한 실행 재현, 학습 데이터 오염 감사, 모델 적재·평가·학습은 수행하지 않았다.
+초기 기반 모델은 GPT-2 XL/base로 정했고 revision·어휘·동시 GPU 적재·짧은 입력 추론을 확인했다. Dolly 준비 checkpoint·benchmark 조합·통과 점수·탐색 범위·평가 표본 수는 미정이다. 공개 점수의 완전한 실행 재현, 학습 데이터 오염 감사, 로컬 benchmark 평가·학습은 수행하지 않았다.

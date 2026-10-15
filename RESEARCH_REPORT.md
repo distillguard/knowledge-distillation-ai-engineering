@@ -2,7 +2,7 @@
 
 작성일: 2026-10-15, Asia/Seoul
 
-문서 상태: **연구보고서 초안. 문헌 분석과 비교 설계를 작성했으며 실제 학습·평가 결과는 아직 없다.**
+문서 상태: **연구보고서 초안. 문헌 분석·비교 설계와 두 기반 모델의 적재·추론 확인을 작성했다. 실제 학습·평가 결과는 아직 없다.**
 
 이 문서는 연구의 문제·이론·방법·모델 추천과 보고할 자료를 연결한다. 상세 실행·설정 선택 절차는 [연구계획서](RESEARCH_PLAN.md), 기존 분석은 [Hinton](papers/01_hinton_2015_ko.md)·[MiniLLM](papers/02_minillm_2024_ko.md)·[CaRE-KD](papers/03_care_kd_2026_ko.md)를 따른다. 원문 주장, 우리 설계, 실제 관측을 구분하며 결과가 없는 곳에 수치를 채우지 않는다.
 
@@ -10,9 +10,9 @@
 |---|---|
 | 연구 중심 | KL 방향·Hard/Soft gate의 손실 적응, Revival의 갱신 거절, 두 장치 결합의 역할 비교 |
 | 기준 instruction 데이터 | Dolly-15K 우선 선정. 실제 revision·분할·전처리·사용 규모는 미정 |
-| 모델 추천 | 1차 GPT-2 XL → GPT-2 base. 최종 checkpoint·학습 상태·실행 가능성은 미확인 |
+| 초기 모델 | GPT-2 XL/base 두 기반 모델의 revision 고정·동시 적재·공통 입력 추론 확인. Dolly 준비 상태·학습 가능성은 미확인 |
 | 추가 비교 후보 | SeqKD와 교사 응답 증강. 실제 실험 포함 여부는 미정 |
-| 실험·수치·그래프 | 미실행·미측정. 아래 그래프 목록은 설계이며 결과물이 아님 |
+| 실험·수치·그래프 | 적재·짧은 추론 메모리/시간만 측정. KD 학습·평가·그래프는 미실행. 아래 그림 목록은 설계 |
 | 후속 범위 | 한국어 적용, 다른 모델·과제로의 확장 |
 
 ## 1. 초록
@@ -109,19 +109,19 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 | 우선순위 | 교사 기반 모델 ID | 학생 기반 모델 ID | 추천 이유·제약 |
 |---|---|---|---|
-| 1차 추천 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) | [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결되고 작은 학생부터 여러 조건을 반복·계측하는 후보. 실제 적합성은 미측정 |
+| 초기 사용 | [openai-community/gpt2-xl](https://huggingface.co/openai-community/gpt2-xl) | [openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 두 문헌과 공통으로 연결. 기반 모델의 GPU 동시 적재·짧은 입력 추론 확인. Dolly 준비·학습은 미검증 |
 | 대안 | [facebook/opt-2.7b](https://huggingface.co/facebook/opt-2.7b) | [facebook/opt-125m](https://huggingface.co/facebook/opt-125m) | CaRE의 원문 조합. 더 큰 교사의 적재·MC forward 부담을 확인해야 하며 다른 계열을 바로 추가할 필요는 없음 |
 | 이후 확장 | 같은 GPT-2 XL 교사 | [openai-community/gpt2-medium](https://huggingface.co/openai-community/gpt2-medium) | 초기 결과 이후 학생 크기에 따른 차이를 추가 관찰할 후보. 초기 필수 실험은 아님 |
 
 논문은 GPT-2 학생을 120M급으로 표시하지만 위 base 모델 카드는 124M으로 설명한다. 실제 선정은 모델 ID·revision으로 고정하고 표기 차이를 기록한다. 숫자가 비슷한 다른 checkpoint로 조용히 교체하지 않는다. [GPT-2 모델 카드](https://huggingface.co/openai-community/gpt2).
 
-추천 근거는 원문과의 연결, logits 계측과 공통 어휘 확인 가능성, dropout 경로, 여러 조건을 반복할 수 있는 실행 범위다. 16GB급 GPU에서의 동작을 확인한 추천은 아니며 최신 채팅 모델의 종합 성능 순위로 제시하는 것도 아니다.
+추천 근거는 원문과의 연결, logits 계측과 공통 어휘 확인 가능성, dropout 경로, 여러 조건을 반복할 수 있는 실행 범위다. 이후 §7.3의 기반 모델 동시 적재·짧은 추론을 확인했다. 학습·MC 경로의 실행 가능성은 여전히 미검증이며 최신 채팅 모델의 종합 성능 순위로 제시하지 않는다. 초기에는 이 두 모델만 사용하고 OPT·medium은 추가하지 않는다.
 
 ### 6.3. 확인한 config와 남은 준비
 
 2026-10-15에 공개 config를 조회했다. GPT-2 XL과 base에는 vocab_size=50,257 및 attention·embedding·residual dropout 설정이 있고, OPT-2.7B/125M에는 vocab_size=50,272와 dropout 설정이 있다. 이는 **배포된 config의 내용**이며 우리 실험의 MC dropout 최적 설정을 뜻하지 않는다. [GPT-2 XL config](https://huggingface.co/openai-community/gpt2-xl/raw/main/config.json), [GPT-2 base config](https://huggingface.co/openai-community/gpt2/resolve/main/config.json), [OPT-2.7B config](https://huggingface.co/facebook/opt-2.7b/raw/main/config.json), [OPT-125M config](https://huggingface.co/facebook/opt-125m/resolve/main/config.json).
 
-같은 vocab_size만으로 어휘 ID·tokenizer의 일치를 확정하지 않는다. 실제 사용할 revision의 tokenizer·특수 토큰·padding·prompt를 대조해야 한다. config의 dropout 존재만으로 MC-BALD가 유효하다고 판단하지 않으며 실행 시 활성 경로를 확인한다.
+같은 vocab_size만으로 어휘 ID·tokenizer의 일치를 확정하지 않는다. 이번에 고정한 기반 revision에서는 전체 어휘 ID와 tokenizer backend, 점검 입력의 ID 일치를 실제 확인했다. 배치 학습용 특수 토큰·padding·prompt·mask는 별도 대조한다. config의 dropout 존재만으로 MC-BALD가 유효하다고 판단하지 않으며 실행 시 활성 경로를 확인한다.
 
 위 ID는 **기반 모델**이다. 원문과 연결하려면 교사의 Dolly 준비 상태와 학생의 SFT 초기 상태를 확보·기록해야 한다. 준비된 checkpoint의 데이터 분할·학습 이력을 확인하거나 공통 train 자료로 준비한다. 공개 SFT baseline을 MiniLLM의 초기 checkpoint와 같다고 가정하지 않는다. 실제 사용할 준비된 checkpoint·revision은 미정이다.
 
@@ -148,7 +148,11 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 ### 7.3. 로컬 자원과 실행 통과 기준
 
-기존 장치 조회에서 RTX 5060 Ti 16GB급과 시스템 RAM 31.62 GiB를 확인했다. 조회 정보는 [계획서 §6.3](RESEARCH_PLAN.md)을 따르며 모델 적재·학습 실측은 아직 없다.
+기존 장치 조회에서 RTX 5060 Ti 16GB급과 시스템 RAM 31.62 GiB를 확인했다. 2026-10-15 14:27(Asia/Seoul)에 GPT-2 XL/base를 동시에 GPU에 적재하고 같은 짧은 입력의 forward를 통과했다. 기반 모델의 실제 고유 파라미터 수는 각각 **1,557,611,200 / 124,439,808**이었다. revision·입력·검사 항목은 [계획서 §6.4](RESEARCH_PLAN.md), 원자료는 [적재·추론 실행 기록](results/model_preflight.json)을 따른다.
+
+점검은 float16·eager attention·eval·gradient 비활성 상태에서 `Knowledge distillation transfers`의 마지막 위치를 읽었다. 별도 온도 변환·sampling은 없었다. 전체 50,257개 어휘에서 유한 logits와 정규화된 확률을 확인했다. PyTorch allocator의 peak allocated는 **3,350.71 MiB**, peak reserved는 **3,368.00 MiB**, 다운로드를 제외한 적재·forward 시간은 **8.24초**였다. 전체 장치 메모리나 학습 요구량으로 읽지 않는다.
+
+이 입력·정밀도는 적재와 계측 경로를 확인하기 위한 선택이며 최적 학습 설정이나 대표 평가 표본이 아니다. 가중치·공통 입력 logits는 Git에서 제외한 로컬 `tmp/`에 보관했다. 확인 명령 종료 후 GPU 모델은 해제되며 상시 서버는 시작하지 않았다.
 
 후보 모델의 공통 입력과 계획상 긴 입력에서 손실·gate·MC 추정·실제 갱신·생성·기록을 시험한다. peak memory·시간·저장량과 반복 가능 범위를 확인한 뒤 batch·길이·정밀도·예산을 정한다. 양자화·LoRA·길이 변경을 채택하면 분포·학습 조건에 미치는 차이를 기록한다. GPU 용량만으로 특정 조합의 학습 성공을 보장하지 않는다.
 
@@ -156,7 +160,7 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 | 설정 | 필요한 근거 | 현재 상태 |
 |---|---|---|
-| 실제 teacher/student checkpoint·revision | 원문 학습 이력·공식 배포·데이터 분할·공통 초기화 | 미정 |
+| 실제 teacher/student checkpoint·revision | 원문 학습 이력·공식 배포·데이터 분할·공통 초기화 | 기반 두 모델 revision 고정. Dolly 준비·증류 초기 상태는 미정 |
 | 데이터 revision·분할·사용 규모 | 원문·공식 자료·전처리와 중복 검사 | 미정 |
 | KD·rollout·uncertainty·평가 온도 | 역할별 원문·코드 경로와 필요한 validation 선택 | 미정 |
 | gate margin·scale·미분 | 원문 식·그림·공식 구현 대조 | 미정 |
@@ -176,7 +180,15 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. 낮은 값·높은 수용률을 좋은 생성 품질이나 실제 정답의 대체 지표로 사용하지 않는다. 주 평가 지표·reference·채점 규칙·표본 수·반복 정의는 아직 미정이다. 외부 judge를 쓴다면 rubric·모델 버전·오류·비용을 먼저 확인한다.
 
-### 9.2. 예정 자료
+### 9.2. 두 모델부터 시작하는 표시 원칙
+
+초기에는 **GPT-2 XL과 GPT-2 base 두 모델만** 사용한다. 공통 입력의 원시 다음 토큰 분포부터 읽고, Dolly 준비 후의 분포·학습 신호, gate, Revival을 순서대로 연결한다. 초기 기반 모델의 출력은 추론 파이프라인 점검 자료이며 증류 효과의 증거가 아니다. 전체 진행 순서는 [계획서 §5.2.3](RESEARCH_PLAN.md)을 따른다.
+
+교사·학생 색상, 대응 패널의 축과 토큰 순서를 고정한다. 주요 토큰의 합집합을 표시하고 빠진 확률은 `기타 어휘`로 남기며, KL·entropy는 전체 어휘에서 계산한다. 표시할 토큰 수는 가독성을 위한 설정으로 기록하고 분포를 다시 정규화하지 않는다. 확률 차이는 0을 중심으로, heatmap은 공통 범례·범위·mask로 읽는다.
+
+분포 비교·gate 곡선·Revival 흐름은 각각 한 질문을 설명하는 그림으로 나눈다. 모든 그림에 실제 입력·prefix 위치·checkpoint 단계·revision·정밀도·온도 변환·계산 범위를 남긴다. 원문 인용·수식 예시·기반 모델 추론 점검·Dolly 준비 후 실측을 구분하며 아직 실행하지 않은 단계의 값을 채우지 않는다.
+
+### 9.3. 예정 자료
 
 | 자료 ID | 그림·표 | 기록할 내용·해석 조건 |
 |---|---|---|
@@ -193,7 +205,7 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 
 ## 10. 실험 결과 — 실행 후 작성
 
-**현재 미실행이다. 아래 비교의 개선·악화·동등성에 관한 결론은 없다.**
+**현재 KD 학습·평가는 미실행이다. §7.3의 기반 모델 적재·추론 점검만 완료했으며 아래 비교의 개선·악화·동등성에 관한 결론은 없다.**
 
 실행 후에는 실제 수행한 조건과 누락·실패 이유를 적고, FKL/RKL, Hard/Soft, 같은 손실의 Revival 유무, 결합 결과를 대응 표·그림으로 작성한다. 예상 방향에 맞지 않는 결과와 무변화도 기록한다. SeqKD·응답 증강은 실제 수행한 경우에만 추가 결과로 보고한다. 임의 예시 수치를 측정값처럼 채우지 않는다.
 
@@ -209,7 +221,7 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 
 ## 12. 결론과 후속 연구 — 결과에 따라 작성
 
-현재 확정한 것은 연구 질문·비교 구조·기준 데이터의 방향이며, 모델은 추천 단계다. 실험 후 KL 방향·손실 적응·갱신 거절·결합에서 얻은 시사점과 남은 질문을 정리한다. 아직 특정 방법의 우수성이나 새로운 효과를 결론내리지 않는다.
+현재 연구 질문·비교 구조·기준 데이터의 방향과 초기 두 기반 모델을 정했다. 모델 확보·동시 적재·짧은 입력 추론을 확인하고 시각화를 분포 → 손실·gate → Revival 순서로 정리했다. Dolly 준비 checkpoint·분할·학습 protocol은 미정이다. 실험 후 KL 방향·손실 적응·갱신 거절·결합에서 얻은 시사점과 남은 질문을 정리한다. 아직 특정 방법의 우수성이나 새로운 효과를 결론내리지 않는다.
 
 한국어 적용, 다른 모델·과제, 교사 응답 증강 등은 관측 결과와 자원에 근거해 후속 후보로 검토한다. 결론을 먼저 정해 실험 결과를 맞추지 않는다.
 
@@ -220,6 +232,6 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 - Sengupta, Seth, Chakraborty (2026), [CaRE-KD, v1](https://arxiv.org/html/2609.36734v1).
 - Gou 외 (2021), [Knowledge Distillation: A Survey, v7](https://arxiv.org/pdf/2006.05525v7).
 - Kim, Rush (2016), [Sequence-Level Knowledge Distillation](https://aclanthology.org/D16-1139/).
-- 데이터·기반 모델·config의 출처는 §6의 직접 링크를 따른다. 원문 버전은 고정했지만 실제 실행 모델·데이터·코드 revision은 아직 동결 전이다.
+- 데이터·기반 모델·config의 출처는 §6의 직접 링크를 따른다. 원문 버전과 적재 점검용 두 기반 모델 revision은 고정했다. Dolly 준비 checkpoint·데이터·본 실험 코드의 동결은 남아 있다.
 
-부록에는 실제 모델·데이터 revision, 분할·전처리, 값별 근거, 코드·환경 버전, 실행 로그, 추가 그래프·응답 사례를 남긴다. 현재 존재하지 않는 로그·결과 파일은 생성한 것으로 표시하지 않는다.
+부록에는 실제 모델·데이터 revision, 분할·전처리, 값별 근거, 코드·환경 버전, 실행 로그, 추가 그래프·응답 사례를 남긴다. 현재 [확인 코드](scripts/load_two_models.py)와 [적재·추론 실행 기록](results/model_preflight.json)이 있다. 학습 로그·평가 결과·실제 그래프는 아직 생성하지 않았다.
