@@ -1,6 +1,6 @@
 # Dolly 모델 SFT 평가 결과
 
-5개 계열·10개 모델 중 SFT 선택 완료 1/10, 선정 평가 완료 1/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
+5개 계열·10개 모델 중 SFT 선택 완료 2/10, 선정 평가 완료 1/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
 
 | 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |
 |---|---|---|---|
