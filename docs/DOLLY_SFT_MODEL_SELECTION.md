@@ -99,7 +99,7 @@ python -B scripts/run_dolly_sft.py
 
 위 두 tokenizer 의존성은 현재 프로젝트의 `tmp` 안에 설치되어 있다. 추가 모델 protocol에는 해당 버전도 기록한다. 기존 학습 환경 전체를 바꾸지 않고, 새 환경에서 실행할 때만 이 설치 단계를 수행한다.
 
-기존 데이터·점검 파일은 준비되어 있으므로 학습 중 `dolly_sft.py prepare`를 다시 실행하지 않는다. 추가 모델 파일 준비 후 worker는 **모델별 사전 점검 → 두 학습률 SFT → MD 갱신 → 공통 평가 → MD·그림 갱신 → 다음 모델**을 진행한다. 모델별 SFT·평가 완료를 이 채팅에 보고하도록 후속 확인을 설정한다. 실행 상태는 `results/dolly_sft_v1/worker_status.json`, 상세 로그는 `tmp/dolly_sft_v1/worker.log`에 남긴다. 실패 시 다음 단계로 진행하지 않고 실패 상태를 저장한다. 같은 worker의 중복 실행은 파일 잠금으로 막는다.
+기존 데이터·점검 파일은 준비되어 있으므로 학습 중 `dolly_sft.py prepare`를 다시 실행하지 않는다. 추가 모델 파일 준비 후 worker는 **모델별 사전 점검 → 두 학습률 SFT → MD 갱신 → 공통 평가 → MD·그림 갱신 → 다음 모델**을 진행한다. 사용자 요청으로 예약된 후속 확인은 삭제했으며 활성 대화에서 진행률과 모델별 완료를 직접 확인한다. 별도 Python worker의 학습·평가·MD 갱신 순서는 유지한다. 실행 상태는 `results/dolly_sft_v1/worker_status.json`, 상세 로그는 `tmp/dolly_sft_v1/worker.log`에 남긴다. 실패 시 다음 단계로 진행하지 않고 실패 상태를 저장한다. 같은 worker의 중복 실행은 파일 잠금으로 막는다.
 
 사전 점검은 실제 가중치 갱신·유한 gradient·EOS/padding 마스크·adapter 저장/재적재 logits 일치·cache 생성·16건 누적 Trainer 갱신·검증·optimizer checkpoint 저장을 확인한다. 일회성 점검 점수를 본 SFT 성능으로 보고하지 않는다. Trainer 일회성 점검에만 warmup=0을 사용해 실제 한 번의 가중치 변화를 확인하며, 본 학습은 위 3% warmup을 유지한다.
 
