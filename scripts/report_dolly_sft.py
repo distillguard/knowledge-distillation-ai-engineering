@@ -8,6 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from dolly_sft import LR_CANDIDATES, MODELS, OUT, ROOT, protocol, sha
+from evaluate_dolly_sft import SEEDS
 
 
 def read(path):
@@ -16,6 +17,7 @@ def read(path):
 
 def main():
     spec = protocol()
+    assert SEEDS == (10,), "This report is for single-seed model selection"
     runs = {name: read(OUT / f"{name}_evaluation.json") for name in MODELS}
     labels = ["GPT-2 base", "GPT-2 XL", "Qwen3.5-0.8B", "Qwen3.5-9B NF4"]
     colors = ["#93C5FD", "#2563EB", "#FDBA74", "#EA580C"]
@@ -23,6 +25,7 @@ def main():
     for name, run in runs.items():
         evaluation = read(OUT / f"{name}_evaluation_protocol.json")
         chosen = evaluation["selected_adapter"]
+        assert evaluation["generation"]["seeds"] == list(SEEDS) and evaluation["generation"]["phase"] == "model_selection"
         assert run["status"] == "completed" and evaluation["training_protocol_fingerprint"] == spec["fingerprint"]
         assert run["fingerprint"] == evaluation["fingerprint"] == (sha(ROOT / "scripts/evaluate_dolly_sft.py") +
                 spec["fingerprint"] + sha(ROOT / chosen["adapter"] / "adapter_model.safetensors"))
@@ -31,12 +34,13 @@ def main():
             records.append({"model": name, "dataset": dataset, "n": scores["n"], **{key: scores[key] for key in
                            ("accuracy", "macro_f1", "balanced_accuracy", "weighted_f1", "mcc",
                             "positive_class_conditional_label_brier", "majority_class_accuracy")}})
-        for seed in (10, 20, 30, 40, 50):
+        for seed in SEEDS:
             generation = read(OUT / f"{name}_generation_seed{seed}.json")
             assert generation["fingerprint"] == run["fingerprint"] and generation["n"] == 500
+        assert all(scores["sample_sd_across_generation_seeds"] is None for scores in run["dolly_generation"].values())
         records.append({"model": name, "dataset": "dolly_generation", "n": 500,
                         **{key + "_" + stat: value for key, scores in run["dolly_generation"].items()
-                           for stat, value in scores.items()}})
+                           for stat, value in scores.items() if value is not None}})
     fields = list(dict.fromkeys(key for record in records for key in record))
     assert all(math.isfinite(v) for row in records for v in row.values() if isinstance(v, (int, float)))
     with (OUT / "scores.csv").open("w", encoding="utf-8", newline="") as handle:
@@ -57,10 +61,9 @@ def main():
     figure.savefig(OUT / "classification.png", dpi=180); plt.close(figure)
     figure, axis = plt.subplots(figsize=(9, 4.8), layout="constrained")
     values = [run["dolly_generation"]["rougeL"] for run in runs.values()]
-    bars = axis.bar(labels, [v["mean"] for v in values], color=colors,
-                    yerr=[v["sample_sd_across_generation_seeds"] for v in values], capsize=4)
+    bars = axis.bar(labels, [v["mean"] for v in values], color=colors)
     axis.bar_label(bars, fmt="%.2f", padding=6)
-    axis.set(title="Dolly · 500 prompts · mean ± sample SD over 5 generation seeds", ylabel="ROUGE-L F1 × 100", ylim=(0, 100))
+    axis.set(title="Dolly model selection · 500 prompts · generation seed 10", ylabel="ROUGE-L F1 × 100", ylim=(0, 100))
     axis.grid(axis="y", alpha=.18); axis.set_axisbelow(True)
     figure.savefig(OUT / "dolly_rouge.png", dpi=180); plt.close(figure)
     figure, axes = plt.subplots(2, 2, figsize=(10, 7), layout="constrained")
@@ -75,13 +78,13 @@ def main():
     figure.suptitle("Development loss · compare checkpoints within each model")
     figure.savefig(OUT / "development_nll.png", dpi=180); plt.close(figure)
     lines = ["# Dolly 네 모델 SFT 평가 결과", "", "이번 직접 LoRA SFT의 선정 평가 결과다. 9B만 NF4이며 이전 공개 SFT 점수와 구분한다.", "",
-             "| 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L 평균 ± 생성 seed 표준편차 |",
+             "| 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |",
              "|---|---|---|---|"]
     for label, run in zip(labels, runs.values()):
         scores = run["classification"]; rouge = run["dolly_generation"]["rougeL"]
         cells = [f'{100*scores[d]["accuracy"]:.2f} / {100*scores[d]["macro_f1"]:.2f}' for d in ("sst2", "boolq")]
-        lines.append(f'| {label} | {cells[0]} | {cells[1]} | {rouge["mean"]:.2f} ± {rouge["sample_sd_across_generation_seeds"]:.2f} |')
-    lines += ["", "학습 seed는 1개다. 생성 seed 간 변동은 학습 반복의 불확실성이 아니다. 모델 선정에 사용한 자료이므로 독립적인 최종 test가 아니다.", "",
+        lines.append(f'| {label} | {cells[0]} | {cells[1]} | {rouge["mean"]:.2f} |')
+    lines += ["", "모델 선정 단계는 생성 seed 10 한 개를 사용해 seed 간 변동을 추정하지 않는다. 최종 선정 모델의 본 실험에서는 생성 seed 10/20/30/40/50을 사용한다. 학습 seed 반복과 생성 seed 반복은 별개다. 모델 선정 자료이므로 독립적인 최종 test가 아니다.", "",
               "![분류 점수](classification.png)", "", "![Dolly ROUGE-L](dolly_rouge.png)", "", "![검증 손실](development_nll.png)"]
     (OUT / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("Wrote scores.csv, REPORT.md and three figures from matching completed evaluations", flush=True)

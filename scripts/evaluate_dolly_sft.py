@@ -18,7 +18,7 @@ import pyarrow.parquet as pq
 sys.path.append(str(ROOT / "tmp/eval_deps"))
 from rouge_score import rouge_scorer
 
-SEEDS = (10, 20, 30, 40, 50)
+SEEDS = (10,)
 DATA = {"sst2": ("stanfordnlp/sst2", "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb", "data/validation-00000-of-00001.parquet"),
         "boolq": ("super_glue", "3de24cf8022e94f4ee4b9d55a6f539891524d646", "boolq/validation-00000-of-00001.parquet")}
 
@@ -98,6 +98,13 @@ def classify(name, model, data):
     return result
 
 
+def summarize_generation(summaries):
+    assert summaries
+    return {metric: {"mean": statistics.mean(r[metric] for r in summaries),
+                     "sample_sd_across_generation_seeds": statistics.stdev(r[metric] for r in summaries) if len(summaries) > 1 else None}
+            for metric in ("rouge1", "rouge2", "rougeL", "length_cap_rate", "empty_rate", "mean_generated_tokens")}
+
+
 def generate(name, model, tokenizer, selected, fingerprint):
     scorer = rouge_scorer.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=True)
     summaries = []
@@ -133,9 +140,7 @@ def generate(name, model, tokenizer, selected, fingerprint):
                    "length_cap_rate": cap / len(selected), "empty_rate": empty / len(selected),
                    "mean_generated_tokens": statistics.mean(x["generated_tokens"] for x in generated)}
         write_json(destination, summary); summaries.append(summary)
-    return {metric: {"mean": statistics.mean(r[metric] for r in summaries),
-                     "sample_sd_across_generation_seeds": statistics.stdev(r[metric] for r in summaries)}
-            for metric in ("rouge1", "rouge2", "rougeL", "length_cap_rate", "empty_rate", "mean_generated_tokens")}
+    return summarize_generation(summaries)
 
 
 def main():
@@ -145,12 +150,15 @@ def main():
     test = classification_metrics([0, 0, 1, 1], [0, 0, 0, 0], [.1] * 4)
     assert test["accuracy"] == .5 and math.isclose(test["macro_f1"], 1 / 3) and test["balanced_accuracy"] == .5
     assert test["mcc"] == 0 and test["confusion_matrix_true_rows_predicted_columns"] == [[2, 0], [2, 0]]
+    one_seed = summarize_generation([dict.fromkeys(("rouge1", "rouge2", "rougeL", "length_cap_rate", "empty_rate", "mean_generated_tokens"), 1.0)])
+    assert all(score["mean"] == 1.0 and score["sample_sd_across_generation_seeds"] is None for score in one_seed.values())
     training = protocol()
     tokenizers = {name: tokenizer_for(name) for name in MODELS}
     data, manifest = classification_data(tokenizers)
     selected = rows(LOCAL / "selection_evaluation.jsonl")
     specification = {"training_protocol_fingerprint": training["fingerprint"], "evaluation_script_sha256": sha(__file__),
                      "classification": manifest, "generation": {"seeds": SEEDS, "max_new_tokens": 256,
+                     "phase": "model_selection", "seed_basis": "User decision: one common seed, 10 (first MiniLLM seed); five seeds reserved for the selected-model main experiment",
                      "temperature": 1, "top_k": 0, "top_p": 1, "no_repeat_ngram_size": 6,
                      "microbatch": 1, "basis": "MiniLLM sampling settings and seeds; local changes: microbatch 1 and fixed new-token cap 256 (512 total minus common maximum prompt 256), rather than original 512 minus actual padded prompt length",
                      "evaluation_is_independent_final_test": False}}

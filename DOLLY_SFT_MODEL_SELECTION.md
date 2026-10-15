@@ -58,13 +58,15 @@ GPT-2는 pretrained 모델, Qwen은 이미 post-training을 거친 모델이다.
 |---|---|
 | SST-2 | validation 872건, accuracy·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·혼동행렬 |
 | BoolQ | validation 중 공통 길이 기준을 통과한 3,269건, 같은 분류 지표. 원본 row 3154 한 건은 GPT-2의 1,024토큰 용량을 넘으므로 전 모델 공통 제외 |
-| Dolly 생성 | 500문항 × 생성 seed 10/20/30/40/50. ROUGE-1/2/L 평균·생성 seed 간 표본 표준편차, 생성 길이·상한 도달률·빈 응답률 |
+| Dolly 생성 | 모델 선정 단계: 500문항 × 공통 생성 seed 10 한 개. ROUGE-1/2/L의 문항 평균, 생성 길이·상한 도달률·빈 응답률 |
+
+**반복 수 결정:** 모델 선정 단계에서는 네 모델 모두 같은 seed 10으로 생성 평가한다. 전체 생성 수는 500 × 1 × 4 = 2,000개다. 10은 MiniLLM의 seed 목록 중 첫 값을 공통 조건으로 고정한 것이며 최적 seed라는 의미는 아니다. 최종 선정 모델의 본 실험에서는 MiniLLM을 따라 seed 10/20/30/40/50의 5개 생성 반복을 사용한다. 두 단계의 반복 수는 학습 반복 수와 별개다. 현재 실행은 모델 선정까지만 수행하며 본 실험의 추가 학습·방법 비교는 이후 설계에 따른다.
 
 분류는 같은 지시 내용과 label 후보의 조건부 sequence log probability로 판정한다. 자유 응답을 임의 파싱한 정답률과 구분한다. Brier score는 두 label 후보 사이에서 정규화한 확률임을 명시한다. 자료 revision·제외 행·파일 해시도 평가 명세에 남긴다.
 
 생성은 temperature=1, top-k=0, top-p=1, no-repeat-ngram=6과 생성 seed를 [MiniLLM 평가 코드](https://github.com/microsoft/LMOps/tree/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm)·부록 B.2에서 가져온다. **최대 새 토큰 256과 microbatch 1은 로컬 변경값**이다. 256은 전체 길이 상한 512에서 공통 최대 prompt 256을 뺀 보수적 응답 예산이다. 원본은 512에서 실제 padded prompt 길이를 빼므로 짧은 prompt에 더 긴 응답을 허용한다. 이번 고정 상한은 긴 응답의 점수를 낮출 수 있어 상한 도달률도 함께 보고한다. Batch 변경 때문에 seed가 같아도 원문과 생성 문장의 완전 일치를 요구하지 않는다.
 
-그림에는 네 모델의 SST-2·BoolQ accuracy/macro-F1, Dolly ROUGE-L과 생성 seed 간 변동, 학습·검증 손실 곡선을 별도로 제시한다. 분류의 단일 평가값에 생성 seed의 표준편차를 붙이지 않는다. 점수가 없는 모델은 공란으로 두며 이전 공개 SFT 모델 점수로 채우지 않는다. Dolly ROUGE를 accuracy로 해석하지 않는다.
+그림에는 네 모델의 SST-2·BoolQ accuracy/macro-F1, 단일 생성 seed의 Dolly ROUGE-L, 학습·검증 손실 곡선을 별도로 제시한다. 현재 단일 seed에서는 생성 seed 간 표준편차를 추정할 수 없으므로 JSON에 null로 남기고 표·그래프에 오차막대나 ±0을 붙이지 않는다. 본 실험의 5개 생성 반복에서 평균·표본 표준편차를 보고한다. 점수가 없는 모델은 공란으로 두며 이전 공개 SFT 모델 점수로 채우지 않는다. Dolly ROUGE를 accuracy로 해석하지 않는다.
 
 ## 실행과 상태
 
