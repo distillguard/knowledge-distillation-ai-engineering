@@ -2,13 +2,13 @@
 
 계획 갱신일: 2026-10-15, Asia/Seoul. 장비·공개 데이터의 조회일은 각 항목에 별도로 기록한다.
 
-상태: **탐구 목표를 ‘생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구’로 확정했다. Hinton·MiniLLM과 CaRE의 gate 정의를 근거로 FKL/RKL/Hard/Soft를 비교한다. Dolly-15K를 기준 instruction 데이터로 우선 선정했다. 모델·공통 분할·최종 실행 방법·설정·예산은 미정이며 학습은 미실행이다.**
+상태: **탐구 목표를 ‘생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구’로 확정했다. Hinton·MiniLLM·CaRE를 근거로 KL 방향·Hard/Soft gate와 Revival의 개별 역할·결합을 비교한다. Dolly-15K를 기준 instruction 데이터로 우선 선정했다. 모델·공통 분할·최종 실행 방법·설정·예산은 미정이며 학습은 미실행이다.**
 
 ## 1. 목적과 원칙
 
-Hinton으로 KD의 기초를, MiniLLM으로 생성 LLM 증류의 원리를 이해한다. 그다음 실행 가능한 범위에서 학생의 증류 전후 응답과 평가 결과를 관찰하고 문헌의 설명과 연결한다. 일차 목표는 원리 이해와 결과 해석이며, Dolly-15K의 공통 조건에서 **KL 방향과 Hard/Soft gate에 따른 학습 신호·출력분포·생성 응답 차이**를 비교·시각화한다. 추가 기전 분석·새 방법 제안은 후속 탐구로 둔다. 이전 LightJudge의 `T=2`, rank, epoch, seed 등을 새 실험의 기본값으로 승계하지 않는다.
+Hinton으로 KD의 기초를, MiniLLM으로 생성 LLM 증류의 원리를 이해한다. 그다음 실행 가능한 범위에서 학생의 증류 전후 응답과 평가 결과를 관찰하고 문헌의 설명과 연결한다. 일차 목표는 원리 이해와 결과 해석이며, Dolly-15K의 공통 조건에서 **KL 방향·Hard/Soft gate의 손실 적응과 Revival의 학습 갱신 거절에 따른 신호·분포·응답 차이**를 비교·시각화한다. 추가 기전 분석·새 방법 제안은 후속 탐구로 둔다. 이전 LightJudge의 `T=2`, rank, epoch, seed 등을 새 실험의 기본값으로 승계하지 않는다.
 
-**진행 흐름은 기초 이해 → MiniLLM의 KL·CaRE의 gate 분석 → 네 조건의 제한된 비교 실험과 시각화다.** MiniLLM의 원래 언어·모델·데이터·초기 학습·평가 조건을 먼저 검토하되 전체 재현을 필수 목표로 삼지 않는다. 이번에 구현할 방법과 원문과의 차이를 명시한다. **CaRE의 gate 정의는 현재 비교의 직접 근거이고 Revival·한국어 적용은 후속 탐구로 둔다.** 전체 CaRE-KD의 구성요소를 자동으로 추가하지 않는다.
+**진행 흐름은 기초 이해 → MiniLLM의 KL·CaRE의 gate/Revival 분석 → 손실 적응·갱신 거절의 비교 실험과 시각화다.** MiniLLM의 원래 언어·모델·데이터·초기 학습·평가 조건을 먼저 검토하되 전체 재현을 필수 목표로 삼지 않는다. 이번에 구현할 방법과 원문과의 차이를 명시한다. **CaRE의 gate와 Revival은 모두 현재 비교의 직접 근거이며 한국어 적용은 후속 탐구로 둔다.** 전체 모델 조합·benchmark를 수행할지는 자원과 확인 가능한 설정에 따라 별도로 정한다.
 
 **연구의 중심은 참고문헌의 인사이트를 근거 자료와 함께 인용하고, 현재 조건에서 적용·검증하는 것이다.** 수식·그래프·표·사례가 어떤 주장을 뒷받침하는지 먼저 분석한다. 현재 목표에 필요한 응답 사례와 수행 지표를 선택하며, 효율성 순위나 비용 대비 점수를 목표로 두지 않는다. 메모리·실행 시간·저장 공간은 개인 컴퓨터에서 연구를 끝낼 수 있는지 판단하는 제약이다.
 
@@ -38,7 +38,7 @@ Hinton으로 KD의 기초를, MiniLLM으로 생성 LLM 증류의 원리를 이�
 
 ## 3. 주 참고문헌과 후속 참고의 근거
 
-P1–P4와 P5의 gate 정의·미분은 현재 비교의 중심 근거다. P6–P7 중 confidence 정의·gate 설정에 필요한 부분을 확인하고, Revival·MC-BALD·전체 calibration 분석은 후속 참고로 둔다.
+P1–P4와 P5의 gate·Revival은 현재 비교의 중심 근거다. P6–P7에서 confidence·BALD·gate·거절 규칙과 설정을 확인한다. 조건부 calibration·오류 보호 주장은 관측과 구분해 해석하며 전체 분석을 자동으로 재현 목표에 넣지 않는다.
 
 | ID | 근거와 원문 위치 | 연구에서 확인할 것 | 현재 허용하지 않는 해석 |
 |---|---|---|---|
@@ -78,9 +78,9 @@ P1–P4와 P5의 gate 정의·미분은 현재 비교의 중심 근거다. P6–
 
 **통과 기준:** FKL/RKL의 방향 변경과 prefix 변경을 서로 다른 조작으로 설명할 수 있다. 원문 Phase 1의 checkpoint 선택과 Phase 2의 선택을 구분한다. 생성 반복 수를 독립 학습 반복 수로 취급하지 않는다.
 
-### 4.3. CaRE의 gate: Hard/Soft는 무엇이 다른가?
+### 4.3. CaRE: 손실을 바꾸는 것과 학습 갱신을 거르는 것은 어떻게 다른가?
 
-현재 분석 대상은 confidence 정의, KL 혼합, Hard/Soft gate와 그라디언트 차이다. 아래 기존 분석 중 Revival·BALD·전체 calibration 주장은 후속 참고이며 현재 비교 실험의 필수 목표로 두지 않는다.
+현재 분석 대상은 confidence 정의·KL 혼합·Hard/Soft gate의 차이와 BALD 기반 Revival의 수용·거절 규칙이다. 두 구성요소의 개별 역할과 결합을 구분한다. 조건부 calibration과 실제 오류 보호·정답성의 근거는 별도로 확인한다.
 
 읽기 자료: [한국어 번역·분석](papers/03_care_kd_2026_ko.md), P5–P7.
 
@@ -90,7 +90,7 @@ confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival
 
 ### 4.4. 인사이트와 그래프·자료의 인용 계획
 
-[S] 인용의 흐름은 **원문 인사이트 → 근거 자료 → 적용 가정 → 우리의 질문 → 필요한 관측**으로 둔다. 현재는 Hinton·MiniLLM과 CaRE의 gate 관련 수식·그림·표를 연결하며 Revival·오류 보호 분석은 후속 참고다. 아래는 자료 후보이며 새 실험이나 시각화를 이미 수행한 결과가 아니다.
+[S] 인용의 흐름은 **원문 인사이트 → 근거 자료 → 적용 가정 → 우리의 질문 → 필요한 관측**으로 둔다. 현재는 Hinton·MiniLLM과 CaRE의 gate·Revival 관련 수식·그림·표를 연결한다. 낮은 entropy·BALD나 거절 자체를 실제 오류 보호의 증거로 해석하지 않는다. 아래는 자료 후보이며 새 실험이나 시각화를 이미 수행한 결과가 아니다.
 
 | 문헌 인사이트 | 인용할 원문 자료 | 자료가 뒷받침하는 범위 | 후속 분석·시각화 후보 |
 |---|---|---|---|
@@ -120,15 +120,15 @@ confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival
 | MiniLLM | 한국어 해설, 시퀀스 RKL·학습 과정 분석, 공식 코드의 temperature 사용 경로 확인 | v4 당시 checkpoint·환경과 확인한 코드의 일치 |
 | CaRE | 본문·부록의 한국어 재구성, 수식 풀이, 표 전사·그림 연결, 주장·가정의 한계 분석 | 공식 실행 config, 식·그림의 scale 차이와 calibration 해석 |
 
-**분석 문서 작성과 실제 이해·실험 실행은 별도 상태다.** 문서 작성만으로 모든 주장의 독립 검증이나 학습 재현이 끝났다고 표시하지 않는다. 현재 목표와 문헌 역할은 §5.1에서 확정했다. 다음은 FKL/RKL과 Hard/Soft gate의 정의·공통 비교 조건을 확인하는 것이다. gate 관련 미확인 설정은 해당 실험 전에 확인한다. Revival 전용 설정은 현재 비교의 선행 조건이 아니다.
+**분석 문서 작성과 실제 이해·실험 실행은 별도 상태다.** 문서 작성만으로 모든 주장의 독립 검증이나 학습 재현이 끝났다고 표시하지 않는다. 현재 목표와 문헌 역할은 §5.1에서 확정했다. 다음은 FKL/RKL·Hard/Soft gate와 Revival의 정의·공통 비교 조건을 확인하는 것이다. gate·불확실성 추정·수용/거절·실제 갱신의 미확인 설정은 해당 실험 전에 확인한다.
 
 ## 5. 확정한 탐구 목표와 진행 범위
 
 ### 5.1. 목표: 생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구
 
-[결정: 2026-10-15, 범위 구체화] **같은 교사·학생과 Dolly-15K에서 Forward/Reverse KL 및 Hard/Soft gate에 따른 학습·분포·응답 차이를 비교·시각화한다.** Hinton은 기초, MiniLLM은 KL 방향의 근거, CaRE의 gate 부분은 Hard/Soft 비교의 근거로 둔다. SFT·SeqKD·MiniLLM 전체 알고리즘을 넓게 비교하는 것으로 주제를 확장하지 않는다.
+[결정: 2026-10-15, 범위 구체화] **같은 교사·학생과 Dolly-15K에서 KL 방향·Hard/Soft gate의 손실 적응, Revival의 학습 갱신 거절, 두 장치의 결합을 비교·시각화한다.** Hinton은 기초, MiniLLM은 KL 방향, CaRE는 손실 적응과 선택적 갱신의 직접 근거다. SFT·SeqKD·MiniLLM 전체 알고리즘을 넓게 비교하는 것으로 주제를 확장하지 않는다.
 
-핵심 질문은 **‘같은 생성 학습 조건에서 KL 방향을 고정하는 경우와 confidence 기반 Hard/Soft gate를 사용하는 경우 학생의 학습 신호·출력분포·생성 응답이 어떻게 달라지는가?’**다.
+핵심 질문은 **‘같은 생성 학습 조건에서 손실을 어떻게 바꿀지 결정하는 것과 학습 갱신을 받아들일지 결정하는 것은 각각 어떤 역할을 하며, 둘을 결합하면 학생의 학습·분포·응답이 어떻게 달라지는가?’**다. 구체적인 주제명은 **‘생성형 LLM의 지식증류에서 손실 적응과 선택적 학습 갱신의 역할 비교’**로 둔다.
 
 [용어] 흔히 사용하는 지식 유형 분류는 응답/출력 기반·특징 기반·관계 기반이다. 확률분포 기반 KL 증류는 응답/출력 기반에 포함된다. 이 탐구는 그 안에서 목적함수와 gate를 비교한다. [Gou 외, Knowledge Distillation: A Survey, §2](https://arxiv.org/pdf/2006.05525v7).
 
@@ -136,14 +136,14 @@ confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival
 |---|---|---|
 | [Hinton](https://arxiv.org/pdf/1503.02531v1) | KD의 기초를 이해하는 주 참고문헌 | soft target·온도·교사와 학생의 출력분포, 전달 신호 |
 | [MiniLLM](https://arxiv.org/html/2306.08543v4) | 생성형 LLM 증류를 탐구하는 중심 참고문헌 | 생성분포·KL 방향·학습 응답의 출처, 원문 학습 과정과 응답 평가 |
-| [CaRE-KD](papers/03_care_kd_2026_ko.md) | Hard/Soft gate 비교의 직접 근거 | §2.1·3.1의 confidence·혼합 손실·gate 미분. Revival·전체 방법 재현은 후속 참고 |
+| [CaRE-KD](papers/03_care_kd_2026_ko.md) | 손실 적응·선택적 갱신과 결합의 직접 근거 | §2.1–2.2·3.1·4.3의 gate·BALD·Revival 및 구성요소 대조. 전체 benchmark 수행 범위는 미정 |
 
 ### 5.2. 세 단계로 진행한다
 
 | 단계 | 할 일 | 산출물 |
 |---|---|---|
 | 1. 기초 이해 | 다음 토큰 예측과 문장 생성, 교사·학생, 확률분포·soft target·온도·CE/KL 이해 | 생성과 증류 과정을 자기 말과 간단한 예시로 설명 |
-| 2. 논문 분석 | Hinton의 기초, MiniLLM의 KL, CaRE의 gate 정의·미분과 수식·그림·표 연결 | FKL/RKL/Hard/Soft의 의미와 조건을 설명하는 자료 |
+| 2. 논문 분석 | Hinton의 기초, MiniLLM의 KL, CaRE의 gate·Revival과 수식·그림·표 연결 | KL·손실 적응·갱신 거절의 의미와 조건을 설명하는 자료 |
 | 3. 제한된 실험과 해석 | 원문 구성을 검토해 실행 범위를 정하고 모델·데이터·설정을 선정한 뒤 응답·평가 결과 관찰 | 실행 조건, 증류 전후 응답 사례와 평가 결과, 문헌과 연결한 해석·한계 |
 
 실험 전에 **어떤 입력에서, 어떤 학생 초기 상태와 증류 방법을 비교하고, 응답의 무엇을 관찰할지**를 짧게 명시한다. 원문 과제와 모델·데이터를 먼저 검토하며 로컬 실행 시험으로 범위를 확정한다. 기준 instruction 자료는 Dolly-15K로 우선 선정했다. 모델·공통 분할·최종 실행 방법·지표·표본 수·학습 예산은 아직 미정이다.
@@ -152,7 +152,7 @@ confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival
 
 MiniLLM 전체 재현은 필수 목표가 아니다. 단순한 증류 실험이나 일부 요소만 적용한다면 실제 방법·선정 이유·원문과의 차이를 기록한다. RKL 손실만 적용한 실험을 MiniLLM 전체 재현이라고 부르지 않는다. T 등은 원문 사용값과 새 조건에서 검증해 선택한 값을 구분한다.
 
-일차 완료 기준은 **생성·증류 원리를 설명하고, 문헌 근거와 실행 조건을 제시하며, 관찰한 응답 변화와 평가 결과를 해석하는 것**이다. 새 방법 제안·Revival·한국어 적용은 결과를 본 뒤 필요할 때 검토할 후속 탐구다. Hard/Soft gate 비교는 현재 목표에 포함한다. 새로운 기전 가설을 먼저 확정할 필요는 없다.
+일차 완료 기준은 **생성·증류 원리를 설명하고, 문헌 근거와 실행 조건을 제시하며, 관찰한 응답 변화와 평가 결과를 해석하는 것**이다. 새 방법 제안·한국어 적용은 결과를 본 뒤 필요할 때 검토할 후속 탐구다. Hard/Soft gate와 Revival 비교는 현재 목표에 포함한다. 새로운 기전 가설을 먼저 확정할 필요는 없다.
 
 ### 5.2.1. 핵심 비교: FKL / RKL / Hard gate / Soft gate
 
@@ -175,7 +175,7 @@ CaRE 식 (3)의 기준 정의는 c(P)=1−H(P)/log|V|, Δc=c(P)−c(Q), g_hard=1
 
 [설계] 공통 teacher·student 초기 checkpoint, Dolly revision·분할, tokenizer·학습 mask, 학습량·optimizer·평가 조건을 기록한다. prefix를 reference/teacher/student 중 어디서 얻는지 먼저 정하고 네 조건에서 동일한 학습 규칙을 사용한다. 학생 rollout으로 입력이 이후 달라질 때는 같은 입력의 고정 진단과 자유 생성 결과를 구분한다. 단순 토큰 RKL 비교를 MiniLLM 전체 재현으로 표시하지 않는다.
 
-**원문의 Hard/Soft 방법 비교와 연속성 하나의 효과를 구분한다.** 원문은 margin·연속 혼합·gate의 미분 여부가 함께 달라진다. 우선 정의한 방법의 차이를 비교하고, 결과를 연속성 하나의 인과 효과로 단정하지 않는다. 추가 대조는 후속 해석에 필요한 경우에만 검토한다. Revival은 이번 핵심 비교에 포함하지 않는다.
+**원문의 Hard/Soft 방법 비교와 연속성 하나의 효과를 구분한다.** 원문은 margin·연속 혼합·gate의 미분 여부가 함께 달라진다. 우선 정의한 방법의 차이를 비교하고, 결과를 연속성 하나의 인과 효과로 단정하지 않는다. 추가 대조는 후속 해석에 필요한 경우에만 검토한다. Revival은 별도의 수용·거절 축으로 §5.2.2에서 비교한다.
 
 | 시각화 [설계] | 설명할 내용 | 표시 조건 |
 |---|---|---|
@@ -186,6 +186,25 @@ CaRE 식 (3)의 기준 정의는 c(P)=1−H(P)/log|V|, Δc=c(P)−c(Q), g_hard=1
 | 생성 응답 비교 | 같은 평가 입력에서 내용·길이·반복·과제 수행 차이 | 생성 조건·사례 선정 이유와 실패·무변화도 기록 |
 
 모델의 우선 검토 조합은 원문에 있는 **Dolly로 준비한 GPT-2 1.5B 교사 → 120M급 학생**이다. [모델 검토 §2.1](MODEL_BENCHMARK_REVIEW.md)에 근거와 확장 후보를 정리했다. 현재는 후보이며 정확한 checkpoint·tokenizer·SFT 상태와 로컬 학습 가능성은 아직 확인하지 않았다. 공통 자료 구성은 [데이터 선정 문서 §4.1](DATA_SELECTION.md)을 따른다.
+
+### 5.2.2. 중심 비교: 손실 적응과 학습 갱신 거절
+
+[문헌] CaRE-Divergence는 단일 forward의 정규화 entropy confidence로 토큰별 FKL/RKL 선택·혼합을 바꾼다. Revival은 MC dropout으로 추정한 교사·학생 BALD와 각각의 과거 분포 quantile을 사용해 갱신을 억제한다. **두 장치는 사용하는 신호와 개입 위치가 다르다.** 단일 entropy confidence를 그대로 Revival의 불확실성으로 대체하지 않는다. [CaRE §2.1–2.2·식 (1)–(6)](https://arxiv.org/html/2609.36734v1).
+
+[설계] 같은 손실에서 Revival 유무를 대조해야 갱신 거절의 역할을 읽을 수 있다. gate와 Revival을 동시에 켠 결과만 기준선과 비교하면 두 효과를 분리할 수 없다. 아래는 구성요소를 구분하는 대조 구조이며, 모든 FKL/RKL/Hard/Soft × Revival 조합을 실행하기로 확정한 목록이 아니다.
+
+| 대조 구조 | 손실 | Revival | 확인할 역할 |
+|---|---|---|---|
+| 고정 기준선 | FKL 또는 RKL | 없음 | 고정 KL 방향의 학습·분포·응답 |
+| 손실 적응만 | Hard 또는 Soft gate | 없음 | 어떤 KL로 배울지를 바꾸는 효과 |
+| 갱신 거절만 | 대응 기준선과 같은 고정 KL | 있음 | 같은 손실에서 지도를 수용·거절하는 효과 |
+| 두 장치 결합 | 대응 조건과 같은 Hard/Soft gate | 있음 | 같은 gate에 거절 규칙을 추가한 변화와 구성요소의 결합 |
+
+고정 KL·gate별 대응 조건은 원문 설정 확보와 실제 자원 확인 후 확정한다. 위 대조는 [CaRE §4.3·Table 2의 Revival 유무 비교](https://arxiv.org/html/2609.36734v1#S4.T2)를 참고한 우리 설계이며 원문이 이 표의 모든 조합을 동일 조건으로 실행했다고 표시하지 않는다.
+
+시각화에는 **토큰별 gate·손실 변화**, **교사/학생 BALD와 거절 mask의 시간 흐름**, **수용·거절된 자료의 category·길이·불확실성 분포**, **같은 손실에서 Revival 유무에 따른 공통 평가·응답 변화**를 연결한다. 처리한 입력 수와 실제 갱신 수를 함께 기록한다. 거절됐다는 사실을 실제 오답·유해한 지도의 판정으로 바꾸어 해석하지 않는다.
+
+실행 전에는 MC dropout이 해당 모델에서 유효한 비퇴화 신호를 만드는지, 원문의 추정·mask 집계 단위가 무엇인지, 거절 시 실제 optimizer 갱신이 어떻게 처리되는지 확인한다. loss·gradient를 0으로 만드는 것과 optimizer step 생략은 구분한다. MC 수·dropout·온도·quantile·schedule은 원문 역할별 근거와 구현·자원 확인 전까지 미정으로 둔다. 단일-pass 대체 추정량을 쓰면 그 가정과 변경을 명시한다.
 
 ### 5.3. 후속 연구: 한국어 적용
 
@@ -401,7 +420,7 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 
 ## 10. T 외 설정의 근거 등록표
 
-아래 표는 **기준 데이터와 아직 미정인 모델·분할·실험 설정을 구분하는 등록표**다. 탐구 목표는 §5.1에서 확정했다. gate·confidence 항목은 현재 비교의 설정 근거이며, Revival 항목만 후속 참고다.
+아래 표는 **기준 데이터와 아직 미정인 모델·분할·실험 설정을 구분하는 등록표**다. 탐구 목표는 §5.1에서 확정했다. gate·confidence와 Revival의 불확실성·수용/거절 항목은 모두 현재 비교의 설정 근거다.
 
 | 설정 | 선택 근거·절차 | 현재 상태 |
 |---|---|---|
@@ -413,8 +432,8 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 | teacher-mixed α | MiniLLM의 sampling 혼합 역할과 원문·코드 | 재현 근거를 확인하되 새 최적값은 미정 |
 | gate margin·scale | CaRE 식 (3), Figure 2·공식 구현 대조와 값별 근거 | 미정; 임의 scale을 추가하지 않음 |
 | confidence의 공간·온도 | CaRE §2.1의 정의와 같은 어휘·prefix·온도 경로 확인 | 미정; 정답 확률과 동일시하지 않음 |
-| Revival MC 수·dropout | 후속 CaRE 참고: 원문 B.1·Table 4 | 현재 범위 밖; 후속 검토 |
-| Revival quantile·schedule | 후속 CaRE 참고: 원문 식 (5)·D.3 | 현재 범위 밖; 후속 검토 |
+| Revival MC 수·dropout | CaRE B.1·Table 4, 모델별 비퇴화 신호와 실제 자원 확인 | 미정; 원문 사용값을 새 최적값으로 간주하지 않음 |
+| Revival quantile·schedule | CaRE 식 (5)·D.3, 과거 분포·mask 집계·실제 갱신 경로 확인 | 미정 |
 | 학습률·optimizer·scheduler | 기준 논문의 단계별 설정과 동일 budget의 validation | 미정 |
 | batch·누적·길이 | 원문 입력 정의, 실제 token 길이·메모리·잘림 확인 | 미정 |
 | epoch·step·checkpoint | 원문 학습 단계 또는 validation 선택; 관측 종료 기준 사전 등록 | 미정 |
@@ -437,7 +456,7 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 - 과제에 맞는 정량 지표와 실제 응답 사례를 함께 제시한다. 사례를 고른 기준과 오류·무변화도 기록한다.
 - 학습 loss 감소를 생성 응답 품질의 개선으로 바로 해석하지 않는다. 관찰 범위와 변동을 함께 보고한다.
 
-현재 핵심 비교는 §5.2.1의 FKL/RKL/Hard/Soft다. SFT 학생은 초기 상태의 참고 기준선이며 SeqKD·전체 MiniLLM의 알고리즘 비교를 필수 실험으로 추가하지 않는다. Hard/Soft의 margin·미분 경로를 기록하고 연속성만의 효과를 주장하지 않는다. Revival은 후속 참고다.
+현재 핵심 비교는 §5.2.1의 KL·Hard/Soft와 §5.2.2의 Revival 유무·구성요소 대조다. SFT 학생은 초기 상태의 참고 기준선이며 SeqKD·전체 MiniLLM 알고리즘 비교를 필수 실험으로 추가하지 않는다. Hard/Soft의 margin·미분 경로, Revival의 입력 노출·실제 갱신 차이를 기록하고 하나의 요소만의 효과로 단정하지 않는다.
 
 ## 12. 실행 단계와 각 단계의 산출물
 
@@ -446,16 +465,16 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 | 순서 | 할 일 | 산출물·확인 기준 |
 |---|---|---|
 | 1. 기초 이해 | 생성 과정과 KD의 기본 개념 학습 | 생성·증류 흐름을 설명하고 확률 예시와 실제 결과를 구분 |
-| 2. 논문 분석 | Hinton의 기초·MiniLLM의 KL·CaRE의 gate와 인용 자료 연결 | 네 조건의 정의·차이와 출처가 있는 설명 자료 |
+| 2. 논문 분석 | Hinton의 기초·MiniLLM의 KL·CaRE의 gate/Revival과 인용 자료 연결 | 손실 적응·갱신 거절·결합의 정의와 출처가 있는 설명 자료 |
 | 3a. 실험 범위·선정 | 관찰할 응답 변화, MiniLLM의 원문 구성, 모델·데이터·로컬 실행 가능성 대조 | 실제 비교 방법·checkpoint·데이터·설정·평가·예산의 근거 |
 | 3b. 실행 | 구현·설정 경로의 예비 확인 후 선정한 실험 수행 | 실행 조건·학습/검증 기록·잠근 평가 자료의 응답과 점수 |
 | 3c. 해석 | 증류 전후 응답·평가 결과를 문헌과 연결 | 정량 결과·응답 사례·시각화와 해석·한계 |
 
-현재는 **목표·주 참고문헌·진행 순서를 확정하고 분석 문서를 준비한 상태**다. 실제 개념 이해와 실험 완료를 문서 작성만으로 대체하지 않는다. 다음은 FKL/RKL/Hard/Soft의 공통 비교 조건과 gate 설정 근거를 확인하는 것이다. Dolly-15K를 기준 instruction 자료로 우선 선정했고 방식별 시각화를 주요 대상으로 정했다. 모델·공통 분할·최종 실행 방법·설정·예산은 아직 미정이며 학습은 실행하지 않았다. 후속 탐구 선정은 현재 목표의 필수 완료 조건이 아니다.
+현재는 **목표·주 참고문헌·진행 순서를 확정하고 분석 문서를 준비한 상태**다. 실제 개념 이해와 실험 완료를 문서 작성만으로 대체하지 않는다. 다음은 KL·Hard/Soft와 Revival의 공통 비교 조건, 원문 설정과 구현·자원 근거를 확인하는 것이다. Dolly-15K를 기준 instruction 자료로 우선 선정했고 방식별 시각화를 주요 대상으로 정했다. 모델·공통 분할·최종 실행 방법·설정·예산은 아직 미정이며 학습은 실행하지 않았다. 후속 탐구 선정은 현재 목표의 필수 완료 조건이 아니다.
 
 ## 13. 실행 전 완료해야 할 확인 사항
 
-- [x] FKL/RKL/Hard/Soft 비교와 문헌 역할을 명시하고 Revival·한국어 적용을 후속으로 분리했다.
+- [x] KL·Hard/Soft에 더해 Revival·두 장치 결합을 현재 비교에 포함하고 한국어 적용을 후속으로 분리했다.
 - [x] Dolly-15K를 기준 instruction 자료로 두고 증류 방식별 시각화를 주요 대상으로 정했다.
 - [ ] 생성형 LLM의 기본 생성 과정과 Hinton·MiniLLM의 핵심 원리를 설명했다.
 - [ ] 관찰할 응답 변화·과제·언어·비교 방법과 원문 대비 범위를 명시했다.
@@ -463,6 +482,7 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 - [ ] 응답 평가의 주 지표·채점 근거·비교 기준을 정했다.
 - [ ] 기준 논문의 정확한 checkpoint·데이터·prompt·학습 단계를 확인했다.
 - [ ] 공유 temperature 인자의 모든 사용 경로를 확인했다.
+- [ ] MC dropout·BALD·과거 quantile·mask 집계와 거절 시 실제 optimizer 갱신 경로를 확인했다.
 - [ ] T_KD와 다른 온도, 다른 α·τ 기호를 분리했다.
 - [ ] 설정별 출처·원문 조건·후보·선택 규칙·자원 근거를 기록했다.
 - [ ] training KL 최소값을 온도의 성능 최적성 근거로 사용하지 않는다.
@@ -476,13 +496,13 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 2. Dolly-15K의 실제 revision·공통 분할·사용 규모, 실행할 모델·증류 방법·초기 상태·평가 조건과 설정값의 근거.
 3. 장비 정보는 §6.3에서 확인했지만 후보 모델의 실제 메모리·저장량·시간과 반복 가능한 실행 범위는 미측정.
 
-미검증 항목을 임의의 수치로 덮어 실험 설정을 확정하지 않는다. 실제 코드·측정으로 확인되면 근거와 상태를 갱신한다. CaRE의 공식 gate config와 식 (3)·Figure 2의 scale 차이는 현재 구현 전에 대조할 항목이다. 표·calibration 해석과 Revival 전용 설정은 [CaRE 분석 문서](papers/03_care_kd_2026_ko.md)의 후속 참고로 둔다.
+미검증 항목을 임의의 수치로 덮어 실험 설정을 확정하지 않는다. 실제 코드·측정으로 확인되면 근거와 상태를 갱신한다. CaRE의 공식 gate config와 식 (3)·Figure 2의 scale 차이는 현재 구현 전에 대조할 항목이다. Revival의 공식 config·MC 추정·과거 quantile·mask 집계·실제 갱신 경로도 현재 실행 전 확인 사항이다. 표·calibration·오류 보호 해석의 한계는 [CaRE 분석 문서](papers/03_care_kd_2026_ko.md)에서 대조한다.
 
 ## 15. 출처
 
 - **P1–P2:** Hinton, Vinyals, Dean (2015), [Distilling the Knowledge in a Neural Network, v1](https://arxiv.org/abs/1503.02531v1). §2·§2.1·§3·§4.1. 온도 관련 실험을 현재 LLM의 최적값으로 일반화하지 않았다.
 - **P3–P4:** Gu, Dong, Wei, Huang (2024), [MiniLLM, v4](https://arxiv.org/html/2306.08543v4). §2–3, Appendix B.1–B.2. phase별 초기화·선택 기준과 sampling·평가 정의.
-- **P5–P7, gate 관련 부분은 현재 근거·Revival은 후속 참고:** Sengupta, Seth, Chakraborty (2026), [CaRE-KD, v1](https://arxiv.org/html/2609.36734v1). §2–4.5, PDF 부록 B–D·G / HTML §8–10·13. gate·BALD·온도의 역할과 한계.
+- **P5–P7, gate·Revival 모두 현재 근거:** Sengupta, Seth, Chakraborty (2026), [CaRE-KD, v1](https://arxiv.org/html/2609.36734v1). §2–4.5, PDF 부록 B–D·G / HTML §8–10·13. gate·BALD·온도의 역할과 한계.
 - **I:** [Microsoft LMOps, 확인한 commit](https://github.com/microsoft/LMOps/tree/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm). 위 코드 링크의 줄 번호는 이 commit에서 확인했다. 실행 재현 완료를 뜻하지 않는다.
 - **M1:** Cawley, Talbot (2010), [On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation](https://jmlr.org/papers/v11/cawley10a.html). validation 선택의 변동성과 평가 편향 관리.
 - **M2:** Bergstra, Bengio (2012), [Random Search for Hyper-Parameter Optimization](https://jmlr.org/papers/v13/bergstra12a.html). 탐색 자원과 선택 범위의 공개. 이 문서에서는 특정 search 알고리즘을 자동으로 최종 채택하지 않았다.

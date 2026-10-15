@@ -4,7 +4,7 @@
 
 상태: **Dolly-15K를 공통 instruction 데이터로 우선 선정했다. 정확한 revision·전처리·공통 분할·사용 규모는 미정이다.** 증류 방식별 시각화와 모델 실행 조건에 맞춰 세부 조건을 정한다. [연구계획서](RESEARCH_PLAN.md) §6.2와 [벤치마크 검토](MODEL_BENCHMARK_REVIEW.md)를 따른다.
 
-2026-10-15에 [계획서 §5](RESEARCH_PLAN.md)의 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM을 기초·KL의 근거로, CaRE의 gate 정의를 Hard/Soft 비교의 근거로 사용하며 MiniLLM의 원래 데이터·분할을 우선 확인한다. Dolly-15K를 기준으로 같은 원본 record와 공통 분할에서 증류 방식별 차이를 관찰한다. 실제 분할·길이 필터·사용 규모는 원문 근거와 로컬 실행 범위를 확인한 뒤 정한다. Dolly에서 FKL/RKL/Hard/Soft를 비교하고 CaRE의 다른 과제별 데이터·Revival·한국어 자료는 후속 탐구용으로 보관한다.
+2026-10-15에 [계획서 §5](RESEARCH_PLAN.md)의 목표를 **생성형 언어모델의 지식증류 원리와 학생 모델의 응답 변화 탐구**로 정했다. Hinton·MiniLLM을 기초·KL의 근거로, CaRE의 gate·Revival을 손실 적응과 갱신 거절 비교의 근거로 사용하며 MiniLLM의 원래 데이터·분할을 우선 확인한다. Dolly-15K를 기준으로 같은 원본 record와 공통 분할에서 증류 방식별 차이를 관찰한다. 실제 분할·길이 필터·사용 규모는 원문 근거와 로컬 실행 범위를 확인한 뒤 정한다. Dolly에서 FKL/RKL/Hard/Soft와 Revival 유무·결합을 비교하고 다른 과제별 데이터·한국어 자료는 후속 탐구용으로 보관한다.
 
 ## 1. 데이터의 역할부터 정한다
 
@@ -60,11 +60,13 @@ UltraChat의 전체 행 수 515,311을 SFT 학습량으로 적지 않는다. 데
 
 일반 QA·요약·창작을 같은 정확도 사건으로 합치지 않는다. context를 주는 과제에서 context를 제거하면 문제 자체가 달라진다. reference와 표현이 다르다는 이유만으로 생성 답을 오답으로 분류하지 않는다. [Dolly 카드의 과제·품질 설명](https://huggingface.co/datasets/databricks/databricks-dolly-15k).
 
-### 4.1. FKL/RKL/Hard/Soft 시각화를 위한 공통 자료
+### 4.1. 손실 적응·학습 갱신 거절 시각화를 위한 공통 자료
 
 [설계] 같은 Dolly record ID·instruction·context·category와 train/development/test 분할을 네 비교 조건에서 공유한다. 학습 응답·prefix의 출처와 reference를 쓰는 방식을 공통으로 정하고, 같은 context에서 FKL/RKL과 gate만 비교할 수 있도록 기록한다. SFT·SeqKD·MiniLLM 전체 학습 파이프라인의 차이를 동시에 바꾸는 비교로 확대하지 않는다.
 
 시각화용 development 예제는 category·길이·context 유무와 선정 이유를 기록한다. 잘 나온 응답만 고르지 않으며 최종 평가 문항은 설정 선택에서 제외한다. 확률·confidence·gate·학습 신호는 같은 prompt·prefix·어휘 좌표에서 비교하고 자유 생성 응답은 별도로 관찰한다. 실제 student rollout은 조건에 따라 달라질 수 있으므로 입력이 동일한 고정 진단과 구분한다.
+
+Revival 비교에는 같은 입력의 teacher/student BALD, 과거 quantile·mask, 수용/거절된 record·집계 단위와 실제 갱신 여부를 연결한다. 수용된 자료만의 결과로 전체 성능을 보고하지 않고 처리한 자료·거절한 자료의 분포와 전체 평가를 함께 남긴다. 입력 노출 수와 실제 갱신 수를 구분한다. 거절을 정답 오류의 자동 판정으로 해석하지 않는다.
 
 Dolly-15K는 공통 instruction 자료의 기준이다. MiniLLM 원문의 D_PT·teacher-mixed sampling은 KL 배경을 이해하는 참고이며 이번 비교에 자동 승계하지 않는다. 학습 경로에 별도 손실·자료를 채택하면 이유와 조건별 적용을 기록한다. 원문 전체 재현과 목적함수 비교를 구분한다.
 
