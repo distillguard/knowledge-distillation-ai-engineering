@@ -1,0 +1,821 @@
+{
+  "model_id": "MiniLLM/teacher-gpt2-1.5B",
+  "revision": "4a8d07d52ad67b7b87fec9aba25b1521173eb658",
+  "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+  "parameters": 1557611200,
+  "classification": {
+    "sst2": {
+      "n": 872,
+      "accuracy": 0.7649082568807339,
+      "balanced_accuracy": 0.7643870506020038,
+      "macro_f1": 0.7644842328544231,
+      "weighted_f1": 0.7646675945955305,
+      "mcc": 0.5298584494084425,
+      "positive_class_brier": 0.16541973313221828,
+      "confusion_matrix_true_rows_predicted_columns": [
+        [
+          315,
+          113
+        ],
+        [
+          92,
+          352
+        ]
+      ],
+      "per_class": {
+        "0": {
+          "precision": 0.773955773955774,
+          "recall": 0.735981308411215,
+          "f1-score": 0.7544910179640718,
+          "support": 428.0
+        },
+        "1": {
+          "precision": 0.7569892473118279,
+          "recall": 0.7927927927927928,
+          "f1-score": 0.7744774477447744,
+          "support": 444.0
+        },
+        "accuracy": 0.7649082568807339,
+        "macro avg": {
+          "precision": 0.765472510633801,
+          "recall": 0.7643870506020038,
+          "f1-score": 0.7644842328544231,
+          "support": 872.0
+        },
+        "weighted avg": {
+          "precision": 0.7653168544260583,
+          "recall": 0.7649082568807339,
+          "f1-score": 0.7646675945955305,
+          "support": 872.0
+        }
+      },
+      "majority_class_accuracy": 0.5091743119266054,
+      "label_words_0_1": [
+        "negative",
+        "positive"
+      ],
+      "excluded_over_native_context_ids": [],
+      "mean_raw_label_probability_mass": 0.839857284188975,
+      "decision": "argmax of two label logits; ties select class 0; Brier uses probabilities conditional on those labels"
+    },
+    "boolq": {
+      "n": 3269,
+      "accuracy": 0.6252676659528907,
+      "balanced_accuracy": 0.5132319031311466,
+      "macro_f1": 0.429795677466711,
+      "weighted_f1": 0.5109870206467073,
+      "mcc": 0.06880718725827051,
+      "positive_class_brier": 0.3137055946759893,
+      "confusion_matrix_true_rows_predicted_columns": [
+        [
+          65,
+          1172
+        ],
+        [
+          53,
+          1979
+        ]
+      ],
+      "per_class": {
+        "0": {
+          "precision": 0.5508474576271186,
+          "recall": 0.05254648342764753,
+          "f1-score": 0.0959409594095941,
+          "support": 1237.0
+        },
+        "1": {
+          "precision": 0.6280545858457632,
+          "recall": 0.9739173228346457,
+          "f1-score": 0.7636503955238279,
+          "support": 2032.0
+        },
+        "accuracy": 0.6252676659528907,
+        "macro avg": {
+          "precision": 0.5894510217364409,
+          "recall": 0.5132319031311466,
+          "f1-score": 0.429795677466711,
+          "support": 3269.0
+        },
+        "weighted avg": {
+          "precision": 0.5988391629009902,
+          "recall": 0.6252676659528907,
+          "f1-score": 0.5109870206467073,
+          "support": 3269.0
+        }
+      },
+      "majority_class_accuracy": 0.6215968185989599,
+      "label_words_0_1": [
+        "No",
+        "Yes"
+      ],
+      "excluded_over_native_context_ids": [
+        3154
+      ],
+      "mean_raw_label_probability_mass": 0.8318698238795803,
+      "decision": "argmax of two label logits; ties select class 0; Brier uses probabilities conditional on those labels"
+    }
+  },
+  "reference_diagnostics": {
+    "response_token_nll": 3.7164811449770307,
+    "response_token_perplexity": 41.11944586362841,
+    "teacher_forced_response_token_accuracy": 0.498749194068343,
+    "scored_reference_tokens": 38775,
+    "mean_example_response_nll": 3.279394649905815,
+    "references_clipped_at_256_tokens": 34,
+    "eos_scored": false,
+    "note": "Reference prefix only, at most 256 response tokens; not free-generation correctness"
+  },
+  "dolly_seeds": [
+    {
+      "seed": 10,
+      "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+      "all_500": {
+        "rouge1": 0.3495467500024746,
+        "rouge2": 0.16055058624351934,
+        "rougeL": 0.27128093276732,
+        "normalized_exact_match": 0.026,
+        "word_overlap_f1": 0.332591882975091,
+        "generated_tokens": 57.686,
+        "hit_length_cap": 0.012,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9818744260234907,
+        "corpus_4gram_count": 20689,
+        "n": 500
+      },
+      "excluding_flagged_input_overlap": {
+        "rouge1": 0.3474412319975907,
+        "rouge2": 0.15808074978512413,
+        "rougeL": 0.26924303421753465,
+        "normalized_exact_match": 0.026530612244897958,
+        "word_overlap_f1": 0.3303038729722155,
+        "generated_tokens": 56.99795918367347,
+        "hit_length_cap": 0.012244897959183673,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.984749237461873,
+        "corpus_4gram_count": 19999,
+        "n": 490
+      },
+      "by_topic": {
+        "closed_qa": {
+          "rouge1": 0.425028685467692,
+          "rouge2": 0.2548583195842586,
+          "rougeL": 0.3770107171685413,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.39885758784658454,
+          "generated_tokens": 22.416666666666668,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9980392156862745,
+          "corpus_4gram_count": 510,
+          "n": 36
+        },
+        "classification": {
+          "rouge1": 0.6281558958909262,
+          "rouge2": 0.39149060881750264,
+          "rougeL": 0.5013605775171809,
+          "normalized_exact_match": 0.1643835616438356,
+          "word_overlap_f1": 0.610150534231109,
+          "generated_tokens": 31.753424657534246,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9918181818181818,
+          "corpus_4gram_count": 1100,
+          "n": 73
+        },
+        "open_qa": {
+          "rouge1": 0.2881413469176742,
+          "rouge2": 0.12136450806138528,
+          "rougeL": 0.22514917441795887,
+          "normalized_exact_match": 0.0070921985815602835,
+          "word_overlap_f1": 0.2736913409848126,
+          "generated_tokens": 51.347517730496456,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9887175629936066,
+          "corpus_4gram_count": 5318,
+          "n": 141
+        },
+        "brainstorming": {
+          "rouge1": 0.2542084753393563,
+          "rouge2": 0.06998974421941544,
+          "rougeL": 0.19546322377131897,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.242391861160113,
+          "generated_tokens": 65.21126760563381,
+          "hit_length_cap": 0.014084507042253521,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9842349304482225,
+          "corpus_4gram_count": 3235,
+          "n": 71
+        },
+        "information_extraction": {
+          "rouge1": 0.4492576266519243,
+          "rouge2": 0.24038371791854424,
+          "rougeL": 0.3774364472505316,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.4306095242524545,
+          "generated_tokens": 47.2962962962963,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.996523754345307,
+          "corpus_4gram_count": 863,
+          "n": 27
+        },
+        "general_qa": {
+          "rouge1": 0.24472055705208903,
+          "rouge2": 0.05647678790847545,
+          "rougeL": 0.1583640798918972,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.22838864212777335,
+          "generated_tokens": 80.36363636363636,
+          "hit_length_cap": 0.030303030303030304,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9879341268547204,
+          "corpus_4gram_count": 6133,
+          "n": 99
+        },
+        "summarization": {
+          "rouge1": 0.4185122606547247,
+          "rouge2": 0.2219228103164486,
+          "rougeL": 0.3405372163961638,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.3918309729626769,
+          "generated_tokens": 52.67857142857143,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9970986460348162,
+          "corpus_4gram_count": 1034,
+          "n": 28
+        },
+        "creative_writing": {
+          "rouge1": 0.274583835751415,
+          "rouge2": 0.08578042484858099,
+          "rougeL": 0.1776386352795082,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.2555031254620045,
+          "generated_tokens": 125.6,
+          "hit_length_cap": 0.08,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9919871794871795,
+          "corpus_4gram_count": 2496,
+          "n": 25
+        }
+      }
+    },
+    {
+      "seed": 20,
+      "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+      "all_500": {
+        "rouge1": 0.3410324870671154,
+        "rouge2": 0.1577410623790887,
+        "rougeL": 0.2622490105301409,
+        "normalized_exact_match": 0.024,
+        "word_overlap_f1": 0.3263871271143675,
+        "generated_tokens": 58.846,
+        "hit_length_cap": 0.012,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.980155950880142,
+        "corpus_4gram_count": 21417,
+        "n": 500
+      },
+      "excluding_flagged_input_overlap": {
+        "rouge1": 0.3388447420909232,
+        "rouge2": 0.15502239216295768,
+        "rougeL": 0.25979916035085143,
+        "normalized_exact_match": 0.024489795918367346,
+        "word_overlap_f1": 0.32417734323211267,
+        "generated_tokens": 58.23061224489796,
+        "hit_length_cap": 0.012244897959183673,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9828833172613307,
+        "corpus_4gram_count": 20740,
+        "n": 490
+      },
+      "by_topic": {
+        "closed_qa": {
+          "rouge1": 0.34883771644786143,
+          "rouge2": 0.17554941103088514,
+          "rougeL": 0.30385752285253875,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.3381607463606326,
+          "generated_tokens": 25.055555555555557,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 1.0,
+          "corpus_4gram_count": 599,
+          "n": 36
+        },
+        "classification": {
+          "rouge1": 0.6234557570737563,
+          "rouge2": 0.39494227252954034,
+          "rougeL": 0.4938147550906149,
+          "normalized_exact_match": 0.1506849315068493,
+          "word_overlap_f1": 0.5981642956078516,
+          "generated_tokens": 31.315068493150687,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9774109470026064,
+          "corpus_4gram_count": 1151,
+          "n": 73
+        },
+        "open_qa": {
+          "rouge1": 0.2770497205120893,
+          "rouge2": 0.11648643529183994,
+          "rougeL": 0.21598430263764098,
+          "normalized_exact_match": 0.0070921985815602835,
+          "word_overlap_f1": 0.2669186954516878,
+          "generated_tokens": 54.06382978723404,
+          "hit_length_cap": 0.014184397163120567,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9889551192145862,
+          "corpus_4gram_count": 5704,
+          "n": 141
+        },
+        "brainstorming": {
+          "rouge1": 0.2565668642123819,
+          "rouge2": 0.08697042422413537,
+          "rougeL": 0.19143597217453492,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.24932792770747414,
+          "generated_tokens": 70.15492957746478,
+          "hit_length_cap": 0.014084507042253521,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9834455667789002,
+          "corpus_4gram_count": 3564,
+          "n": 71
+        },
+        "information_extraction": {
+          "rouge1": 0.4703360990557217,
+          "rouge2": 0.27656613526480606,
+          "rougeL": 0.389534915564043,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.45204499442984863,
+          "generated_tokens": 42.888888888888886,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9907894736842106,
+          "corpus_4gram_count": 760,
+          "n": 27
+        },
+        "general_qa": {
+          "rouge1": 0.24782559344435565,
+          "rouge2": 0.058031207265546066,
+          "rougeL": 0.1618836493777705,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.23141934261200772,
+          "generated_tokens": 83.48484848484848,
+          "hit_length_cap": 0.020202020202020204,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9856503625983645,
+          "corpus_4gram_count": 6481,
+          "n": 99
+        },
+        "summarization": {
+          "rouge1": 0.3942322704427301,
+          "rouge2": 0.2110172051504299,
+          "rougeL": 0.3229951069818516,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.36971955199904505,
+          "generated_tokens": 51.785714285714285,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9969788519637462,
+          "corpus_4gram_count": 993,
+          "n": 28
+        },
+        "creative_writing": {
+          "rouge1": 0.2757298210349858,
+          "rouge2": 0.07998488344248583,
+          "rougeL": 0.18014518481378108,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.26192347834964846,
+          "generated_tokens": 110.32,
+          "hit_length_cap": 0.04,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9903002309468822,
+          "corpus_4gram_count": 2165,
+          "n": 25
+        }
+      }
+    },
+    {
+      "seed": 30,
+      "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+      "all_500": {
+        "rouge1": 0.3510045034247129,
+        "rouge2": 0.16596330262406764,
+        "rougeL": 0.2739571989350417,
+        "normalized_exact_match": 0.028,
+        "word_overlap_f1": 0.33614327033630537,
+        "generated_tokens": 57.066,
+        "hit_length_cap": 0.018,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9818137612448334,
+        "corpus_4gram_count": 20565,
+        "n": 500
+      },
+      "excluding_flagged_input_overlap": {
+        "rouge1": 0.3488278223429309,
+        "rouge2": 0.16346718692390247,
+        "rougeL": 0.2719302082271048,
+        "normalized_exact_match": 0.02857142857142857,
+        "word_overlap_f1": 0.3338871940423703,
+        "generated_tokens": 56.436734693877554,
+        "hit_length_cap": 0.018367346938775512,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9847677458274683,
+        "corpus_4gram_count": 19892,
+        "n": 490
+      },
+      "by_topic": {
+        "closed_qa": {
+          "rouge1": 0.4086824107601034,
+          "rouge2": 0.23951653629371103,
+          "rougeL": 0.3549703383261957,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.395880166844007,
+          "generated_tokens": 28.916666666666668,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9971305595408895,
+          "corpus_4gram_count": 697,
+          "n": 36
+        },
+        "classification": {
+          "rouge1": 0.6570802781269834,
+          "rouge2": 0.420614862321893,
+          "rougeL": 0.5293674070425721,
+          "normalized_exact_match": 0.1643835616438356,
+          "word_overlap_f1": 0.641101633548125,
+          "generated_tokens": 32.013698630136986,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9816593886462882,
+          "corpus_4gram_count": 1145,
+          "n": 73
+        },
+        "open_qa": {
+          "rouge1": 0.2807479068743745,
+          "rouge2": 0.11544030233870306,
+          "rougeL": 0.22114389710925905,
+          "normalized_exact_match": 0.0070921985815602835,
+          "word_overlap_f1": 0.269292100579062,
+          "generated_tokens": 49.90070921985816,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9852969257208325,
+          "corpus_4gram_count": 5237,
+          "n": 141
+        },
+        "brainstorming": {
+          "rouge1": 0.25930091198952065,
+          "rouge2": 0.09373364656973748,
+          "rougeL": 0.20369979302353328,
+          "normalized_exact_match": 0.014084507042253521,
+          "word_overlap_f1": 0.24518247383696476,
+          "generated_tokens": 65.3943661971831,
+          "hit_length_cap": 0.028169014084507043,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9885092228605987,
+          "corpus_4gram_count": 3307,
+          "n": 71
+        },
+        "information_extraction": {
+          "rouge1": 0.45122279875528853,
+          "rouge2": 0.24201198148186495,
+          "rougeL": 0.3647435664235609,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.4347740903414656,
+          "generated_tokens": 49.96296296296296,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9932810750279956,
+          "corpus_4gram_count": 893,
+          "n": 27
+        },
+        "general_qa": {
+          "rouge1": 0.2402062144251737,
+          "rouge2": 0.05946203313084654,
+          "rougeL": 0.16248141969087931,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.22423155281986706,
+          "generated_tokens": 76.25252525252525,
+          "hit_length_cap": 0.030303030303030304,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9888324873096447,
+          "corpus_4gram_count": 5910,
+          "n": 99
+        },
+        "summarization": {
+          "rouge1": 0.42446209976229865,
+          "rouge2": 0.22127311534653477,
+          "rougeL": 0.3432440494354469,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.3994703033603222,
+          "generated_tokens": 54.035714285714285,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9979716024340771,
+          "corpus_4gram_count": 986,
+          "n": 28
+        },
+        "creative_writing": {
+          "rouge1": 0.2791454165340335,
+          "rouge2": 0.08421150040345675,
+          "rougeL": 0.17469206198271872,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.2607358170483041,
+          "generated_tokens": 122.6,
+          "hit_length_cap": 0.16,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9878661087866109,
+          "corpus_4gram_count": 2390,
+          "n": 25
+        }
+      }
+    },
+    {
+      "seed": 40,
+      "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+      "all_500": {
+        "rouge1": 0.35181458735274207,
+        "rouge2": 0.1631541505224197,
+        "rougeL": 0.2717483006231913,
+        "normalized_exact_match": 0.028,
+        "word_overlap_f1": 0.33569105824375783,
+        "generated_tokens": 60.446,
+        "hit_length_cap": 0.012,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9786008976742078,
+        "corpus_4gram_count": 22057,
+        "n": 500
+      },
+      "excluding_flagged_input_overlap": {
+        "rouge1": 0.34969839241018713,
+        "rouge2": 0.16003067571792334,
+        "rougeL": 0.2692647525925089,
+        "normalized_exact_match": 0.02857142857142857,
+        "word_overlap_f1": 0.3334126040838155,
+        "generated_tokens": 59.851020408163265,
+        "hit_length_cap": 0.012244897959183673,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9812371326969868,
+        "corpus_4gram_count": 21372,
+        "n": 490
+      },
+      "by_topic": {
+        "closed_qa": {
+          "rouge1": 0.4035701100124381,
+          "rouge2": 0.259153714661214,
+          "rougeL": 0.36696141477318633,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.3923493458282967,
+          "generated_tokens": 31.36111111111111,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 1.0,
+          "corpus_4gram_count": 719,
+          "n": 36
+        },
+        "classification": {
+          "rouge1": 0.6397637840774755,
+          "rouge2": 0.40169333135365926,
+          "rougeL": 0.5118494070048853,
+          "normalized_exact_match": 0.1643835616438356,
+          "word_overlap_f1": 0.623575549367081,
+          "generated_tokens": 33.42465753424658,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9749393694421988,
+          "corpus_4gram_count": 1237,
+          "n": 73
+        },
+        "open_qa": {
+          "rouge1": 0.2825657763873742,
+          "rouge2": 0.11990757918079557,
+          "rougeL": 0.22341901916879442,
+          "normalized_exact_match": 0.014184397163120567,
+          "word_overlap_f1": 0.2688761452426175,
+          "generated_tokens": 49.4822695035461,
+          "hit_length_cap": 0.014184397163120567,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9897584541062802,
+          "corpus_4gram_count": 5175,
+          "n": 141
+        },
+        "brainstorming": {
+          "rouge1": 0.2490863620365426,
+          "rouge2": 0.07164775950288448,
+          "rougeL": 0.1827605074805408,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.2358497591177539,
+          "generated_tokens": 72.78873239436619,
+          "hit_length_cap": 0.014084507042253521,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9857373519913886,
+          "corpus_4gram_count": 3716,
+          "n": 71
+        },
+        "information_extraction": {
+          "rouge1": 0.45714764730594337,
+          "rouge2": 0.2547838239980527,
+          "rougeL": 0.3774871412054352,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.4335440234191483,
+          "generated_tokens": 51.888888888888886,
+          "hit_length_cap": 0.037037037037037035,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9947807933194155,
+          "corpus_4gram_count": 958,
+          "n": 27
+        },
+        "general_qa": {
+          "rouge1": 0.27101679119184013,
+          "rouge2": 0.06175647207258933,
+          "rougeL": 0.17247417711747864,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.24979381894810546,
+          "generated_tokens": 88.13131313131314,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9775575633925969,
+          "corpus_4gram_count": 6862,
+          "n": 99
+        },
+        "summarization": {
+          "rouge1": 0.40502720875300485,
+          "rouge2": 0.21278209412366608,
+          "rougeL": 0.33070744100168026,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.38674975483346247,
+          "generated_tokens": 55.42857142857143,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 1.0,
+          "corpus_4gram_count": 1070,
+          "n": 28
+        },
+        "creative_writing": {
+          "rouge1": 0.26538786610866066,
+          "rouge2": 0.07916064547182454,
+          "rougeL": 0.17174200957046787,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.2511519339270932,
+          "generated_tokens": 113.24,
+          "hit_length_cap": 0.08,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9943965517241379,
+          "corpus_4gram_count": 2320,
+          "n": 25
+        }
+      }
+    },
+    {
+      "seed": 50,
+      "fingerprint": "b325f9a695cec097b8ce7bc2bd7c4fecb0c676f4205c7f6f45cd1eef7c60c59c",
+      "all_500": {
+        "rouge1": 0.3538436337727686,
+        "rouge2": 0.1646897304537759,
+        "rougeL": 0.27375308483549554,
+        "normalized_exact_match": 0.034,
+        "word_overlap_f1": 0.33697102167717663,
+        "generated_tokens": 59.136,
+        "hit_length_cap": 0.012,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9845786069185338,
+        "corpus_4gram_count": 21334,
+        "n": 500
+      },
+      "excluding_flagged_input_overlap": {
+        "rouge1": 0.3519396136772322,
+        "rouge2": 0.1619343031748604,
+        "rougeL": 0.27151553066581346,
+        "normalized_exact_match": 0.03469387755102041,
+        "word_overlap_f1": 0.3349830209255954,
+        "generated_tokens": 58.03469387755102,
+        "hit_length_cap": 0.012244897959183673,
+        "empty": 0.0,
+        "distinct_4_whitespace": 0.9875397019301246,
+        "corpus_4gram_count": 20465,
+        "n": 490
+      },
+      "by_topic": {
+        "closed_qa": {
+          "rouge1": 0.3997100169888873,
+          "rouge2": 0.20726277567001616,
+          "rougeL": 0.34903492582418566,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.38735252203821147,
+          "generated_tokens": 26.36111111111111,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9969088098918083,
+          "corpus_4gram_count": 647,
+          "n": 36
+        },
+        "classification": {
+          "rouge1": 0.6482676336432459,
+          "rouge2": 0.4107088153837123,
+          "rougeL": 0.5191221884845589,
+          "normalized_exact_match": 0.1917808219178082,
+          "word_overlap_f1": 0.6202759302551838,
+          "generated_tokens": 30.794520547945204,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9927404718693285,
+          "corpus_4gram_count": 1102,
+          "n": 73
+        },
+        "open_qa": {
+          "rouge1": 0.27412116621542665,
+          "rouge2": 0.12370051836404411,
+          "rougeL": 0.21942674755955283,
+          "normalized_exact_match": 0.014184397163120567,
+          "word_overlap_f1": 0.2627163499658692,
+          "generated_tokens": 49.43262411347518,
+          "hit_length_cap": 0.0070921985815602835,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9916583912611718,
+          "corpus_4gram_count": 5035,
+          "n": 141
+        },
+        "brainstorming": {
+          "rouge1": 0.2684178793521589,
+          "rouge2": 0.08161123300542893,
+          "rougeL": 0.20329695170606066,
+          "normalized_exact_match": 0.014084507042253521,
+          "word_overlap_f1": 0.25534010105856686,
+          "generated_tokens": 73.2394366197183,
+          "hit_length_cap": 0.014084507042253521,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9839847991313789,
+          "corpus_4gram_count": 3684,
+          "n": 71
+        },
+        "information_extraction": {
+          "rouge1": 0.4511129760329755,
+          "rouge2": 0.22448541146850204,
+          "rougeL": 0.3550634168765544,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.4318710500897884,
+          "generated_tokens": 43.81481481481482,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9948717948717949,
+          "corpus_4gram_count": 780,
+          "n": 27
+        },
+        "general_qa": {
+          "rouge1": 0.26233026000297177,
+          "rouge2": 0.06804604536321113,
+          "rougeL": 0.16798790605677422,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.24413459564515022,
+          "generated_tokens": 82.92929292929293,
+          "hit_length_cap": 0.010101010101010102,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9897035881435258,
+          "corpus_4gram_count": 6410,
+          "n": 99
+        },
+        "summarization": {
+          "rouge1": 0.44592381628155786,
+          "rouge2": 0.248308881681068,
+          "rougeL": 0.3760971829461793,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.4201558417443298,
+          "generated_tokens": 62.142857142857146,
+          "hit_length_cap": 0.0,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9975389663658737,
+          "corpus_4gram_count": 1219,
+          "n": 28
+        },
+        "creative_writing": {
+          "rouge1": 0.27453408797523216,
+          "rouge2": 0.07660711437453355,
+          "rougeL": 0.1717549709558558,
+          "normalized_exact_match": 0.0,
+          "word_overlap_f1": 0.25977270904412353,
+          "generated_tokens": 122.72,
+          "hit_length_cap": 0.12,
+          "empty": 0.0,
+          "distinct_4_whitespace": 0.9963369963369964,
+          "corpus_4gram_count": 2457,
+          "n": 25
+        }
+      }
+    }
+  ],
+  "completed_at_utc": "2026-10-15T06:38:57.972167+00:00",
+  "seconds": 3585.18,
+  "peak_cuda_allocated_mib": 5715.29,
+  "versions": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.46.3",
+    "rouge-score": "0.1.2",
+    "scikit-learn": "1.8.0",
+    "pyarrow": "26.0.0",
+    "nltk": "3.9.2"
+  }
+}

@@ -20,6 +20,18 @@
 
 [데이터 선정 근거와 후보](DATA_SELECTION.md)에서 기준 데이터 Dolly-15K와 MiniLLM의 원문 분할·전처리를 대조한다. 공통 분할·실제 사용 규모는 미정이다. 기존 UltraChat·MetaMathQA·WizardCoder와 한국어 자료 조사는 후속 탐구 자료로 보관한다.
 
+## 공개 SFT 기준선 평가
+
+[SFT 평가 결과](SFT_BASELINE_EVALUATION.md)에 저자의 SFT 완료 XL/base를 이 장치에서 평가한 수치·CSV·그림·protocol을 정리했다. 두 모델 모두 Dolly 500문항 × 5개 생성 seed와 SST-2·BoolQ 분류 평가를 완료했다. 직접 SFT를 재학습한 결과나 KD 비교 결과는 아니다.
+
+![SFT 모델 분류 평가](results/sft_baselines/classification.png)
+
+![SFT 모델 Dolly 생성 평가](results/sft_baselines/dolly_rouge.png)
+
+Dolly ROUGE-L은 XL **27.06 ± 0.48**, base **23.00 ± 0.41**이다. ±는 생성 seed 사이의 표본 표준편차다. BoolQ는 XL의 accuracy가 높지만 macro-F1은 base가 높아 지표별 오류를 함께 읽어야 한다.
+
+[Dolly 데이터 구성](DOLLY_DATA_OVERVIEW.md)에 원본 15,011행의 네 필드·8개 과제, 평가용 500행의 분포와 원본과의 차이를 정리했다. 원본 전체·공개 raw·평가 파일의 개수를 곧바로 최종 학습/검증/시험 분할로 합산하지 않는다.
+
 ## 읽기 순서
 
 | 순서 | 논문별 한국어 문서 | 붙잡을 질문 | 문서 상태 |

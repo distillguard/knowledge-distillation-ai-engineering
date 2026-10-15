@@ -268,9 +268,26 @@ def main():
                 "precision": "float16", "attention": "eager", "script_sha256": script_hash,
                 "sources": {"paper": "https://arxiv.org/html/2306.08543v4",
                             "code_commit": "48fca1acc61ffa20ebb7c31c74a1d8e33499b476"}, "data": manifest}
+    pending = []
+    for role in args.model:
+        expected = hashlib.sha256(json.dumps([protocol, *MODELS[role]], sort_keys=True).encode()).hexdigest()
+        completed = OUT / f"{role}.json"
+        existing = list(OUT.glob(f"{role}_dolly_seed*.json"))
+        if completed.exists():
+            existing.append(completed)
+        for path in existing:
+            saved = json.loads(path.read_text(encoding="utf-8"))
+            if saved["fingerprint"] != expected:
+                raise RuntimeError("Existing results use a different evaluation fingerprint; archive the results directory before a new run. No protocol was overwritten.")
+        if completed.exists():
+            print("Already complete:", role, flush=True)
+        else:
+            pending.append(role)
+    if not pending:
+        return
     write_json(OUT / "protocol.json", protocol)
     RAW.mkdir(parents=True, exist_ok=True)
-    for role in args.model:
+    for role in pending:
         started = perf_counter()
         write_json(OUT / f"{role}_protocol.json", protocol)
         model_id, revision = MODELS[role]
