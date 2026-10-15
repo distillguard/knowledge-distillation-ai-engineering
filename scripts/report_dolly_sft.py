@@ -17,6 +17,15 @@ def read(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def epoch_losses(history):
+    losses = {}
+    for entry in history:
+        if "eval_loss" in entry:
+            # Trainer re-evaluates the restored best checkpoint at the final epoch.
+            losses.setdefault(entry["epoch"], entry["eval_loss"])
+    return losses
+
+
 def replace_progress(text, block):
     start, end = "<!-- SFT_PROGRESS:START -->", "<!-- SFT_PROGRESS:END -->"
     assert text.count(start) == text.count(end) == 1, "Progress markers must occur exactly once"
@@ -135,9 +144,9 @@ def main():
         for lr in LR_CANDIDATES:
             run = read(result_dir(name) / f"{name}_lr{lr:.0e}.json")
             assert run["status"] == "completed" and run["protocol_fingerprint"] == model_protocol(name)["fingerprint"]
-            logs = [r for r in run["trainer_log_history"] if "eval_loss" in r]
-            axis.plot([0] + [r["epoch"] for r in logs], [run["before_sft_development"]["before_sft_loss"]] +
-                      [r["eval_loss"] for r in logs], marker="o", label=f"LR={lr:.0e}")
+            losses = epoch_losses(run["trainer_log_history"])
+            axis.plot([0, *losses], [run["before_sft_development"]["before_sft_loss"], *losses.values()],
+                      marker="o", label=f"LR={lr:.0e}")
         axis.set(title=label, xlabel="Epoch", ylabel="Mean example response NLL"); axis.legend(frameon=False)
     for axis in axes.flat[len(runs):]:
         axis.set_visible(False)
@@ -151,6 +160,7 @@ def main():
         cells = [f'{100*scores[d]["accuracy"]:.2f} / {100*scores[d]["macro_f1"]:.2f}' for d in ("sst2", "boolq")]
         lines.append(f'| {label} | {cells[0]} | {cells[1]} | {rouge["mean"]:.2f} |')
     lines += ["", "모델 선정 단계는 생성 seed 10 한 개를 사용해 seed 간 변동을 추정하지 않는다. 최종 선정 모델의 본 실험에서는 생성 seed 10/20/30/40/50을 사용한다. 학습 seed 반복과 생성 seed 반복은 별개다. 모델 선정 자료이므로 독립적인 최종 test가 아니다.", "",
+              "검증 손실 곡선은 각 에포크 종료 시 측정값을 표시한다. 학습 종료 후 최적 checkpoint를 복원해 재평가한 값은 해당 에포크의 추가 측정으로 표시하지 않는다.", "",
               "![분류 점수](classification.png)", "", "![Dolly ROUGE-L](dolly_rouge.png)", "", "![검증 손실](development_nll.png)"]
     (OUT / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("Wrote scores.csv, REPORT.md and three figures from matching completed evaluations", flush=True)
