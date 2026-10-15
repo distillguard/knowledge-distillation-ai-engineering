@@ -4,13 +4,13 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](../results/dolly_sft_v1/REPORT.md)를 따른다.
 
 <!-- SFT_PROGRESS:END -->
 
-문서 상태: **연구보고서 초안. 현재 실행은 Dolly 고정·GPT-2·Qwen3.5·OPT·OpenLLaMA·Gemma-2의 총 10개 모델 LoRA SFT 비교다. 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4이며, 추가 모델은 가중치 크기와 실제 전용 VRAM 점검에 따라 정밀도를 정한다.** 공통 분할·설정 근거·실행 상태는 [현재 비교 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [실행 결과](results/dolly_sft_v1/)를 따른다. 아래의 데이터 3종 비교와 두 모델 관련 내용은 이전 검토·관측 기록이며, 공개 SFT 모델 평가와 이번 직접 학습 결과를 합치지 않는다. KD 방법 비교 결과는 아직 없다.
+문서 상태: **연구보고서 초안. 현재 실행은 Dolly 고정·GPT-2·Qwen3.5·OPT·OpenLLaMA·Gemma-2의 총 10개 모델 LoRA SFT 비교다. 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4이며, 추가 모델은 가중치 크기와 실제 전용 VRAM 점검에 따라 정밀도를 정한다.** 공통 분할·설정 근거·실행 상태는 [현재 비교 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [실행 결과](../results/dolly_sft_v1)를 따른다. 아래의 데이터 3종 비교와 두 모델 관련 내용은 이전 검토·관측 기록이며, 공개 SFT 모델 평가와 이번 직접 학습 결과를 합치지 않는다. KD 방법 비교 결과는 아직 없다.
 
-이 문서는 연구의 문제·이론·방법·모델 추천과 보고할 자료를 연결한다. 상세 실행·설정 선택 절차는 [연구계획서](RESEARCH_PLAN.md), 기존 분석은 [Hinton](papers/01_hinton_2015_ko.md)·[MiniLLM](papers/02_minillm_2024_ko.md)·[CaRE-KD](papers/03_care_kd_2026_ko.md)를 따른다. 원문 주장, 우리 설계, 실제 관측을 구분하며 결과가 없는 곳에 수치를 채우지 않는다.
+이 문서는 연구의 문제·이론·방법·모델 추천과 보고할 자료를 연결한다. 상세 실행·설정 선택 절차는 [연구계획서](RESEARCH_PLAN.md), 기존 분석은 [Hinton](../papers/01_hinton_2015_ko.md)·[MiniLLM](../papers/02_minillm_2024_ko.md)·[CaRE-KD](../papers/03_care_kd_2026_ko.md)를 따른다. 원문 주장, 우리 설계, 실제 관측을 구분하며 결과가 없는 곳에 수치를 채우지 않는다.
 
 | 항목 | 현재 상태 |
 |---|---|
@@ -155,7 +155,7 @@ train·development·최종 평가의 역할을 분리하며 증강 자료는 원
 
 ### 7.3. 로컬 자원과 실행 통과 기준
 
-기존 장치 조회에서 RTX 5060 Ti 16GB급과 시스템 RAM 31.62 GiB를 확인했다. 2026-10-15 14:27(Asia/Seoul)에 GPT-2 XL/base를 동시에 GPU에 적재하고 같은 짧은 입력의 forward를 통과했다. 기반 모델의 실제 고유 파라미터 수는 각각 **1,557,611,200 / 124,439,808**이었다. revision·입력·검사 항목은 [계획서 §6.4](RESEARCH_PLAN.md), 원자료는 [적재·추론 실행 기록](results/model_preflight.json)을 따른다.
+기존 장치 조회에서 RTX 5060 Ti 16GB급과 시스템 RAM 31.62 GiB를 확인했다. 2026-10-15 14:27(Asia/Seoul)에 GPT-2 XL/base를 동시에 GPU에 적재하고 같은 짧은 입력의 forward를 통과했다. 기반 모델의 실제 고유 파라미터 수는 각각 **1,557,611,200 / 124,439,808**이었다. revision·입력·검사 항목은 [계획서 §6.4](RESEARCH_PLAN.md), 원자료는 [적재·추론 실행 기록](../results/model_preflight.json)을 따른다.
 
 점검은 float16·eager attention·eval·gradient 비활성 상태에서 `Knowledge distillation transfers`의 마지막 위치를 읽었다. 별도 온도 변환·sampling은 없었다. 전체 50,257개 어휘에서 유한 logits와 정규화된 확률을 확인했다. PyTorch allocator의 peak allocated는 **3,350.71 MiB**, peak reserved는 **3,368.00 MiB**, 다운로드를 제외한 적재·forward 시간은 **8.24초**였다. 전체 장치 메모리나 학습 요구량으로 읽지 않는다.
 
@@ -255,4 +255,4 @@ entropy·KL·gate·gradient·BALD·수용률은 동작을 읽는 진단이다. �
 - Kim, Rush (2016), [Sequence-Level Knowledge Distillation](https://aclanthology.org/D16-1139/).
 - 데이터·기반 모델·config의 출처는 §6의 직접 링크를 따른다. 원문 버전과 적재 점검용 두 기반 모델 revision은 고정했다. 세 후보 원자료 revision은 고정했고 데이터별 SFT checkpoint·분할·본 실험 코드의 동결은 남아 있다.
 
-부록에는 실제 모델·데이터 revision, 분할·전처리, 값별 근거, 코드·환경 버전, 실행 로그, 추가 그래프·응답 사례를 남긴다. 현재 [확인 코드](scripts/load_two_models.py)와 [적재·추론 실행 기록](results/model_preflight.json)이 있다. KD 학습 로그·방법 비교 결과는 아직 없다. 공개 SFT 기준선 평가와 그림은 §7.4의 별도 기록을 따른다.
+부록에는 실제 모델·데이터 revision, 분할·전처리, 값별 근거, 코드·환경 버전, 실행 로그, 추가 그래프·응답 사례를 남긴다. 현재 [확인 코드](../scripts/load_two_models.py)와 [적재·추론 실행 기록](../results/model_preflight.json)이 있다. KD 학습 로그·방법 비교 결과는 아직 없다. 공개 SFT 기준선 평가와 그림은 §7.4의 별도 기록을 따른다.

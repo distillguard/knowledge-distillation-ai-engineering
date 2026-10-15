@@ -2,13 +2,13 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](../results/dolly_sft_v1/REPORT.md)를 따른다.
 
 <!-- SFT_PROGRESS:END -->
 
 계획 갱신일: 2026-10-15, Asia/Seoul. 장비·공개 데이터의 조회일은 각 항목에 별도로 기록한다.
 
-상태: **목표는 생성형 언어모델의 지식증류 원리와 학생의 응답 변화 탐구다. 현재 실행은 Dolly 고정·GPT-2 XL/base, Qwen3.5-9B/0.8B, OPT-2.7B/125M, OpenLLaMA-7B/3B, Gemma-2-9B-IT/2B-IT의 독립적인 LoRA SFT 비교다. 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4다. 추가 모델의 양자화 여부는 가중치 크기와 실제 전용 VRAM 점검으로 확정한다. 공통 원본 분할은 학습 11,117건·검증 975건·선정 평가 500건이다.** 최신 설정·근거·실행 방법은 [Dolly 모델 SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 실행 상태는 [결과 기록](results/dolly_sft_v1/)을 따른다. 아래의 데이터 3종 비교 및 초기 두 모델 관련 내용은 이전 검토 기록이다. KD 본실험은 아직 시작하지 않았다.
+상태: **목표는 생성형 언어모델의 지식증류 원리와 학생의 응답 변화 탐구다. 현재 실행은 Dolly 고정·GPT-2 XL/base, Qwen3.5-9B/0.8B, OPT-2.7B/125M, OpenLLaMA-7B/3B, Gemma-2-9B-IT/2B-IT의 독립적인 LoRA SFT 비교다. 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4다. 추가 모델의 양자화 여부는 가중치 크기와 실제 전용 VRAM 점검으로 확정한다. 공통 원본 분할은 학습 11,117건·검증 975건·선정 평가 500건이다.** 최신 설정·근거·실행 방법은 [Dolly 모델 SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 실행 상태는 [결과 기록](../results/dolly_sft_v1)을 따른다. 아래의 데이터 3종 비교 및 초기 두 모델 관련 내용은 이전 검토 기록이다. KD 본실험은 아직 시작하지 않았다.
 
 ## 1. 목적과 원칙
 
@@ -66,7 +66,7 @@ P1–P4와 P5의 gate·Revival은 현재 비교의 중심 근거다. P6–P7에�
 
 ### 4.1. Hinton: 무엇을 전달하는가?
 
-읽기 자료: [한국어 해설](papers/01_hinton_2015_ko.md), P1–P2.
+읽기 자료: [한국어 해설](../papers/01_hinton_2015_ko.md), P1–P2.
 
 분석 결과로 다음을 설명할 수 있어야 한다.
 
@@ -80,7 +80,7 @@ P1–P4와 P5의 gate·Revival은 현재 비교의 중심 근거다. P6–P7에�
 
 ### 4.2. MiniLLM: 어디에서 만든 응답으로 배우는가?
 
-읽기 자료: [한국어 해설](papers/02_minillm_2024_ko.md), P3–P4.
+읽기 자료: [한국어 해설](../papers/02_minillm_2024_ko.md), P3–P4.
 
 분포의 좌표가 토큰인지 응답 전체인지, 기대값의 표본이 교사·학생·혼합 중 무엇인지 표시한다. policy gradient의 필요성, single-step 분해, teacher-mixed sampling, 길이 정규화를 각각 어떤 문제에 대응시키는지 정리한다. 일반 능력 보존 손실과 SFT 초기화도 학습 과정에 포함한다.
 
@@ -90,7 +90,7 @@ P1–P4와 P5의 gate·Revival은 현재 비교의 중심 근거다. P6–P7에�
 
 현재 분석 대상은 confidence 정의·KL 혼합·Hard/Soft gate의 차이와 BALD 기반 Revival의 수용·거절 규칙이다. 두 구성요소의 개별 역할과 결합을 구분한다. 조건부 calibration과 실제 오류 보호·정답성의 근거는 별도로 확인한다.
 
-읽기 자료: [한국어 번역·분석](papers/03_care_kd_2026_ko.md), P5–P7.
+읽기 자료: [한국어 번역·분석](../papers/03_care_kd_2026_ko.md), P5–P7.
 
 confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival의 조건을 정리한다. entropy의 뾰족함, 실제 정답, epistemic uncertainty, 지도 신호의 유용성을 다른 개념으로 적는다. 정리의 가정과 보고한 ECE의 한계를 함께 읽는다.
 
@@ -144,7 +144,7 @@ confidence의 측정 공간, hard/soft 수식, selection gradient, BALD·Revival
 |---|---|---|
 | [Hinton](https://arxiv.org/pdf/1503.02531v1) | KD의 기초를 이해하는 주 참고문헌 | soft target·온도·교사와 학생의 출력분포, 전달 신호 |
 | [MiniLLM](https://arxiv.org/html/2306.08543v4) | 생성형 LLM 증류를 탐구하는 중심 참고문헌 | 생성분포·KL 방향·학습 응답의 출처, 원문 학습 과정과 응답 평가 |
-| [CaRE-KD](papers/03_care_kd_2026_ko.md) | 손실 적응·선택적 갱신과 결합의 직접 근거 | §2.1–2.2·3.1·4.3의 gate·BALD·Revival 및 구성요소 대조. 전체 benchmark 수행 범위는 미정 |
+| [CaRE-KD](../papers/03_care_kd_2026_ko.md) | 손실 적응·선택적 갱신과 결합의 직접 근거 | §2.1–2.2·3.1·4.3의 gate·BALD·Revival 및 구성요소 대조. 전체 benchmark 수행 범위는 미정 |
 
 ### 5.2. 세 단계로 진행한다
 
@@ -324,7 +324,7 @@ CaRE 식 (3)의 기준 정의는 c(P)=1−H(P)/log|V|, Δc=c(P)−c(Q), g_hard=1
 
 ### 6.4. 두 기반 모델의 적재·추론 확인
 
-[관측: 2026-10-15 14:27, Asia/Seoul] [확인 코드](scripts/load_two_models.py)를 실행해 다음 두 모델을 RTX 5060 Ti에 **동시에 적재한 상태**에서 공통 입력의 forward를 통과했다. 상세 근거는 [실행 기록](results/model_preflight.json)이다.
+[관측: 2026-10-15 14:27, Asia/Seoul] [확인 코드](../scripts/load_two_models.py)를 실행해 다음 두 모델을 RTX 5060 Ti에 **동시에 적재한 상태**에서 공통 입력의 forward를 통과했다. 상세 근거는 [실행 기록](../results/model_preflight.json)이다.
 
 | 역할 | 기반 모델 ID | 고정 revision | 실제 고유 파라미터 수 |
 |---|---|---|---:|
@@ -562,7 +562,7 @@ entropy, gate 비율, KL, gradient norm은 원인을 읽는 진단이고, 연구
 2. 세 데이터의 최종 전처리·공통 분할·사용 규모와 데이터별 SFT 비교, 실행할 증류 방법·초기 상태·평가·설정값의 근거.
 3. 두 기반 모델의 짧은 입력 추론 메모리·시간은 §6.4에서 측정했다. 준비 checkpoint의 긴 입력·학습·MC 경로, 전체 저장량과 반복 가능한 연구 예산은 미검증이다.
 
-미검증 항목을 임의의 수치로 덮어 실험 설정을 확정하지 않는다. 실제 코드·측정으로 확인되면 근거와 상태를 갱신한다. CaRE의 공식 gate config와 식 (3)·Figure 2의 scale 차이는 현재 구현 전에 대조할 항목이다. Revival의 공식 config·MC 추정·과거 quantile·mask 집계·실제 갱신 경로도 현재 실행 전 확인 사항이다. 표·calibration·오류 보호 해석의 한계는 [CaRE 분석 문서](papers/03_care_kd_2026_ko.md)에서 대조한다.
+미검증 항목을 임의의 수치로 덮어 실험 설정을 확정하지 않는다. 실제 코드·측정으로 확인되면 근거와 상태를 갱신한다. CaRE의 공식 gate config와 식 (3)·Figure 2의 scale 차이는 현재 구현 전에 대조할 항목이다. Revival의 공식 config·MC 추정·과거 quantile·mask 집계·실제 갱신 경로도 현재 실행 전 확인 사항이다. 표·calibration·오류 보호 해석의 한계는 [CaRE 분석 문서](../papers/03_care_kd_2026_ko.md)에서 대조한다.
 
 ## 15. 출처
 

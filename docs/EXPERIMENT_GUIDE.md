@@ -1,0 +1,191 @@
+# 공통 실험 조건과 장비별 실행 지침
+
+갱신일: 2026-10-15. 적용 범위: Dolly 기반 교사·학생 후보의 독립적인 LoRA SFT와 모델 선정 평가.
+
+목적은 컴퓨터나 실행 담당자가 달라도 같은 자료·학습량·선택 기준을 사용하고, 장비에 맞춘 실행 차이는 별도로 기록하는 것이다. 이후 KD 방법 비교는 선정한 교사·학생 조합에서 수행한다. 이 문서는 현재 코드의 조건과 향후 장비 최적화 절차를 구분한다.
+
+## 명세와 작업 범위
+
+| 기준 자료 | 역할 |
+|---|---|
+| [기존 학습 protocol](../results/dolly_sft_v1/protocol.json) | 공통 데이터 분할·LoRA·학습률·optimizer·학습량·해시의 기준 |
+| [추가 모델 registry](../results/dolly_sft_additional_v1/registry.json) | OPT·OpenLLaMA·Gemma의 공식 모델 ID·고정 revision |
+| `results/dolly_sft_additional_v1/<model>/protocol.json` | 추가 모델의 실제 정밀도·같은 원본 분할·부모 명세·실행 소스 해시. GPU 점검 시 생성 |
+| [상세 선정 계획](DOLLY_SFT_MODEL_SELECTION.md) | 논문·공식 구현의 설정 근거와 원문 재현 차이 |
+| [진행 기록](SFT_PROGRESS.md) | 완료한 학습률 후보·선택 결과·평가 상태 |
+
+위 JSON은 실행 기록이다. JSON 숫자만 고쳐도 코드에 적용되는 설정 파일은 아니다. 실행 조건을 바꿀 때는 코드·새 protocol·사전 점검·결과 경로를 함께 맞추며, 기존 checkpoint가 있는 명세를 덮어쓰지 않는다.
+
+| 계열 | 교사 후보 | 학생 후보 | 실행 ID |
+|---|---|---|---|
+| GPT-2 | XL | base | `gpt2_xl`, `gpt2_base` |
+| Qwen3.5 | 9B | 0.8B | `qwen_9b`, `qwen_08b` |
+| OPT | 2.7B | 125M | `opt_27b`, `opt_125m` |
+| OpenLLaMA | 7B | 3B | `openllama_7b`, `openllama_3b` |
+| Gemma-2 | 9B-IT | 2B-IT | `gemma2_9b_it`, `gemma2_2b_it` |
+
+5개 계열은 교사·학생을 합쳐 **10개 모델**이다. 같은 seed에서 학습률 후보 두 개를 독립적으로 학습하므로 총 20개 학습 실행이다. 모델 크기만으로 교사의 우월성을 가정하지 않는다. Qwen·Gemma-IT의 기존 post-training과 양자화 차이도 해석에 포함한다.
+
+## 공통 학습 파라미터
+
+| 항목 | 현재 공통 조건 |
+|---|---|
+| 데이터 | `MiniLLM/dolly`, revision `d131636138be0ff3fd0901c12c1739844d337279` |
+| 원본 분할 | 학습 11,117건·개발 검증 975건·선정 평가 500건. 모든 모델에서 같은 순서의 원본 record ID |
+| 전처리 | 지시문 기준 분할 중복 제거, 전체 응답 보존, prompt label·padding은 `-100`, 응답과 마지막 EOS만 손실 대상 |
+| 입력 형식 | 같은 instruction/context. 모델별 검증된 native template·BOS·EOS 적용 |
+| 길이 | 최초 GPT-2·Qwen은 prompt ≤256·학습 전체 ≤512. 추가 모델은 같은 원문을 재토큰화하고 전체 ≤1,024 및 native 용량 확인. 응답 자르기·추가 행 제외 없음 |
+| 초기 가중치 | 고정한 공식 공개 revision에서 매 학습률 후보를 새로 초기화. 기존 연구 adapter 재사용 없음 |
+| 학습 방식 | 동결한 기반 모델 + LoRA. 전체 가중치 미세조정 아님 |
+| LoRA | `r=64`, `lora_alpha=16`, `lora_dropout=0.05`, `target_modules=all-linear`, `bias=none`, `task_type=CAUSAL_LM` |
+| 학습률 후보 | `1e-4`, `2e-4`. 같은 모델 안에서 검증 NLL로 선택 |
+| 학습량 | 학습률 후보마다 3epoch 상한. 매 epoch 검증·저장 |
+| 유효 batch | 단일 GPU 기준 16문항, 마지막 불완전 batch 유지 |
+| 학습 seed | `seed=0`, `data_seed=0` |
+| Optimizer | `adamw_torch`, betas `(0.9, 0.999)`, eps `1e-8`, weight decay `0` |
+| Gradient clipping | `max_grad_norm=0.3` |
+| Scheduler | `constant_with_warmup`, 전체 optimizer step의 3% warmup |
+| 선택 기준 | 모델·학습률별 최저 개발 검증 NLL checkpoint → 두 학습률 후보 중 최저 NLL adapter |
+| NLL 해석 | 현재 microbatch 1 평가의 문항별 응답 토큰 평균. tokenizer가 다른 모델 사이의 성능 순위로 사용하지 않음 |
+
+LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/artidoro/qlora/blob/7f4e95a68dc076bea9b3a413d2b512eca6d004e5/scripts/finetune_guanaco_13b.sh)·[33B 스크립트](https://github.com/artidoro/qlora/blob/7f4e95a68dc076bea9b3a413d2b512eca6d004e5/scripts/finetune_guanaco_33b.sh), 3epoch는 [MiniLLM 부록 B.1의 초기화 단계](https://arxiv.org/html/2306.08543v4#A2.SS1)에 근거한다. 이 조합이 모든 후보의 최적 설정이라는 의미는 아니다. 원문 SFT baseline의 완전 재현과 구분한다.
+
+## 공통 평가 조건
+
+| 항목 | 현재 조건 |
+|---|---|
+| SST-2 | 같은 validation 872건, label sequence의 조건부 log probability로 판정 |
+| BoolQ | 같은 validation 3,269건. 원본 row 3154는 기존 공통 길이 검사에서 제외 |
+| 분류 지표 | accuracy, macro-F1, balanced accuracy, weighted-F1, MCC, 클래스별 recall, 혼동행렬, 두 label 사이에서 정규화한 Brier score |
+| Dolly 생성 | 같은 500문항, 생성 seed `10` 한 개, 모델당 500응답·전체 5,000응답 |
+| 생성 파라미터 | `do_sample=True`, `temperature=1`, `top_k=0`, `top_p=1`, `no_repeat_ngram_size=6`, `max_new_tokens=256`, `use_cache=True` |
+| 생성 종료 | 모델별 tokenizer EOS와 공식 generation config의 EOS. 실제 목록 기록 |
+| 생성 지표 | ROUGE-1/2/L F1 ×100, 생성 길이, 상한 도달률, 빈 응답률 |
+| 반복 해석 | 생성 seed 간 표준편차는 `null`. 오차막대·±0 없음 |
+| 최종 선정 후 본 실험 | 생성 seed `10/20/30/40/50` 예정. 학습 seed 5회 반복을 뜻하지 않음 |
+
+생성의 temperature는 sampling 조건이며 KD 분포의 온도 T와 다르다. KD의 T·gate·MC dropout 횟수·Revival 기준은 이 SFT 단계의 설정값이 아니다. 이후 문헌 근거와 검증 절차로 별도 명세한다. 현재 관찰한 선정 평가 자료를 독립적인 최종 test로 부르지 않는다.
+
+## 현재 장비와 실행 환경
+
+2026-10-15에 확인한 현재 실행 장비다. 다른 컴퓨터에 이 사양을 적용했다고 기록하지 않는다.
+
+| 항목 | 확인값 |
+|---|---|
+| CPU | AMD Ryzen 5 7500F, 6 cores |
+| RAM | 31.62 GiB |
+| GPU | NVIDIA GeForce RTX 5060 Ti, 전용 VRAM 16,311 MiB |
+| OS / GPU driver | Windows / NVIDIA 610.88 |
+| Python | 3.12.14 |
+| PyTorch | 2.11.0+cu128 |
+| Transformers / PEFT | 5.19.0 / 0.21.2 |
+| bitsandbytes / Accelerate | 0.50.2 / 1.15.0 |
+| datasets | 5.1.0 |
+| 추가 tokenizer 의존성 | sentencepiece 0.2.2, protobuf 7.36.2. 프로젝트 `tmp/dolly_sft_additional_v1/deps` 안에 설치 |
+
+현재 직접 의존성 버전은 [requirements-sft.txt](../requirements-sft.txt)에 정리했다. PyTorch의 CUDA wheel은 실제 GPU·driver와 맞춰 설치하고 현재 검증된 wheel은 `2.11.0+cu128`이다. 기존 `requirements-eval.txt`는 과거 공개 SFT 평가용으로 일부 버전이 다르며, 현재 10개 모델 학습 환경과 혼용하지 않는다. 현재 학습 중인 환경은 재설치하지 않았다.
+
+현재 실행은 BF16 계산·FP32 LoRA와 정규화, microbatch 1·gradient accumulation 16, gradient checkpointing 켜기, TF32 끄기, dataloader workers 0을 사용한다. Qwen의 선택적 고속 커널이 없는 환경이므로 장시간 속도는 실제 로그로 확인한다.
+
+## 장비에 따른 조정 범위
+
+| 항목 | 조정 원칙 | 현재 구현 상태 |
+|---|---|---|
+| 모델 적재 정밀도 | 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4. 추가 6개는 BF16 가중치가 물리 VRAM을 넘거나 실제 갱신·저장 점검이 전용 VRAM에 맞지 않으면 NF4 | 추가 모델에서 자동 판단·기록. Gemma9B는 BF16 가중치만으로 현재 VRAM 초과 |
+| Microbatch·누적 횟수 | 단일 GPU에서 두 값의 곱 16 유지. 후보 `1×16`, `2×8`, `4×4`, `8×2`, `16×1` 중 실제 처리량·메모리로 선택 | 현재 `1×16` 고정. 다른 조합의 자동 탐색은 미구현 |
+| Gradient checkpointing | VRAM에 여유가 있으면 해제 상태도 실측. 학습량·손실 의미 유지 확인 | 현재 모든 모델에서 켜짐. 자동 해제 미구현 |
+| 평가 batch | 공통 문항·전체 입력·동일 지표 유지. 문항별 NLL 평균 방식과 생성 난수 처리 변화 확인 | 현재 분류·검증·생성 모두 microbatch 1 |
+| Data loader·kernel | CPU·RAM·GPU 환경에 맞춰 처리량을 측정하고 버전·변경값 기록 | 현재 worker 0·검증된 기본 backend. 자동 탐색 미구현 |
+
+Batch 크기와 accumulation의 관계는 [Transformers 문서](https://huggingface.co/docs/transformers/v5.12.0/grad_accumulation), activation 재계산의 메모리·속도 교환은 [gradient checkpointing 문서](https://huggingface.co/docs/transformers/v5.19.0/grad_checkpointing)를 따른다. 문서의 일반 설명을 현재 GPU의 실측 향상률로 쓰지 않는다.
+
+양자화·연산 정밀도는 결과에도 영향을 주는 조건이다. 장비 때문에 바꿨더라도 실제 형식과 이유를 함께 기록하며 BF16 결과와 무조건 동등하다고 간주하지 않는다. BF16을 지원하지 않는 GPU에서 FP16으로 자동 대체하지 않고 별도 실행 조건으로 명세한다.
+
+새 장비 또는 새 실행 profile의 사전 점검은 다음 순서다.
+
+1. GPU·전용 여유 VRAM·RAM·라이브러리 버전을 확인한다. 같은 GPU에서 다른 학습을 겹쳐 실행하지 않는다.
+2. 동일 원본 ID·파일 해시·template·EOS·마스킹·실제 최장 입력을 확인한다. 기존 장비의 통과 JSON을 새 장비의 점검 결과로 복사하지 않는다.
+3. 폐기 가능한 adapter로 실제 forward/backward·optimizer update·검증·저장/재적재·생성을 검사한다. 배치를 늘릴 때는 최장 입력들이 한 batch에 들어오는 경우도 점검한다.
+4. 유효 batch 16과 손실 정규화·문항 가중치가 유지되는지 확인한다. 같은 유효 batch라는 이유만으로 gradient의 완전 일치를 가정하지 않는다.
+5. 적재 시간을 제외한 안정 구간의 처리량과 peak VRAM을 측정한다. OOM·전용 메모리 초과를 확인한 경우에만 메모리 대응을 적용하며 다른 오류는 별도로 해결한다.
+6. 선택값·실측값·정밀도·소스 해시를 새 profile/protocol에 남기고 본 학습에 적용한다. 현재 저장된 학습 중간에 batch·누적·scheduler를 바꿔 이어 붙이지 않는다.
+
+데이터 수·epoch·학습률 후보·LoRA rank·생성 길이·평가 문항을 줄이는 것은 별도의 연구 설계 변경이다. 장비 조정으로 숨기지 않는다. 앞서 제안한 후보 조기 선별은 아직 적용하지 않았다.
+
+## VSCode와 모델별 실행
+
+저장소 `knowledge-distillation-ai-engineering` 폴더 자체를 VSCode로 열고 `Python: Select Interpreter`에서 위 패키지가 설치된 환경을 선택한다. `.vscode/tasks.json`의 **Dolly: 모델별 학습·평가** 작업에서 실행 ID 하나 또는 `all`을 고른다. 작업은 선택한 Python interpreter를 사용한다. [VSCode 공식 Tasks 문서](https://code.visualstudio.com/docs/debugtest/tasks).
+
+모델별 공통 순서는 **원본·자료 확인 → 해당 장비의 사전 점검 → LR 1e-4의 3epoch → LR 2e-4의 3epoch → 검증 NLL로 adapter 선택 → SFT 완료 MD 갱신 → SST-2·BoolQ → Dolly seed 10 → 점수·그림·MD 갱신**이다. 추가 6개 모델의 사전 점검·정밀도 선택은 실행기가 자동 호출한다. 기존 4개 모델은 공통 protocol의 GPU 사전 점검을 미리 통과해야 한다.
+
+아래 인자를 `python -u -B -X utf8 scripts/run_dolly_sft.py` 뒤에 붙인다. 모든 모델에 같은 학습·평가 계약을 적용한다.
+
+| 모델·역할 | 실행 인자 | 기반 가중치 조건 |
+|---|---|---|
+| GPT-2 base·학생 | `--model gpt2_base` | BF16 |
+| GPT-2 XL·교사 | `--model gpt2_xl` | BF16 |
+| Qwen3.5-0.8B·학생 | `--model qwen_08b` | BF16 |
+| Qwen3.5-9B·교사 | `--model qwen_9b` | NF4·double quantization |
+| OPT-125M·학생 | `--model opt_125m` | BF16부터 실제 점검, 맞지 않으면 NF4 |
+| OPT-2.7B·교사 | `--model opt_27b` | BF16부터 실제 점검, 맞지 않으면 NF4 |
+| OpenLLaMA-3B·학생 | `--model openllama_3b` | BF16부터 실제 점검, 맞지 않으면 NF4 |
+| OpenLLaMA-7B·교사 | `--model openllama_7b` | BF16부터 실제 점검, 맞지 않으면 NF4 |
+| Gemma-2-2B-IT·학생 | `--model gemma2_2b_it` | BF16부터 실제 점검, 맞지 않으면 NF4 |
+| Gemma-2-9B-IT·교사 | `--model gemma2_9b_it` | 현재 장비는 BF16 가중치만으로 VRAM 초과하므로 NF4 |
+
+현재 장비에서 같은 작업을 PowerShell로 실행하는 예시는 다음과 같다. 다른 장비에서는 Python 경로를 해당 환경에 맞춘다. 모델·데이터 준비와 해당 장비의 사전 점검이 완료된 작업 폴더를 전제로 한다.
+
+```powershell
+$StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
+
+# 공통 환경 확인
+& $StudyPython -c "import torch, transformers; print(torch.__version__, transformers.__version__)"
+
+# GPT-2 base 하나: 두 LR 학습 → MD 갱신 → 공통 평가 → MD·그림 갱신
+& $StudyPython -u -B -X utf8 scripts/run_dolly_sft.py --model gpt2_base
+
+# OPT-2.7B 하나: 추가 모델 GPU 점검부터 같은 순서
+& $StudyPython -u -B -X utf8 scripts/run_dolly_sft.py --model opt_27b
+
+# 전체 10개 모델 순차 실행·재개. 위 개별 명령과 함께 실행하지 않음
+& $StudyPython -u -B -X utf8 scripts/run_dolly_sft.py --model all
+```
+
+각 명령은 독립적인 선택지다. 같은 worker 잠금을 사용하므로 기존 전체 실행 중 모델별 실행을 추가하면 학습을 시작하기 전에 종료된다. 저수준 `dolly_sft.py train`을 직접 실행하면 이 worker 잠금을 우회하므로 운영에는 위 실행기를 사용한다. 현재 자동 실행은 계속 진행 중이며 VSCode용 작업을 추가했다는 이유로 재시작하지 않는다.
+
+단일 모델 실행의 worker 상태가 `completed`라는 것은 `requested_models`에 기록된 요청만 끝났다는 뜻이다. 전체 완료는 10개 모델의 selected·평가 JSON을 모두 확인해 판단한다.
+
+## 모델별 필수 결과물과 완료 판정
+
+아래 `<model>`에는 표의 실행 ID를 넣는다. GPT-2·Qwen의 학습 요약 디렉터리는 `results/dolly_sft_v1/`, 추가 6개 모델은 `results/dolly_sft_additional_v1/<model>/`이다. 10개 모델의 평가 요약은 모두 `results/dolly_sft_v1/`에 모이며 파일명에 모델 ID가 들어간다. 기존 checkpoint·파일 해시를 유지하기 위해 실행 중인 결과 디렉터리는 이동하지 않는다.
+
+| 단계 | 필수 파일 | 완료 조건 |
+|---|---|---|
+| 준비 | 공통 `protocol.json`, 추가 모델별 `preparation.json`·`protocol.json` | 고정 revision·동일 원본 ID·분할 수·자료 해시 일치. 추가 모델 `preparation.status=prepared` |
+| GPU 사전 점검 | `preflight.json`, `trainer_preflight.json`; 추가 모델 `memory_check.json` | 해당 protocol fingerprint에서 갱신·유한 gradient·마스킹·재적재·checkpoint 저장 통과. 추가 모델 전용 VRAM 적합성 통과 |
+| LR 후보 1 | 학습 요약 디렉터리의 `<model>_lr1e-04.json` | `status=completed`, 유한 검증 NLL, best checkpoint·adapter 경로 존재 |
+| LR 후보 2 | 같은 위치의 `<model>_lr2e-04.json` | 위와 동일. LR 1 후보의 adapter에서 이어 학습하지 않음 |
+| SFT 선택 | 같은 위치의 `<model>_selected.json` | 두 후보 모두 완료. 선택 LR·자기 모델의 검증 NLL·adapter·protocol fingerprint 기록 |
+| 실제 adapter | selected JSON의 `adapter` 경로 안 `adapter_config.json`, `adapter_model.safetensors` | 파일 존재·정상 재적재. Git에 가중치를 올리지 않음 |
+| 평가 조건 | 공통 평가 디렉터리의 `<model>_evaluation_protocol.json` | 선택 adapter·학습 명세·평가 코드 fingerprint 일치, 같은 데이터 revision·제외 행·생성 조건 |
+| Dolly 생성 | 같은 위치의 `<model>_generation_seed10.json` | `seed=10`, `n=500`, ROUGE·생성 길이·상한·빈 응답 지표. 실제 응답 500개는 `tmp/dolly_sft_v1/evaluation/<model>_seed10_responses.json` |
+| 최종 선정 평가 | 같은 위치의 `<model>_evaluation.json` | `status=completed`, SST-2 `n=872`, BoolQ `n=3269`, 생성 seed SD는 `null`, fingerprint 일치 |
+| 표·그림·문서 | `scores.csv`, `classification.png`, `dolly_rouge.png`, `development_nll.png`, `REPORT.md`, `docs/SFT_PROGRESS.md` | 완료한 모델의 실제 결과만 포함. 미완료 모델을 0점으로 채우지 않음 |
+
+단일 LR 후보의 완료, 진행 JSON의 `step=max_steps`, checkpoint 파일 생성만으로 모델 SFT 전체 완료를 선언하지 않는다. 두 LR 후보를 검증해 selected JSON을 만든 시점에 **SFT 완료**, 공통 평가와 지표·fingerprint 검증까지 마친 시점에 **평가 완료**를 보고한다.
+
+모델 하나가 끝날 때마다 선택 LR·자기 모델의 NLL·실제 정밀도·평가 수·분류 점수·Dolly 지표를 연결한다. 과거 공개 SFT 모델의 점수로 이번 직접 학습 결과를 채우지 않는다. 실패한 모델은 원인과 마지막 정상 checkpoint를 남기고 결과 수치를 만들지 않는다.
+
+## 재개와 산출물
+
+실패 시 실제 실행 프로세스·마지막 로그·checkpoint를 먼저 확인한다. 살아 있는 실행을 중복 시작하지 않는다. 같은 조건의 학습은 마지막 epoch checkpoint에서 재개하고, 완료한 학습률 후보는 건너뛴다. 생성은 완료된 seed 단위로 재사용한다. 조건을 변경한 결과는 이전 완료 JSON과 합치지 않는다.
+
+| 위치 | 저장 내용 | Git |
+|---|---|---|
+| `results/dolly_sft_v1/` | 기존 모델 학습 요약·선택, 10개 모델 평가·표·그림 | 검증한 완료 요약만 반영 |
+| `results/dolly_sft_additional_v1/<model>/` | 추가 모델 준비·protocol·점검·학습·선택 요약 | 검증한 요약만 반영 |
+| `docs/SFT_PROGRESS.md`와 연구 MD | 모델별 완료 상태와 실제 선택 근거 | 반영 |
+| `tmp/` | 원자료·토큰화 자료·모델 cache·checkpoint·생성 원문·로그 | 제외 |
+| 토큰·인증 파일 | 로컬 인증 | 제외. 명령 인자나 문서에 토큰 입력 금지 |
+
+모델별 SFT·평가 완료 후 관련 MD와 검증된 결과만 commit/push한다. `git add .` 대신 대상 파일을 지정하며 진행 중 LR JSON·예시 점수·미완료 실행을 완료 성능으로 올리지 않는다.

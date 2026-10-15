@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](../results/dolly_sft_v1/REPORT.md)를 따른다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -22,9 +22,9 @@
 
 기존 GPT-2 두 모델과 Qwen0.8B는 BF16, Qwen9B는 NF4를 유지한다. 추가 6개 모델은 BF16 가중치 크기가 물리 VRAM을 넘으면 NF4로 시작하고, 그렇지 않으면 BF16의 실제 적재·갱신·저장 점검부터 한다. CUDA OOM 또는 측정한 전용 VRAM 여유보다 높은 peak allocated가 확인될 때 NF4로 전환한다. 그 밖의 오류를 메모리 부족으로 간주하지 않는다. 실제 정밀도·전환 근거·메모리 수치를 모델별 protocol과 점검 JSON에 남긴다. 정규화와 LoRA는 FP32, 동결 embedding·출력 행렬은 BF16이다. 10개 모델 모두 LoRA 실험이다.
 
-추가 조합은 [CaRE §4의 Dolly 실험](https://arxiv.org/html/2609.36734v1)과 맞춘다. Gemma는 사용자 조건 동의·로컬 인증 후 다시 포함했다. 공식 가중치만 사용하고 원본 revision·파일 형식은 [추가 모델 registry](results/dolly_sft_additional_v1/registry.json)에 고정한다. 기존 4개 모델의 학습 checkpoint와 protocol은 유지하며 추가 모델은 부모 protocol·동일 원본 자료·실행 소스 해시를 가진 별도 protocol을 만든다.
+추가 조합은 [CaRE §4의 Dolly 실험](https://arxiv.org/html/2609.36734v1)과 맞춘다. Gemma는 사용자 조건 동의·로컬 인증 후 다시 포함했다. 공식 가중치만 사용하고 원본 revision·파일 형식은 [추가 모델 registry](../results/dolly_sft_additional_v1/registry.json)에 고정한다. 기존 4개 모델의 학습 checkpoint와 protocol은 유지하며 추가 모델은 부모 protocol·동일 원본 자료·실행 소스 해시를 가진 별도 protocol을 만든다.
 
-원본 model ID·revision·소스 해시·라이브러리 버전은 [protocol.json](results/dolly_sft_v1/protocol.json)에 고정한다. 과거 연구의 학습된 adapter는 초기값으로 사용하지 않는다. Qwen은 공개 checkpoint에서 텍스트 언어모델 부분만 불러오고 vision encoder는 사용하지 않는다.
+원본 model ID·revision·소스 해시·라이브러리 버전은 [protocol.json](../results/dolly_sft_v1/protocol.json)에 고정한다. 과거 연구의 학습된 adapter는 초기값으로 사용하지 않는다. Qwen은 공개 checkpoint에서 텍스트 언어모델 부분만 불러오고 vision encoder는 사용하지 않는다.
 
 GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 거친 모델이다. [Qwen 공식 모델 카드](https://huggingface.co/Qwen/Qwen3.5-0.8B#model-overview)와 [Gemma 공식 카드](https://huggingface.co/google/gemma-2-2b-it)에서 학습 단계를 확인한다. 크기·학습 이력·어휘·prompt 형식·정밀도가 함께 다르므로 순수한 아키텍처 효과나 양자화 효과로 해석하지 않는다. 계열 각각의 교사–학생 격차와 오류 유형을 확인한다.
 
@@ -84,6 +84,8 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 �
 그림에는 평가가 완료된 모델의 SST-2·BoolQ accuracy/macro-F1, 단일 생성 seed의 Dolly ROUGE-L, 학습·검증 손실 곡선을 별도로 제시한다. 현재 단일 seed에서는 생성 seed 간 표준편차를 추정할 수 없으므로 JSON에 null로 남기고 표·그래프에 오차막대나 ±0을 붙이지 않는다. 본 실험의 5개 생성 반복에서 평균·표본 표준편차를 보고한다. 점수가 없는 모델은 공란으로 두며 이전 공개 SFT 모델 점수로 채우지 않는다. Dolly ROUGE를 accuracy로 해석하지 않는다.
 
 ## 실행과 상태
+
+공통 파라미터 전체 표·현재 장비 사양·장비별 변경 범위·모델 하나씩 실행하는 방법은 [공통 실험 실행 지침](EXPERIMENT_GUIDE.md)을 따른다. 현재 microbatch·누적 횟수는 고정이며, 문서의 장비별 최적화 절차가 자동 적용된 상태는 아니다.
 
 현재 환경에서 다음 순서로 실행한다. Python은 Qwen3.5를 지원하는 transformers가 설치된 환경이어야 한다.
 

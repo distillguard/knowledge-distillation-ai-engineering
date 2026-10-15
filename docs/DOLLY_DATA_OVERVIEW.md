@@ -1,6 +1,6 @@
 # Dolly 데이터의 구성과 이번 평가에서의 사용
 
-확인일: 2026-10-15, Asia/Seoul. 원본 파일과 MiniLLM 공개 평가 파일을 직접 집계했다. [집계 코드](scripts/summarize_dolly.py)·[revision/파일 hash/개수](results/sft_baselines/dolly_composition.json)를 함께 보관한다.
+확인일: 2026-10-15, Asia/Seoul. 원본 파일과 MiniLLM 공개 평가 파일을 직접 집계했다. [집계 코드](../scripts/summarize_dolly.py)·[revision/파일 hash/개수](../results/sft_baselines/dolly_composition.json)를 함께 보관한다.
 
 ## 원본은 무엇인가
 
@@ -19,7 +19,7 @@
 
 ## 과제별 구성
 
-![Dolly 원본과 평가 자료의 과제별 구성](results/sft_baselines/dolly_composition.png)
+![Dolly 원본과 평가 자료의 과제별 구성](../results/sft_baselines/dolly_composition.png)
 
 | 유형 | 무엇을 하는가 | 원본 | 이번 공개 평가 |
 |---|---|---:|---:|

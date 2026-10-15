@@ -15,7 +15,7 @@
 
 ## 데이터와 사전 점검
 
-정확한 revision·파일 SHA256·행 수는 [교사 protocol](results/sft_baselines/teacher_protocol.json)과 [학생 protocol](results/sft_baselines/student_protocol.json)에 남긴다. 일부를 임의 표집하지 않고 다음 공개 집합을 사용한다.
+정확한 revision·파일 SHA256·행 수는 [교사 protocol](../results/sft_baselines/teacher_protocol.json)과 [학생 protocol](../results/sft_baselines/student_protocol.json)에 남긴다. 일부를 임의 표집하지 않고 다음 공개 집합을 사용한다.
 
 | 집합 | 원본 규모 | 역할·처리 |
 |---|---:|---|
@@ -53,7 +53,7 @@ float16·eager attention·eval·gradient 비활성 상태에서 평가한다. �
 - [generation 인자 기본값](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/arguments.py): no-repeat-ngram-size=6. 따라서 반복 진단은 **반복 억제가 있는 이 decoding 조건**의 관측이다.
 - Dolly 공개 500개 prompt는 모두 256토큰 이하임을 확인했다. reference 진단은 [공식 loader](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/data_utils/prompt_datasets.py)의 상한에 맞춰 첫 256개 응답 토큰까지 계산하고 잘린 reference 수를 기록한다. EOS·prompt·padding은 reference token 지표에서 제외한다.
 
-ROUGE와 정규화 Exact Match는 공식 metric과 연결한다. 추가 지표의 정의·집계는 [평가 코드](scripts/evaluate_sft_baselines.py)에 있다. Distinct-4는 이 구현에서 공백으로 나눈 응답 단어의 corpus 4-gram 고유 비율이다. token NLL·perplexity는 응답 토큰으로 가중하고 mean-example NLL도 별도 기록한다. 일부 구현·라이브러리·GPU가 달라 원문 숫자와 비트 단위 동일성을 보장하지 않는다.
+ROUGE와 정규화 Exact Match는 공식 metric과 연결한다. 추가 지표의 정의·집계는 [평가 코드](../scripts/evaluate_sft_baselines.py)에 있다. Distinct-4는 이 구현에서 공백으로 나눈 응답 단어의 corpus 4-gram 고유 비율이다. token NLL·perplexity는 응답 토큰으로 가중하고 mean-example NLL도 별도 기록한다. 일부 구현·라이브러리·GPU가 달라 원문 숫자와 비트 단위 동일성을 보장하지 않는다.
 
 ## 결과
 
@@ -76,7 +76,7 @@ SST-2에서 지정한 두 label의 원래 확률질량 합은 평균 XL 83.99%, 
 
 두 모델 모두 500문항 × 5개 seed 평가를 완료했다. 아래 ±는 **생성 seed 사이의 표본 표준편차**이며 독립 SFT 학습의 변동이나 신뢰구간이 아니다.
 
-![Dolly 생성 평가](results/sft_baselines/dolly_rouge.png)
+![Dolly 생성 평가](../results/sft_baselines/dolly_rouge.png)
 
 | 지표 | GPT-2 XL SFT | GPT-2 base SFT |
 |---|---:|---:|
@@ -123,13 +123,13 @@ reference 진단은 두 모델 모두 같은 **38,775개 응답 토큰**에서 �
 
 이 조건의 Dolly 생성에서는 XL의 ROUGE-L이 base보다 약 4.06점 높고 reference NLL도 낮다. BoolQ의 accuracy·macro-F1은 서로 다른 순위를 보이므로 하나의 점수로 모든 과제의 교사 적합성을 정하지 않는다. SFT 전후나 KD 효과를 비교한 결과는 아니며, 다른 prompt·verbalizer를 사후 선택해 점수를 높이지 않았다.
 
-![분류 평가 비교](results/sft_baselines/classification.png)
+![분류 평가 비교](../results/sft_baselines/classification.png)
 
-원자료 집계: [분류 CSV](results/sft_baselines/classification.csv)·[Dolly CSV](results/sft_baselines/dolly.csv)·[XL 전체 기록](results/sft_baselines/teacher.json)·[base 전체 기록](results/sft_baselines/student.json). CSV/JSON의 비율 지표는 기본 0–1 척도이며 위 표·그림은 해당 지표를 ×100으로 표시한다. MCC는 −1~1, NLL은 응답 토큰당 nats다. 전체 환경은 [환경 기록](results/sft_baselines/environment.json)을 따른다.
+원자료 집계: [분류 CSV](../results/sft_baselines/classification.csv)·[Dolly CSV](../results/sft_baselines/dolly.csv)·[XL 전체 기록](../results/sft_baselines/teacher.json)·[base 전체 기록](../results/sft_baselines/student.json). CSV/JSON의 비율 지표는 기본 0–1 척도이며 위 표·그림은 해당 지표를 ×100으로 표시한다. MCC는 −1~1, NLL은 응답 토큰당 nats다. 전체 환경은 [환경 기록](../results/sft_baselines/environment.json)을 따른다.
 
 ## 실행과 원자료
 
-기존 PyTorch/Transformers 환경은 [기반 모델 점검 기록](results/model_preflight.json)을 따르며 추가 의존성은 [requirements-eval.txt](requirements-eval.txt)에 고정했다. 현재 추가 의존성은 전역 Python을 바꾸지 않고 Git 제외 `tmp/eval_deps/`에 설치했다.
+기존 PyTorch/Transformers 환경은 [기반 모델 점검 기록](../results/model_preflight.json)을 따르며 추가 의존성은 [requirements-eval.txt](../requirements-eval.txt)에 고정했다. 현재 추가 의존성은 전역 Python을 바꾸지 않고 Git 제외 `tmp/eval_deps/`에 설치했다.
 
 ```powershell
 python -m pip install --target tmp/eval_deps -r requirements-eval.txt

@@ -1,8 +1,32 @@
+# Local source downloads, datasets, model caches and training artifacts.
 .sources/
 tmp/
+.cache/
+.venv/
+venv/
 __pycache__/
-results/sft_baselines/*_progress.json
-results/dolly_sft_v1/*_progress.json
-results/dolly_sft_v1/worker_status.json
-results/dolly_sft_v1/reported_completions.json
-results/dolly_sft_additional_v1/*/*_progress.json
+*.py[cod]
+.pytest_cache/
+
+# Credentials and machine-specific editor settings.
+.env
+.env.*
+.hf_token
+.vscode/settings.json
+
+# Large weights/checkpoints belong in local storage; summary JSON/CSV/PNG stay public.
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+**/checkpoint-*/
+**/best_adapter/
+*.log
+*.tmp
+*.lock
+
+# Volatile progress and per-chat notification receipts.
+results/**/*_progress.json
+results/**/worker_status.json
+results/**/reported_completions.json

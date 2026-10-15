@@ -10,13 +10,13 @@
 
 연구 질문·평가 사건 → 데이터 후보·전처리 → 공통 모델의 SFT 비교 → 모델·데이터 최종 선정 → KD 비교 순서다. 현재 XL/base는 비교의 통제 조건이다. 문맥 길이·실제 수행·교사/학생 오류 조합이 연구 질문에 맞는지 확인한 후 확정한다.
 
-SFT 비교에서 데이터와 모델 초기 상태를 동시에 바꾸지 않는다. 각 데이터의 XL은 같은 XL 기반 revision에서, base는 같은 base 기반 revision에서 출발한다. 데이터 간 순차 추가 학습이나 이미 Dolly로 학습한 모델의 재사용은 이번 비교가 아니다. 두 revision은 [모델 점검 기록](results/model_preflight.json)에 고정했다.
+SFT 비교에서 데이터와 모델 초기 상태를 동시에 바꾸지 않는다. 각 데이터의 XL은 같은 XL 기반 revision에서, base는 같은 base 기반 revision에서 출발한다. 데이터 간 순차 추가 학습이나 이미 Dolly로 학습한 모델의 재사용은 이번 비교가 아니다. 두 revision은 [모델 점검 기록](../results/model_preflight.json)에 고정했다.
 
 최고 accuracy 하나로 데이터를 고르지 않는다. KL 방향과 gate의 차이를 관찰할 수 있는 분포·응답, Revival의 지도 유익성을 판정할 정답, 교사·학생의 다양한 오류 조합, 누수·품질·문맥 길이·로컬 반복 가능성을 함께 본다. 두 모델이 모두 거의 풀지 못하거나 오류 조합이 한쪽으로만 몰리는지도 확인한다. 수치 임계값은 임의로 만들지 않는다.
 
 ## 2. 원본 전체 집계
 
-[재실행 코드](scripts/audit_dataset_candidates.py)와 [전체 JSON](results/dataset_candidates/audit.json). 표본 추정이 아닌 명시한 파일 전체 집계다. UltraChat의 `gen` split은 SFT용 자료가 아니므로 내려받거나 학습량에 합치지 않았다. 원본 행 수는 최종 학습량이 아니다.
+[재실행 코드](../scripts/audit_dataset_candidates.py)와 [전체 JSON](../results/dataset_candidates/audit.json). 표본 추정이 아닌 명시한 파일 전체 집계다. UltraChat의 `gen` split은 SFT용 자료가 아니므로 내려받거나 학습량에 합치지 않았다. 원본 행 수는 최종 학습량이 아니다.
 
 | 후보·공개 split | 읽은 행/대화 | 직렬화 길이 중앙값 | 1,024토큰을 초과한 완전한 행/대화 |
 |---|---:|---:|---:|
@@ -86,7 +86,7 @@ SFT 단계에는 KD 온도 T나 confidence gate를 넣지 않는다. KD 설정 �
 
 ## 6. 이 컴퓨터에서 실행한 학습 점검
 
-[코드](scripts/preflight_sft_training.py), [실측 JSON](results/dataset_candidates/training_preflight.json). 기반 XL/base를 각각 다시 불러와 microbatch 1, 길이 512와 1,024에서 response-only loss·backward·optimizer.step을 실행했다. 모든 parameter의 유한 gradient와 유한 갱신 후 가중치, 실제 한 가중치의 변화를 확인했다. 각 dtype의 512 점검 뒤 1,024 점검은 한 번 갱신된 상태에서 수행했다. checkpoint를 저장하지 않았다.
+[코드](../scripts/preflight_sft_training.py), [실측 JSON](../results/dataset_candidates/training_preflight.json). 기반 XL/base를 각각 다시 불러와 microbatch 1, 길이 512와 1,024에서 response-only loss·backward·optimizer.step을 실행했다. 모든 parameter의 유한 gradient와 유한 갱신 후 가중치, 실제 한 가중치의 변화를 확인했다. 각 dtype의 512 점검 뒤 1,024 점검은 한 번 갱신된 상태에서 수행했다. checkpoint를 저장하지 않았다.
 
 공통 실행 경로는 SDPA·gradient checkpointing·BF16 autocast(cache off)·**bitsandbytes 0.47.0 AdamW8bit**다. 일반 FP32 AdamW의 가중치+gradient+두 moment만으로 XL은 약 23.21GiB여서 16GB GPU의 범위를 넘는다. 8비트 optimizer는 메모리를 줄이기 위한 원문과의 변경이다. 모델 가중치의 8비트 양자화나 LoRA를 적용한 것은 아니다. [Windows/CUDA 12.8·sm120 지원 근거](https://huggingface.co/docs/bitsandbytes/v0.47.0/installation), [8비트 optimizer 설명](https://huggingface.co/docs/bitsandbytes/v0.47.0/optimizers).
 

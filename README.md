@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -37,7 +37,7 @@ LoRA는 10개 모델에 공통 적용한다. 추가한 OPT·OpenLLaMA·Gemma 조
 - `response`: SFT에서 학습할 기준 응답
 - `category`: 과제 유형
 
-Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입력은 MiniLLM이 공개한 Dolly 분할이다. 지시문 중복과 네 tokenizer의 길이를 함께 확인한 공통 분할은 **학습 11,117건·검증 975건·선정 평가 500건**이다. 응답을 잘라 맞추지 않고 길이 초과 예제를 공통 제외한다. UltraChat·MetaMathQA는 확장 후보로 보관한다. 상세 근거·제외 수·설정 선택은 [현재 SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md)에 기록한다.
+Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입력은 MiniLLM이 공개한 Dolly 분할이다. 지시문 중복과 네 tokenizer의 길이를 함께 확인한 공통 분할은 **학습 11,117건·검증 975건·선정 평가 500건**이다. 응답을 잘라 맞추지 않고 길이 초과 예제를 공통 제외한다. UltraChat·MetaMathQA는 확장 후보로 보관한다. 상세 근거·제외 수·설정 선택은 [현재 SFT 비교 계획](docs/DOLLY_SFT_MODEL_SELECTION.md)에 기록한다.
 
 ## 평가 기준
 
@@ -78,12 +78,30 @@ Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입�
 
 현재 완료된 성능 점수는 저자가 공개한 GPT-2 SFT 모델의 평가 결과다. 이번 직접 학습 결과는 후보별 완료 후 별도 기록한다. 본 SFT가 진행 중이며 지식증류 결과는 아직 없다. 일회성 갱신 통과는 장기 학습 안정성을 보장하지 않는다.
 
+## 저장소 구성
+
+```text
+README.md                 연구 개요와 문서 진입점
+docs/                     공통 실행 지침·연구계획·보고서·데이터·진행 기록
+papers/                   참고논문별 한국어 분석
+scripts/                  준비·점검·학습·평가·문서 갱신
+tests/                    실행 순서와 중복 실행 차단 검사
+results/                  검증된 protocol·요약 JSON·CSV·그림
+.vscode/tasks.json        모델 하나 또는 전체의 공통 실행 작업
+requirements-sft.txt      현재 SFT·평가 환경의 직접 의존성 버전
+tmp/                      로컬 모델·자료·checkpoint·응답·로그, Git 제외
+.sources/                 내려받은 원문 자료, Git 제외
+```
+
+모델별 명령·필수 결과물·완료 판정은 [공통 실행 지침](docs/EXPERIMENT_GUIDE.md#모델별-필수-결과물과-완료-판정)을 따른다. 현재 학습의 checkpoint와 protocol 경로는 유지한다.
+
 ## 관련 문서
 
-- [연구계획](RESEARCH_PLAN.md) · [연구보고서 초안](RESEARCH_REPORT.md)
-- [현재 Dolly 모델 SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md) · [모델별 진행](SFT_PROGRESS.md) · [실행 명세와 점검 결과](results/dolly_sft_v1/)
-- [데이터 선정 조사](DATA_SELECTION.md) · [이전 데이터 후보별 SFT 비교 설계](DATASET_SFT_COMPARISON.md)
-- [공개 SFT 모델 평가 결과](SFT_BASELINE_EVALUATION.md) · [Dolly 구성](DOLLY_DATA_OVERVIEW.md)
+- [공통 파라미터·장비별 실행 지침](docs/EXPERIMENT_GUIDE.md) · [VSCode 실행 작업](.vscode/tasks.json)
+- [연구계획](docs/RESEARCH_PLAN.md) · [연구보고서 초안](docs/RESEARCH_REPORT.md)
+- [현재 Dolly 모델 SFT 비교 계획](docs/DOLLY_SFT_MODEL_SELECTION.md) · [모델별 진행](docs/SFT_PROGRESS.md) · [실행 명세와 점검 결과](results/dolly_sft_v1)
+- [데이터 선정 조사](docs/DATA_SELECTION.md) · [이전 데이터 후보별 SFT 비교 설계](docs/DATASET_SFT_COMPARISON.md)
+- [공개 SFT 모델 평가 결과](docs/SFT_BASELINE_EVALUATION.md) · [Dolly 구성](docs/DOLLY_DATA_OVERVIEW.md)
 - 논문 해설: [Hinton](papers/01_hinton_2015_ko.md) · [MiniLLM](papers/02_minillm_2024_ko.md) · [CaRE-KD](papers/03_care_kd_2026_ko.md)
 
 연결된 계획·보고서의 과거 검토에는 이전의 데이터 3종 × 모델 2종 설계가 남아 있다. 현재 실행 범위는 **Dolly 고정·5개 계열의 10개 모델 LoRA SFT 비교**다. 진행 상태는 결과 폴더와 모델별 진행 기록을 따른다.

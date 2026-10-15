@@ -33,7 +33,7 @@ MiniLLM v4는 Dolly를 사용하고, CaRE v1은 Dolly·UltraChat·WizardCoder·M
 
 ## 3. 확인한 규모·분할·버전
 
-아래 버전은 공식 카드/API와 대조하고 내려받은 원자료에 고정했다. **원문 실행 당시의 revision이나 새 연구의 채택 규모를 뜻하지 않는다.** 2026-10-15에 Dolly 전체, UltraChat SFT 두 split 전체, MetaMathQA 전체의 구조·길이를 직접 집계했다. 파일 hash와 집계는 [audit.json](results/dataset_candidates/audit.json), 렌더링 조건과 해석은 [비교 프로토콜](DATASET_SFT_COMPARISON.md)을 따른다. 정답 품질·의미상 중복 감사까지 끝난 것은 아니다.
+아래 버전은 공식 카드/API와 대조하고 내려받은 원자료에 고정했다. **원문 실행 당시의 revision이나 새 연구의 채택 규모를 뜻하지 않는다.** 2026-10-15에 Dolly 전체, UltraChat SFT 두 split 전체, MetaMathQA 전체의 구조·길이를 직접 집계했다. 파일 hash와 집계는 [audit.json](../results/dataset_candidates/audit.json), 렌더링 조건과 해석은 [비교 프로토콜](DATASET_SFT_COMPARISON.md)을 따른다. 정답 품질·의미상 중복 감사까지 끝난 것은 아니다.
 
 | 데이터 | 확인한 공개 split과 행 수 | 카드의 라이선스 표시 | 확인한 repository revision |
 |---|---|---|---|
@@ -58,7 +58,7 @@ UltraChat의 전체 행 수 515,311을 SFT 학습량으로 적지 않는다. 데
 
 [관측] [MiniLLM/dolly](https://huggingface.co/datasets/MiniLLM/dolly/tree/d131636138be0ff3fd0901c12c1739844d337279)에는 `raw.jsonl`과 `valid.jsonl`이 있다. 최초 메타데이터 조회 당시 기본 Viewer는 `text` 컬럼의 `validation` 500행만 표시했다. 이후 2026-10-15에 파일을 직접 읽어 raw 12,435행·valid 500행을 확인했고, [공식 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/evaluate_main.py)가 valid를 test 역할로 읽는 것을 대조했다. 이를 공개 SFT 기준선 평가에 사용하며 논문의 validation 1K나 새 학습 자료로 해석하지 않는다. 해당 패키지의 카드 표시는 Apache 2.0이며 원본 Dolly의 CC BY-SA 3.0 표시와 다르므로, 이를 원본 이용 조건의 변경 근거로 취급하지 않는다.
 
-[관측: SFT 기준선 평가용 점검] 공개 500문항의 prompt는 두 SFT 모델의 공통 tokenizer에서 모두 256토큰 이하였다. 공백·대소문자를 정규화한 instruction+input을 raw와 대조했을 때 평가 10행이 9종의 입력과 일치했다. [SFT 평가 문서](SFT_BASELINE_EVALUATION.md)에 전체 500행과 이 10행을 제외한 490행의 평가를 함께 기록한다. 파일 hash·일치 행 번호는 [protocol](results/sft_baselines/protocol.json)에 고정한다. 완전한 체크포인트 학습 이력·의미상 중복 감사를 마쳤다고 표시하지 않는다. 이미 기준선 확인에 사용한 평가 집합을 앞으로의 독립 최종 test로 자동 취급하지 않는다.
+[관측: SFT 기준선 평가용 점검] 공개 500문항의 prompt는 두 SFT 모델의 공통 tokenizer에서 모두 256토큰 이하였다. 공백·대소문자를 정규화한 instruction+input을 raw와 대조했을 때 평가 10행이 9종의 입력과 일치했다. [SFT 평가 문서](SFT_BASELINE_EVALUATION.md)에 전체 500행과 이 10행을 제외한 490행의 평가를 함께 기록한다. 파일 hash·일치 행 번호는 [protocol](../results/sft_baselines/protocol.json)에 고정한다. 완전한 체크포인트 학습 이력·의미상 중복 감사를 마쳤다고 표시하지 않는다. 이미 기준선 확인에 사용한 평가 집합을 앞으로의 독립 최종 test로 자동 취급하지 않는다.
 
 일반 QA·요약·창작을 같은 정확도 사건으로 합치지 않는다. context를 주는 과제에서 context를 제거하면 문제 자체가 달라진다. reference와 표현이 다르다는 이유만으로 생성 답을 오답으로 분류하지 않는다. [Dolly 카드의 과제·품질 설명](https://huggingface.co/datasets/databricks/databricks-dolly-15k).
 
@@ -74,7 +74,7 @@ Dolly-15K는 일반 instruction 자료의 기준 후보다. MiniLLM 원문의 D_
 
 ### 4.2. 원본 파일의 구성 확인
 
-2026-10-15에 Databricks 원본 15,011행 파일도 내려받아 네 필드·8개 과제·context 유무를 직접 집계했다. [Dolly 데이터 구성 문서](DOLLY_DATA_OVERVIEW.md)와 [파일 hash·구성 집계](results/sft_baselines/dolly_composition.json)를 따른다. 원본의 context 보유 비중은 4,467/15,011(29.76%)이며 평가용 500행에서는 91/500(18.2%)다.
+2026-10-15에 Databricks 원본 15,011행 파일도 내려받아 네 필드·8개 과제·context 유무를 직접 집계했다. [Dolly 데이터 구성 문서](DOLLY_DATA_OVERVIEW.md)와 [파일 hash·구성 집계](../results/sft_baselines/dolly_composition.json)를 따른다. 원본의 context 보유 비중은 4,467/15,011(29.76%)이며 평가용 500행에서는 91/500(18.2%)다.
 
 공백·대소문자 정규화 후 평가 500개 instruction은 원본에서 모두 찾았으나 instruction+context가 같은 것은 448개였고 52개는 context가 달랐다. 변환·버전 경로의 완전한 동일성은 아직 미확인이다. 두 모델은 같은 공개 prompt로 평가했다. 단순한 행 수 차이로 저자가 실제 사용한 train/development/test 크기나 필터 제외 수를 역산하지 않는다. 원본 전체를 읽어 구성 수를 확인한 것과 전처리·의미상 중복·정답 품질 감사를 마친 것은 다르다.
 

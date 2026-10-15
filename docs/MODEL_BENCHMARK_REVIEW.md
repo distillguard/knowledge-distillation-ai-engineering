@@ -43,7 +43,7 @@
 
 논문은 base 학생을 120M급으로 표시하며 위 GPT-2 모델 카드는 124M으로 안내한다. 실제 선정은 모델 ID·revision을 기준으로 기록한다. 상세 추천과 해석 범위는 [연구보고서 §6](RESEARCH_REPORT.md)을 따른다.
 
-2026-10-15에 확인한 GPT-2 XL/base config에는 vocab_size=50,257과 attention·embedding·residual dropout 설정이 있다. 이후 고정한 기반 revision의 tokenizer backend·어휘 ID 전체 일치와 공통 입력 forward를 확인했다. MC-BALD의 유효성이나 최적 dropout을 검증한 결과는 아니다. [XL config](https://huggingface.co/openai-community/gpt2-xl/raw/main/config.json), [base config](https://huggingface.co/openai-community/gpt2/resolve/main/config.json), [로컬 적재·추론 기록](results/model_preflight.json).
+2026-10-15에 확인한 GPT-2 XL/base config에는 vocab_size=50,257과 attention·embedding·residual dropout 설정이 있다. 이후 고정한 기반 revision의 tokenizer backend·어휘 ID 전체 일치와 공통 입력 forward를 확인했다. MC-BALD의 유효성이나 최적 dropout을 검증한 결과는 아니다. [XL config](https://huggingface.co/openai-community/gpt2-xl/raw/main/config.json), [base config](https://huggingface.co/openai-community/gpt2/resolve/main/config.json), [로컬 적재·추론 기록](../results/model_preflight.json).
 
 [설계] 종합 benchmark 최고점보다 같은 교사·학생에서 손실·gate·불확실성·수용/거절·생성을 반복해 계측할 수 있는지 우선한다. 직접 토큰 KL 비교를 위해 tokenizer·어휘 ID·특수 토큰과 같은 prefix를 확인한다. MC 추정이 0으로 퇴화하면 dropout 경로·원문 설정을 대조한다. GPU 16GB급이라는 정보만으로 실제 학습 가능성을 확정하지 않는다.
 

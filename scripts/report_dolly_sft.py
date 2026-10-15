@@ -56,12 +56,14 @@ def progress():
         lines.append(f'| {label} | {len(completed)}/2 | {lr} | {loss} | {precision} | {"완료" if evaluation_path.exists() else "대기"} | {finished} |')
     lines += ["", "NLL은 각 모델 내부의 checkpoint·학습률 선택에 사용한다. 다른 tokenizer의 NLL로 성능 순위를 매기지 않는다.", "",
               "각 모델 SFT 후 SST-2 872건·BoolQ 3,269건·Dolly 500문항(생성 seed 10)을 평가하고 다음 모델로 진행한다. 단일 생성 seed의 표준편차는 미추정이다."]
-    (ROOT / "SFT_PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    block = (f"현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **{len(selected)}/10**, 선정 평가 완료 **{len(evaluated)}/10**이다. "
-             "Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), "
-             "평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.")
-    for filename in ("README.md", "RESEARCH_PLAN.md", "RESEARCH_REPORT.md", "DOLLY_SFT_MODEL_SELECTION.md"):
+    (ROOT / "docs/SFT_PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    for filename in ("README.md", "docs/RESEARCH_PLAN.md", "docs/RESEARCH_REPORT.md", "docs/DOLLY_SFT_MODEL_SELECTION.md"):
         path = ROOT / filename
+        progress_link = "docs/SFT_PROGRESS.md" if path.parent == ROOT else "SFT_PROGRESS.md"
+        report_link = "results/dolly_sft_v1/REPORT.md" if path.parent == ROOT else "../results/dolly_sft_v1/REPORT.md"
+        block = (f"현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **{len(selected)}/10**, 선정 평가 완료 **{len(evaluated)}/10**이다. "
+                 f"Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록]({progress_link}), "
+                 f"평가 점수와 그림은 [직접 SFT 평가 결과]({report_link})를 따른다.")
         path.write_text(replace_progress(path.read_text(encoding="utf-8"), block), encoding="utf-8")
     return selected
 
@@ -72,7 +74,7 @@ def main():
     runs = {name: read(OUT / f"{name}_evaluation.json") for name in MODELS if (OUT / f"{name}_evaluation.json").exists()}
     if not runs:
         selected = progress()
-        (OUT / "REPORT.md").write_text(f"# Dolly 모델 SFT 평가 결과\n\nSFT 선택 완료 {len(selected)}/10. 아직 완료된 선정 평가가 없다. [모델별 학습 상태](../../SFT_PROGRESS.md)를 따른다.\n", encoding="utf-8")
+        (OUT / "REPORT.md").write_text(f"# Dolly 모델 SFT 평가 결과\n\nSFT 선택 완료 {len(selected)}/10. 아직 완료된 선정 평가가 없다. [모델별 학습 상태](../../docs/SFT_PROGRESS.md)를 따른다.\n", encoding="utf-8")
         print("Updated SFT progress; no completed evaluations yet", flush=True)
         return
     labels = []
