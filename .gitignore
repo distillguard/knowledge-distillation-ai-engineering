@@ -4,3 +4,5 @@ __pycache__/
 results/sft_baselines/*_progress.json
 results/dolly_sft_v1/*_progress.json
 results/dolly_sft_v1/worker_status.json
+results/dolly_sft_v1/reported_completions.json
+results/dolly_sft_additional_v1/*/*_progress.json

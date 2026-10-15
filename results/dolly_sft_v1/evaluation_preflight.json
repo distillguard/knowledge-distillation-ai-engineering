@@ -25,9 +25,23 @@
     }
   },
   "protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
-  "evaluation_script_sha256": "f5b95b01e919b0760b2e79d0a61f946deb9b55b069c77c2998e3327cc6187479",
+  "evaluation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
   "generation_summary_self_check": true,
   "model_selection_generation_seeds": [
     10
-  ]
+  ],
+  "additional_tokenizer_audit": {
+    "models_checked": [
+      "gpt2_base",
+      "gpt2_xl",
+      "qwen_08b",
+      "qwen_9b",
+      "opt_125m",
+      "opt_27b",
+      "openllama_3b",
+      "gemma2_2b_it"
+    ],
+    "same_fixed_rows": true,
+    "complete_inputs_within_native_context": true
+  }
 }

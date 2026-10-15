@@ -2,7 +2,13 @@
 
 작성일: 2026-10-15, Asia/Seoul
 
-문서 상태: **연구보고서 초안. 현재 실행은 Dolly 고정·GPT-2 XL/base와 Qwen3.5-9B/0.8B의 LoRA SFT 비교다. 9B에만 NF4를 적용하고 나머지는 BF16 가중치를 사용한다.** 공통 분할·설정 근거·실행 상태는 [현재 비교 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [실행 결과](results/dolly_sft_v1/)를 따른다. 아래의 데이터 3종 비교와 두 모델 관련 내용은 이전 검토·관측 기록이며, 공개 SFT 모델 평가와 이번 직접 학습 결과를 합치지 않는다. KD 방법 비교 결과는 아직 없다.
+<!-- SFT_PROGRESS:START -->
+
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **0/10**, 선정 평가 완료 **0/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](results/dolly_sft_v1/REPORT.md)를 따른다.
+
+<!-- SFT_PROGRESS:END -->
+
+문서 상태: **연구보고서 초안. 현재 실행은 Dolly 고정·GPT-2·Qwen3.5·OPT·OpenLLaMA·Gemma-2의 총 10개 모델 LoRA SFT 비교다. 기존 GPT-2 두 모델·Qwen0.8B는 BF16, Qwen9B는 NF4이며, 추가 모델은 가중치 크기와 실제 전용 VRAM 점검에 따라 정밀도를 정한다.** 공통 분할·설정 근거·실행 상태는 [현재 비교 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [실행 결과](results/dolly_sft_v1/)를 따른다. 아래의 데이터 3종 비교와 두 모델 관련 내용은 이전 검토·관측 기록이며, 공개 SFT 모델 평가와 이번 직접 학습 결과를 합치지 않는다. KD 방법 비교 결과는 아직 없다.
 
 이 문서는 연구의 문제·이론·방법·모델 추천과 보고할 자료를 연결한다. 상세 실행·설정 선택 절차는 [연구계획서](RESEARCH_PLAN.md), 기존 분석은 [Hinton](papers/01_hinton_2015_ko.md)·[MiniLLM](papers/02_minillm_2024_ko.md)·[CaRE-KD](papers/03_care_kd_2026_ko.md)를 따른다. 원문 주장, 우리 설계, 실제 관측을 구분하며 결과가 없는 곳에 수치를 채우지 않는다.
 
@@ -10,7 +16,7 @@
 |---|---|
 | 연구 중심 | KL 방향·Hard/Soft gate의 손실 적응, Revival의 갱신 거절, 두 장치 결합의 역할 비교 |
 | 현재 데이터 | Dolly 고정. 공통 학습 11,117건·검증 975건·선정 평가 500건. UltraChat·MetaMathQA는 후속 후보 |
-| 비교 모델 | GPT-2 XL/base와 Qwen3.5-9B/0.8B, LoRA 공통 적용. 9B만 NF4, 나머지 BF16. 원본 revision·계열 내 어휘 일치 확인 |
+| 비교 모델 | GPT-2 XL/base, Qwen3.5-9B/0.8B, OPT-2.7B/125M, OpenLLaMA-7B/3B, Gemma-2-9B-IT/2B-IT. LoRA 공통 적용, 모델별 원본 revision·어휘 대응·정밀도와 근거 기록 |
 | 추가 비교 후보 | SeqKD와 교사 응답 증강. 실제 실험 포함 여부는 미정 |
 | 실험·수치·그래프 | 기반 모델 점검과 공개 SFT 기준선 평가를 별도 기록. KD 학습·방법 비교는 미실행. §9.3은 KD 예정 자료 |
 | 생성 평가 반복 | 모델 선정은 공통 seed 10 한 개, 최종 선정 모델의 본 실험은 10/20/30/40/50의 5개 생성 seed. 현재 단일 seed에서 표준편차 미추정 |

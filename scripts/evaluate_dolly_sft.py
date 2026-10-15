@@ -1,4 +1,4 @@
-"""Evaluate the four newly trained adapters on shared selection-evaluation records."""
+"""Evaluate each newly trained adapter on the fixed model-selection records."""
 
 import argparse
 from collections import Counter
@@ -10,8 +10,8 @@ from pathlib import Path
 import statistics
 import sys
 
-from dolly_sft import (HUB, LOCAL, MODELS, OUT, ROOT, load_model, protocol,
-                       render_prompt, rows, sha, tokenizer_for, write_json)
+from dolly_sft import HUB, LOCAL, OUT, ROOT, rows, sha, write_json
+from dolly_study import MODELS, generation_eos_ids, load_model, model_protocol, render_prompt, selected_record, tokenizer_for
 import torch
 import pyarrow.parquet as pq
 # These packages are pure Python; keep the current environment's compiled dependencies first.
@@ -40,12 +40,16 @@ def classification_metrics(labels, predictions, probabilities):
 
 def classification_data(tokenizers):
     output, manifest = {}, {}
+    frozen_rows = json.loads((OUT / "evaluation_preflight.json").read_text(encoding="utf-8"))["classification"]
     for dataset, (repo, revision, filename) in DATA.items():
         path = HUB / ("datasets--" + repo.replace("/", "--")) / "snapshots" / revision / filename
         source = pq.read_table(path).to_pylist()
         kept, excluded = [], []
         words = ("negative", "positive") if dataset == "sst2" else ("No", "Yes")
         for index, row in enumerate(source):
+            if index in frozen_rows[dataset]["excluded_source_rows"]:
+                excluded.append(index)
+                continue
             instruction, context = (("Determine the sentiment of the input sentence. Please respond as positive or negative.", row["sentence"])
                                     if dataset == "sst2" else (f'Read the input passage and answer the question: {row["question"].rstrip(" ?")}? Your answer should be “Yes” or “No”.', row["passage"]))
             item = {"source_row": index, "label": row["label"], "models": {}}
@@ -54,16 +58,15 @@ def classification_data(tokenizers):
                 ids = tokenizer.encode(prompt, add_special_tokens=False)
                 targets = [tokenizer.encode(w, add_special_tokens=False) for w in words]
                 assert all(targets)
+                assert len(ids) + max(map(len, targets)) - 1 <= tokenizer.model_max_length, (dataset, index, name, "full shared input exceeds native context")
                 item["models"][name] = {"prompt": ids, "targets": targets}
-            if any(len(d["prompt"]) + max(map(len, d["targets"])) - 1 > 1024 for d in item["models"].values()):
-                excluded.append(index)
-            else:
-                kept.append(item)
+            kept.append(item)
         assert len(kept) + len(excluded) == len(source)
+        assert len(kept) == frozen_rows[dataset]["included_rows"]
         output[dataset] = kept
         manifest[dataset] = {"repo": repo, "revision": revision, "sha256": sha(path),
                              "included_rows": len(kept), "excluded_source_rows": excluded,
-                             "context_limit_basis": "common 1024, the GPT-2 native capacity",
+                             "context_limit_basis": "fixed original four-tokenizer audit: SST-2 872 and BoolQ 3269; added models keep the same rows and full input within their native context",
                              "decision": "conditional label-sequence log probability; not generation answer parsing"}
     return output, manifest
 
@@ -107,6 +110,7 @@ def summarize_generation(summaries):
 
 def generate(name, model, tokenizer, selected, fingerprint):
     scorer = rouge_scorer.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=True)
+    eos_ids = generation_eos_ids(name, tokenizer)
     summaries = []
     for seed in SEEDS:
         destination = OUT / f"{name}_generation_seed{seed}.json"
@@ -122,14 +126,14 @@ def generate(name, model, tokenizer, selected, fingerprint):
                 prompt = render_prompt(name, tokenizer, row["instruction"], row["input"])
                 ids = tokenizer(prompt, return_tensors="pt", add_special_tokens=False).to("cuda")
                 output = model.generate(**ids, max_new_tokens=256, do_sample=True, temperature=1, top_k=0, top_p=1,
-                                        no_repeat_ngram_size=6, use_cache=True, eos_token_id=tokenizer.eos_token_id,
+                                        no_repeat_ngram_size=6, use_cache=True, eos_token_id=eos_ids,
                                         pad_token_id=tokenizer.eos_token_id)
                 continuation = output[0, ids.input_ids.shape[1]:]
                 text = tokenizer.decode(continuation, skip_special_tokens=True)
                 generated.append({"id": row["id"], "response": text, "generated_tokens": len(continuation)})
                 for metric, score in scorer.score(row["output"], text).items():
                     totals[metric] += 100 * score.fmeasure
-                cap += int(len(continuation) == 256 and continuation[-1] != tokenizer.eos_token_id)
+                cap += int(len(continuation) == 256 and int(continuation[-1]) not in eos_ids)
                 empty += int(not text.strip())
                 if (index + 1) % 50 == 0:
                     print(f"GENERATE {name} seed={seed}: {index + 1}/{len(selected)}", flush=True)
@@ -152,19 +156,20 @@ def main():
     assert test["mcc"] == 0 and test["confusion_matrix_true_rows_predicted_columns"] == [[2, 0], [2, 0]]
     one_seed = summarize_generation([dict.fromkeys(("rouge1", "rouge2", "rougeL", "length_cap_rate", "empty_rate", "mean_generated_tokens"), 1.0)])
     assert all(score["mean"] == 1.0 and score["sample_sd_across_generation_seeds"] is None for score in one_seed.values())
-    training = protocol()
-    tokenizers = {name: tokenizer_for(name) for name in MODELS}
-    data, manifest = classification_data(tokenizers)
     selected = rows(LOCAL / "selection_evaluation.jsonl")
-    specification = {"training_protocol_fingerprint": training["fingerprint"], "evaluation_script_sha256": sha(__file__),
-                     "classification": manifest, "generation": {"seeds": SEEDS, "max_new_tokens": 256,
-                     "phase": "model_selection", "seed_basis": "User decision: one common seed, 10 (first MiniLLM seed); five seeds reserved for the selected-model main experiment",
-                     "temperature": 1, "top_k": 0, "top_p": 1, "no_repeat_ngram_size": 6,
-                     "microbatch": 1, "basis": "MiniLLM sampling settings and seeds; local changes: microbatch 1 and fixed new-token cap 256 (512 total minus common maximum prompt 256), rather than original 512 minus actual padded prompt length",
-                     "evaluation_is_independent_final_test": False}}
     names = list(MODELS) if args.model == "all" else [args.model]
     for name in names:
-        chosen = json.loads((OUT / f"{name}_selected.json").read_text(encoding="utf-8"))
+        training = model_protocol(name)
+        tokenizer = tokenizer_for(name)
+        data, manifest = classification_data({name: tokenizer})
+        specification = {"training_protocol_fingerprint": training["fingerprint"], "evaluation_script_sha256": sha(__file__),
+                     "classification": manifest, "generation": {"seeds": SEEDS, "max_new_tokens": 256,
+                     "phase": "model_selection", "seed_basis": "User decision: one common seed, 10 (first MiniLLM seed); five seeds reserved for the selected-model main experiment",
+                     "eos_token_ids": generation_eos_ids(name, tokenizer),
+                     "temperature": 1, "top_k": 0, "top_p": 1, "no_repeat_ngram_size": 6,
+                     "microbatch": 1, "basis": "MiniLLM sampling settings and seeds; local changes: microbatch 1 and fixed new-token cap 256, originally 512 minus the first four tokenizers' common prompt cap 256. Added tokenizers keep complete identical text, so their prompts may exceed 256. This is not the original variable 512-minus-padded-prompt response budget",
+                     "evaluation_is_independent_final_test": False}}
+        chosen = selected_record(name)
         assert chosen["protocol_fingerprint"] == training["fingerprint"]
         fingerprint = sha(__file__) + training["fingerprint"] + sha(ROOT / chosen["adapter"] / "adapter_model.safetensors")
         destination = OUT / f"{name}_evaluation.json"
@@ -176,7 +181,7 @@ def main():
         model.eval().requires_grad_(False); model.gradient_checkpointing_disable()
         result = {"status": "completed", "fingerprint": fingerprint,
                   "classification": classify(name, model, data),
-                  "dolly_generation": generate(name, model, tokenizers[name], selected, fingerprint)}
+                  "dolly_generation": generate(name, model, tokenizer, selected, fingerprint)}
         write_json(destination, result)
         del model; gc.collect(); torch.cuda.empty_cache()
 
