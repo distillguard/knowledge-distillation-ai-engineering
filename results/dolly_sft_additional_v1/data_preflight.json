@@ -1,0 +1,178 @@
+{
+  "status": "passed",
+  "checked_at_utc": "2026-10-15T13:05:02.172440+00:00",
+  "parent_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "study_script_sha256": "880f4c3976c8d6c3564a46285bda3f740a884870c8a7f6227e463129393a6b46",
+  "models": {
+    "opt_125m": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 2,
+      "generation_eos_ids": [
+        2
+      ],
+      "tokenizer_class": "GPT2Tokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 511,
+          "max_prompt_tokens": 256
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 512,
+          "max_prompt_tokens": 255
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 1960,
+          "max_prompt_tokens": 256
+        }
+      }
+    },
+    "opt_27b": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 2,
+      "generation_eos_ids": [
+        2
+      ],
+      "tokenizer_class": "GPT2Tokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 511,
+          "max_prompt_tokens": 256
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 512,
+          "max_prompt_tokens": 255
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 1960,
+          "max_prompt_tokens": 256
+        }
+      }
+    },
+    "openllama_3b": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 2,
+      "generation_eos_ids": [
+        2
+      ],
+      "tokenizer_class": "LlamaTokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 563,
+          "max_prompt_tokens": 306
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 589,
+          "max_prompt_tokens": 297
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 2159,
+          "max_prompt_tokens": 293
+        }
+      }
+    },
+    "openllama_7b": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 2,
+      "generation_eos_ids": [
+        2
+      ],
+      "tokenizer_class": "LlamaTokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 563,
+          "max_prompt_tokens": 306
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 589,
+          "max_prompt_tokens": 297
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 2159,
+          "max_prompt_tokens": 293
+        }
+      }
+    },
+    "gemma2_2b_it": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 107,
+      "generation_eos_ids": [
+        107,
+        1
+      ],
+      "tokenizer_class": "GemmaTokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 496,
+          "max_prompt_tokens": 253
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 481,
+          "max_prompt_tokens": 254
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 1961,
+          "max_prompt_tokens": 250
+        }
+      }
+    },
+    "gemma2_9b_it": {
+      "same_ordered_record_ids": true,
+      "prepared_file_hashes_match": true,
+      "prompt_mask_and_complete_target": true,
+      "all_weight_files_complete": true,
+      "eos_token_id": 107,
+      "generation_eos_ids": [
+        107,
+        1
+      ],
+      "tokenizer_class": "GemmaTokenizer",
+      "lengths": {
+        "train": {
+          "n": 11117,
+          "max_total_tokens": 496,
+          "max_prompt_tokens": 253
+        },
+        "development": {
+          "n": 975,
+          "max_total_tokens": 481,
+          "max_prompt_tokens": 254
+        },
+        "selection_evaluation": {
+          "n": 500,
+          "max_total_tokens": 1961,
+          "max_prompt_tokens": 250
+        }
+      }
+    }
+  }
+}

@@ -39,7 +39,9 @@
       "opt_125m",
       "opt_27b",
       "openllama_3b",
-      "gemma2_2b_it"
+      "openllama_7b",
+      "gemma2_2b_it",
+      "gemma2_9b_it"
     ],
     "same_fixed_rows": true,
     "complete_inputs_within_native_context": true
