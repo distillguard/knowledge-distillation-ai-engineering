@@ -216,10 +216,19 @@ def _validate_protocol(root, protocol, run_id):
     _require(precision.get("base_weights") == "BF16, no weight quantization", "External run is not nonquantized BF16")
     _require(precision.get("normalization") == "FP32" and precision.get("trainable_lora") == "FP32",
              "External FP32 normalization/LoRA condition mismatch")
+    allowed_losses = (
+        {"implementation": "transformers", "chunk_tokens": None,
+         "reference": "transformers.loss.loss_utils.ForCausalLMLoss"},
+        {"implementation": "checkpointed-ce", "chunk_tokens": 64,
+         "reference": "transformers.loss.loss_utils.ForCausalLMLoss"},
+    )
+    _require(protocol.get("causal_lm_loss") in allowed_losses,
+             "Unsupported external causal LM loss implementation, chunk size, or reference")
     sources = {"source_script_sha256": "scripts/dolly_external.py",
                "engine_script_sha256": "scripts/dolly_sft.py", "study_script_sha256": "scripts/dolly_study.py",
                "handoff_script_sha256": "scripts/dolly_handoff.py",
-               "external_probe_script_sha256": "scripts/preflight_external_gemma.py"}
+               "external_probe_script_sha256": "scripts/preflight_external_gemma.py",
+               "chunked_loss_script_sha256": "scripts/dolly_chunked_loss.py"}
     _require(protocol.get("source_hash_policy") == "UTF-8 source bytes with CRLF normalized to LF",
              "External source hash policy mismatch")
     for key, relative in sources.items():

@@ -21,6 +21,7 @@
 | Optimizer | `adamw_torch`, betas `(0.9, 0.999)`, eps `1e-8`, weight decay `0`, gradient clipping `0.3` |
 | Scheduler | `constant_with_warmup`, 전체 optimizer step의 3% warmup |
 | 메모리 설정 | Gradient checkpointing 켜기, TF32 끄기, dataloader workers 0 |
+| 아래 4090 예시의 손실 구현 | `checkpointed-ce`: 64토큰 단위로 cross-entropy 중간 계산을 재계산. protocol에 별도 기록 |
 | 선택 | 각 LR의 최저 개발 검증 NLL checkpoint → 두 LR 중 최저 NLL adapter |
 
 정밀도와 GPU 환경은 기존 NF4 실행과 다른 조건으로 기록한다. 나중에 결과를 한 저장소에 모으더라도 NF4와 BF16 결과의 차이를 양자화만의 효과라고 단정하지 않는다. 전체 공통 조건은 [EXPERIMENT_GUIDE.md](EXPERIMENT_GUIDE.md)를 따른다.
@@ -72,14 +73,21 @@ $env:HF_HOME = Join-Path (Get-Location).Path 'tmp/hf_home'
 
 ## 3. 전용 실행 준비와 SFT
 
-`run-id`는 이 실행에 고유하게 정하고 두 PC에서 같은 값을 사용한다. 다음 예시는 `gemma2_9b_bf16_4090`이다. 다른 실험 조건으로 시작할 때는 새 ID를 사용한다.
+`run-id`는 이 실행에 고유하게 정하고 두 PC에서 같은 값을 사용한다. 다음 예시는 `gemma2_9b_bf16_4090`이다. 다른 실험 조건이나 손실 구현으로 시작할 때는 새 ID를 사용한다.
 
 ```powershell
-& $SftPython -u -B -X utf8 scripts/dolly_external.py prepare --run-id gemma2_9b_bf16_4090 --inputs tmp/gemma_inputs.zip
+& $SftPython -u -B -X utf8 scripts/dolly_external.py prepare --run-id gemma2_9b_bf16_4090 --inputs tmp/gemma_inputs.zip --loss-implementation checkpointed-ce
+
+# 선택 사항: allocator의 메모리 단편화 대응. 실행 환경에 기록된다.
+$env:PYTORCH_ALLOC_CONF = 'expandable_segments:True'
 & $SftPython -u -B -X utf8 scripts/dolly_external.py train --run-id gemma2_9b_bf16_4090
 ```
 
 다른 드라이브의 모델 cache를 사용할 경우 준비 명령에 `--cache-dir D:/hf-cache/hub`를 지정할 수 있다. 준비는 고정 revision 다운로드, 입력 묶음·record ID 검증, 동일 template의 재토큰화, 전용 protocol 생성을 수행한다. `train`은 해당 PC의 사전 점검을 통과한 뒤 두 LR을 순서대로 실행한다. 같은 PC에서 이 명령을 중복으로 시작하지 않는다.
+
+4090 24GB에서는 기본 Transformers cross-entropy의 중간 텐서로 메모리 부족이 관측되어 위 예시에 `--loss-implementation checkpointed-ce`를 지정했다. 한 문항의 전체 입력과 label을 유지하면서 손실 계산의 중간 텐서를 64토큰 단위로 나누고 backward 때 재계산한다. 원래 causal label shift, `-100` 마스킹, 손실 합산과 Trainer의 공통 `num_items_in_batch` 분모를 유지한다. 데이터·LoRA rank·batch·누적 횟수·epoch·학습률 후보는 위 표와 같다.
+
+옵션을 생략하면 기본 Transformers 손실 구현을 사용한다. 선택한 구현·청크 크기·기준 구현·소스 해시는 protocol의 `causal_lm_loss`와 관련 source hash에 남아 결과 묶음에도 보존된다. FP32 합산 순서가 달라질 수 있으므로 두 구현의 수학적 손실 목적이 같다는 것과 비트 단위 결과가 같다는 것을 구분한다. 이미 준비한 실행에서 손실 옵션만 바꿔 이어 학습하지 않고 새 `run-id`로 준비한다.
 
 실행 위치는 다음과 같다.
 
@@ -156,4 +164,4 @@ Git에 올릴 때는 외부 실행의 검증한 요약 경로만 명시적으로
 
 ## 검증 범위
 
-이 실행 경로는 입력/결과 묶음 검사, 조건 고정, 경로 분리와 코드 수준 검증을 포함한다. 실제 RTX 4090에서의 BF16 전체 SFT 및 최종 NLL은 아직 측정하지 않았다. 새 PC의 사전 점검 통과와 두 LR 완료 기록이 확보된 이후에만 해당 PC의 성공 결과를 보고한다.
+이 실행 경로는 입력/결과 묶음 검사, 조건 고정, 경로 분리와 코드 수준 검증을 포함한다. 기본 손실 구현에서 4090의 메모리 부족을 확인했으며, `checkpointed-ce`를 포함한 전체 사전 점검과 두 LR의 실학습 완료는 아직 확인하지 않았다. 새 PC의 점검 통과와 두 LR 완료 기록이 확보된 이후에만 해당 PC의 성공 결과와 최종 NLL을 보고한다.

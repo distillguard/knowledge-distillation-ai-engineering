@@ -68,13 +68,16 @@ class HandoffTests(unittest.TestCase):
                              max_prompt_tokens=None, precision={handoff.MODEL: {
                                  "base_weights": "BF16, no weight quantization", "normalization": "FP32",
                                  "trainable_lora": "FP32", "compute": "BF16 autocast"}},
+                             causal_lm_loss={"implementation": "transformers", "chunk_tokens": None,
+                                            "reference": "transformers.loss.loss_utils.ForCausalLMLoss"},
                              source_hash_policy="UTF-8 source bytes with CRLF normalized to LF")
         self.write("scripts/dolly_external.py", b"# pinned external source\r\n")
         self.protocol["source_script_sha256"] = handoff._sha(b"# pinned external source\n")
         for key, relative in (("engine_script_sha256", "scripts/dolly_sft.py"),
                               ("study_script_sha256", "scripts/dolly_study.py"),
                               ("handoff_script_sha256", "scripts/dolly_handoff.py"),
-                              ("external_probe_script_sha256", "scripts/preflight_external_gemma.py")):
+                              ("external_probe_script_sha256", "scripts/preflight_external_gemma.py"),
+                              ("chunked_loss_script_sha256", "scripts/dolly_chunked_loss.py")):
             self.write(relative, b"# pinned source\r\n")
             self.protocol[key] = handoff._sha(b"# pinned source\n")
         self.protocol["prepared_files_sha256"] = {
@@ -126,7 +129,8 @@ class HandoffTests(unittest.TestCase):
         for relative in ("results/dolly_sft_v1/protocol.json", "results/dolly_sft_additional_v1/registry.json",
                          f"results/dolly_sft_additional_v1/{handoff.MODEL}/preparation.json",
                          "scripts/dolly_external.py", "scripts/dolly_sft.py", "scripts/dolly_study.py",
-                         "scripts/dolly_handoff.py", "scripts/preflight_external_gemma.py"):
+                         "scripts/dolly_handoff.py", "scripts/preflight_external_gemma.py",
+                         "scripts/dolly_chunked_loss.py"):
             path = target / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes((self.root / relative).read_bytes())
@@ -273,6 +277,29 @@ class HandoffTests(unittest.TestCase):
         self.write_json(self.result_prefix + "protocol.json", self.protocol)
         with self.assertRaisesRegex(ValueError, "condition differs.*epochs"):
             self.export()
+
+    def test_loss_implementation_and_chunked_source_provenance(self):
+        original = copy.deepcopy(self.protocol)
+        reference = "transformers.loss.loss_utils.ForCausalLMLoss"
+        for loss in ({"implementation": "transformers", "chunk_tokens": None, "reference": reference},
+                     {"implementation": "checkpointed-ce", "chunk_tokens": 64, "reference": reference}):
+            with self.subTest(loss=loss):
+                protocol = {**original, "causal_lm_loss": loss}
+                protocol["fingerprint"] = handoff._fingerprint(protocol)
+                handoff._validate_protocol(self.root, protocol, self.run_id)
+        for loss in (None,
+                     {"implementation": "custom", "chunk_tokens": 64, "reference": reference},
+                     {"implementation": "transformers", "chunk_tokens": 64, "reference": reference},
+                     {"implementation": "checkpointed-ce", "chunk_tokens": 128, "reference": reference},
+                     {"implementation": "checkpointed-ce", "chunk_tokens": 64, "reference": "different"}):
+            with self.subTest(loss=loss):
+                protocol = {**original, "causal_lm_loss": loss}
+                protocol["fingerprint"] = handoff._fingerprint(protocol)
+                with self.assertRaisesRegex(ValueError, "causal LM loss"):
+                    handoff._validate_protocol(self.root, protocol, self.run_id)
+        self.write("scripts/dolly_chunked_loss.py", b"# changed loss implementation\n")
+        with self.assertRaisesRegex(ValueError, "Source fingerprint mismatch.*dolly_chunked_loss"):
+            handoff._validate_protocol(self.root, original, self.run_id)
 
     def test_refuses_overwrite_of_existing_bundle(self):
         self.export()

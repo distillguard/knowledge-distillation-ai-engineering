@@ -23,6 +23,7 @@ SOURCE_FILES = {
     "study_script_sha256": "scripts/dolly_study.py",
     "handoff_script_sha256": "scripts/dolly_handoff.py",
     "external_probe_script_sha256": "scripts/preflight_external_gemma.py",
+    "chunked_loss_script_sha256": "scripts/dolly_chunked_loss.py",
 }
 
 
@@ -79,6 +80,12 @@ def validate_run(run_id, check_versions=True):
         raise RuntimeError("Pinned Gemma model/revision mismatch")
     if spec["precision"][MODEL]["base_weights"] != "BF16, no weight quantization":
         raise RuntimeError("This runner only accepts nonquantized BF16 weights")
+    loss = spec.get("causal_lm_loss", {})
+    if loss not in ({"implementation": "transformers", "chunk_tokens": None,
+                     "reference": "transformers.loss.loss_utils.ForCausalLMLoss"},
+                    {"implementation": "checkpointed-ce", "chunk_tokens": 64,
+                     "reference": "transformers.loss.loss_utils.ForCausalLMLoss"}):
+        raise RuntimeError("Unknown causal language-model loss implementation")
     for key, relative in SOURCE_FILES.items():
         if spec[key] != source_sha(ROOT / relative):
             raise RuntimeError(f"Source changed since preparation: {relative}; use a new run-id")
@@ -151,6 +158,9 @@ def load_engine(run_id):
             if "norm" in type(module).__name__.lower():
                 module.to(engine.torch.float32)
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+        if validate_run(run_id)["causal_lm_loss"]["implementation"] == "checkpointed-ce":
+            from dolly_chunked_loss import chunked_causal_lm_loss
+            model.loss_function = chunked_causal_lm_loss
         model = (engine.PeftModel.from_pretrained(model, adapter, is_trainable=False) if adapter else
                  engine.get_peft_model(model, engine.LoraConfig(**engine.LORA)))
         if not adapter:
@@ -176,13 +186,17 @@ def encoded_bytes(records, expected):
     raise RuntimeError("Gemma tokenization differs from the original experiment; do not change/drop/truncate records")
 
 
-def prepare(run_id, inputs, cache_dir=None):
+def prepare(run_id, inputs, cache_dir=None, loss_implementation="transformers"):
+    if loss_implementation not in ("transformers", "checkpointed-ce"):
+        raise ValueError("Unknown loss implementation")
     from dolly_handoff import read_inputs
     parent = parent_protocol()
     shared = read_inputs(inputs, parent)
     local, out = paths(run_id)
     if (out / "protocol.json").exists():
-        validate_run(run_id)
+        existing = validate_run(run_id)
+        if existing["causal_lm_loss"]["implementation"] != loss_implementation:
+            raise RuntimeError("Use a new run-id for a different loss implementation")
         print(f"Already prepared: {run_id}", flush=True)
         return
     if any((local / "runs").glob("*/checkpoint-*")):
@@ -226,6 +240,9 @@ def prepare(run_id, inputs, cache_dir=None):
                 models={MODEL: {key: entry[key] for key in ("id", "revision")}},
                 **{key: source_sha(ROOT / relative) for key, relative in SOURCE_FILES.items()},
                 source_hash_policy="UTF-8 source bytes with CRLF normalized to LF", versions=actual_versions,
+                causal_lm_loss={"implementation": loss_implementation,
+                               "chunk_tokens": 64 if loss_implementation == "checkpointed-ce" else None,
+                               "reference": "transformers.loss.loss_utils.ForCausalLMLoss"},
                 prepared_files_sha256=prepared, observed_lengths=lengths, max_total_training_tokens=1024,
                 max_prompt_tokens=None, response_truncation=False,
                 length_basis="Same original records and complete responses; Gemma manifest tokenization parity; train/development <=1024",
@@ -344,6 +361,8 @@ def main(argv=None):
     prep.add_argument("--run-id", required=True)
     prep.add_argument("--inputs", type=Path, required=True)
     prep.add_argument("--cache-dir", type=Path)
+    prep.add_argument("--loss-implementation", choices=("transformers", "checkpointed-ce"), default="transformers",
+                      help="Use checkpointed token-chunk CE to reduce intermediate memory with the same loss objective")
     training = commands.add_parser("train", help="BF16 preflight, two LR candidates and selection; no evaluation")
     training.add_argument("--run-id", required=True)
     export = commands.add_parser("export", help="Package completed summaries and both best adapters")
@@ -365,7 +384,7 @@ def main(argv=None):
     else:
         with run_lock(args.run_id, gpu=args.command == "train"):
             if args.command == "prepare":
-                prepare(args.run_id, args.inputs, args.cache_dir)
+                prepare(args.run_id, args.inputs, args.cache_dir, args.loss_implementation)
             elif args.command == "train":
                 train(args.run_id)
             else:
