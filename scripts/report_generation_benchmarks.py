@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from dolly_sft import ROOT, write_json
-from dolly_study import LABELS, MODELS, result_dir
+from dolly_study import LABELS, result_dir
+from dolly_scope import EXCLUDED_MODELS, MODELS, REQUIRED_BENCHMARKS
 from evaluate_generation_benchmarks import load_completed
 from prepare_generation_benchmarks import BENCHMARKS, OUT, PAIRS, prepared_protocol
 
@@ -17,20 +18,22 @@ def main():
     data = prepared_protocol()
     runs = {name: load_completed(name, data) for name in MODELS
             if (result_dir(name) / f"{name}_selected.json").exists()}
-    complete = [name for name, run in runs.items() if len(run) == len(BENCHMARKS)]
+    complete = [name for name, run in runs.items() if all(key in run for key in REQUIRED_BENCHMARKS)]
+    extended_complete = [name for name, run in runs.items() if len(run) == len(BENCHMARKS)]
     records = [{"model": name, "benchmark": key, "n": value["n"], "seed": 10, **value["metrics"]}
                for name, run in runs.items() for key, value in run.items()]
     fields = ["model", "benchmark", "n", "seed", "rouge1", "rouge2", "rougeL", "exact_match", "generated_tokens", "empty", "length_capped"]
     with (OUT / "scores.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields); writer.writeheader(); writer.writerows(records)
-    lines = ["# 생성 벤치마크의 교사·학생 비교", "",
-             f"주 평가: 네 생성 benchmark. 완료 {len(complete)}/10모델. SST-2·BoolQ는 [보조 분류 진단](../dolly_sft_v1/REPORT.md)으로 분리한다.", "",
+    lines = ["# Dolly 예비 생성 평가와 기존 외부 평가", "",
+             f"예비 주 평가: Dolly 500문항. 완료 {len(complete)}/{len(MODELS)}모델. 외부 3종과 SST-2·BoolQ의 새 평가는 후보 축소 후 진행한다. [기존 보조 분류 결과](../dolly_sft_v1/REPORT.md)는 보존한다.", "",
+             "현재는 4계열·8모델의 예비 비교다. Qwen 두 모델은 2026-10-16 범위 축소로 제외했고 기존 SFT·부분 평가 결과는 보존한다. 후보군을 좁힌 뒤 원문 기반 SFT 탐색을 적용하며, 본 KD는 한 조합에서 진행한다. 아래 외부 점수는 이미 완료한 결과이며 미실행 외부 항목은 후속으로 표시한다.", "",
              "모든 모델에 동일 원문 ID·새 토큰 예산 256·생성 seed 10을 적용한다. 원 논문 그대로의 재현은 아니다. 단일 seed이므로 seed 간 SD와 오차막대를 표시하지 않는다. ROUGE는 정답과의 겹침을 측정하며 사실성이나 사람의 선호를 직접 측정하지 않는다.", "",
              "이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. METEOR·BERTScore와 원본 대비 SFT 전후의 생성 평가는 아직 미실행이다. 최종 조합은 보완 평가·오류 분석·후보 KD 실행 점검 후 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.", "",
              "| 모델 | Dolly | Self-Instruct | S-NI (11_) | Vicuna | 네 과제 평균 |", "|---|---:|---:|---:|---:|---:|"]
     for name, run in runs.items():
-        cells = [f'{run[key]["metrics"]["rougeL"]:.2f}' if key in run else "대기" for key in BENCHMARKS]
-        average = f'{statistics.mean(v["metrics"]["rougeL"] for v in run.values()):.2f}' if name in complete else "—"
+        cells = [f'{run[key]["metrics"]["rougeL"]:.2f}' if key in run else ("대기" if key in REQUIRED_BENCHMARKS else "후속") for key in BENCHMARKS]
+        average = f'{statistics.mean(v["metrics"]["rougeL"] for v in run.values()):.2f}' if name in extended_complete else "—"
         lines.append(f'| {LABELS[name]} | {" | ".join(cells)} | {average} |')
     lines += ["", "과제 평균은 네 benchmark 평균에 같은 가중치를 준 값이며 전체 문항을 합친 평균과 다르다. 미완료 모델은 평균을 계산하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않는다.", "",
               "## 동일 문항의 교사−학생 차이", "", "| 조합 | Benchmark | 평균 ROUGE-L 차이 | 교사 우위 / 동률 / 학생 우위 문항 |", "|---|---|---:|---|"]
@@ -65,7 +68,7 @@ def main():
         plotted = axis.imshow(np.ma.masked_invalid(grid), vmin=0, vmax=100, cmap="Blues", aspect="auto")
         axis.set(xticks=range(4), xticklabels=list(BENCHMARKS.values()), yticks=range(len(names)), yticklabels=[LABELS[n] for n in names], title="Primary generation evaluation · seed 10")
         for index in np.ndindex(grid.shape):
-            axis.text(index[1], index[0], f"{grid[index]:.2f}" if np.isfinite(grid[index]) else "pending", ha="center", va="center", color="white" if grid[index] > 60 else "black")
+            axis.text(index[1], index[0], f"{grid[index]:.2f}" if np.isfinite(grid[index]) else ("pending" if list(BENCHMARKS)[index[1]] in REQUIRED_BENCHMARKS else "deferred"), ha="center", va="center", color="white" if grid[index] > 60 else "black")
         figure.colorbar(plotted, ax=axis, label="ROUGE-L F1 × 100")
         figure.savefig(OUT / "generation_scores.png", dpi=180); plt.close(figure)
         lines += ["![생성 ROUGE-L](generation_scores.png)", ""]
@@ -86,10 +89,12 @@ def main():
         figure.savefig(OUT / "teacher_student_gaps.png", dpi=180); plt.close(figure)
         lines += ["![교사−학생 생성 점수 차이](teacher_student_gaps.png)", ""]
     write_json(OUT / "paired_comparisons.json", {"data_protocol_fingerprint": data["fingerprint"], "comparisons": pairs})
-    write_json(OUT / "completion.json", {"data_protocol_fingerprint": data["fingerprint"], "completed_models": complete,
+    write_json(OUT / "completion.json", {"data_protocol_fingerprint": data["fingerprint"], "study_models": list(MODELS),
+                                         "excluded_models": list(EXCLUDED_MODELS), "required_benchmarks": list(REQUIRED_BENCHMARKS),
+                                         "completed_models": complete, "completed_extended_models": extended_complete,
                                          "completed_benchmarks": {name: list(run) for name, run in runs.items()}})
     (OUT / "REPORT.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
-    print(f"Verified generation report: {len(complete)}/10 models complete", flush=True)
+    print(f"Verified generation report: {len(complete)}/{len(MODELS)} models complete", flush=True)
 
 
 if __name__ == "__main__":

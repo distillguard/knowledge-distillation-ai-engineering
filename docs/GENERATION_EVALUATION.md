@@ -2,7 +2,7 @@
 
 기준일: 2026-10-16. 생성 성능의 차이를 모델 선정의 주 근거로 삼는다. SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류는 편향과 확률 품질의 보조 진단이다. 현재 Brier score를 MiniLLM의 ECE 재현으로 표시하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않고 과제별 차이와 동일 문항의 오류를 확인한다.
 
-2026-10-16 사용자 범위 확인: **학습은 Dolly만 유지하고 생성 평가는 외부 세 benchmark까지 포함**한다. 모델당 2,516개는 학습 표본 수가 아니라 네 자료의 평가 문항 합계다.
+2026-10-16 최신 범위 결정: **Qwen 제외 8모델의 예비 평가는 Dolly 500문항부터 수행하고 외부 세 benchmark는 후보 축소 후 적용**한다. 이미 완료한 외부 평가 결과는 보존한다. 학습은 Dolly만 유지한다. 외부까지 적용한 모델당 2,516개는 학습 표본 수가 아니라 네 자료의 평가 문항 합계다.
 
 ## 체크포인트 선택과 조합 선정
 
@@ -21,14 +21,15 @@
 | 단계 | 현재 실행·결정 | 완료 근거 |
 |---|---|---|
 | SFT 체크포인트 | 각 모델에서 두 LR·epoch별 개발 NLL 선택 | 두 LR 완료·selected adapter hash. 계열 간 NLL 순위와 구분 |
-| 생성 주 평가 | 동일 2,516문항, 생성 seed 10 한 개 | 네 benchmark의 JSON·문항별 CSV·같은 ID·fingerprint 검증 |
+| 예비 생성 평가 | Dolly 500문항, 생성 seed 10 한 개 | Dolly JSON·문항별 CSV·같은 ID·fingerprint 검증 |
+| 후보 후속 평가 | 후보 축소 후 외부 3종 추가 | 원문 기반 SFT 탐색·외부 생성 평가·오류 분석, 기존 결과 재사용 |
 | 보완 지표 | METEOR·BERTScore 미구현·미채점 | 채택 지표·평가 모델·revision·길이 처리·다중 정답·집계 명세 후 저장 응답 채점 |
 | 보조 진단 | SST-2·BoolQ | accuracy·macro-F1·클래스별 오류·Brier. 생성 평가의 대체가 아님 |
 | 비교·오류 분석 | 모델×benchmark×지표와 계열 내 차이 | 과제별 일관성, 지시 준수·사실 오류·반복·누락, 사례 선정 근거 |
 | 증류 실행 점검 | 후보 조합의 logits·어휘·prefix·학생 갱신·메모리 | 실제 KD 연산·필요한 생성·MC 경로의 통과 기록 |
 | 최종 조합 | 미정 | model ID·revision·SFT adapter·정밀도·선정 자료·이유와 한계 동결 |
 
-현재 `completion.json`과 자동 보고서의 완료 수는 네 생성 benchmark의 실행 완료다. 보완 지표·오류 검토·증류 실행 점검·사람의 선정 판단까지 자동으로 완료됐다는 뜻이 아니다. 실제 점수가 있는 지표만 비교표에 채우고 미실행 항목은 미실행으로 표시한다.
+현재 `completion.json`과 자동 보고서의 완료 수는 활성 8모델의 Dolly 예비 평가 완료다. `completed_extended_models`는 네 benchmark를 모두 완료한 보존 결과를 별도 기록한다. 보완 지표·오류 검토·증류 실행 점검·사람의 선정 판단까지 자동으로 완료됐다는 뜻이 아니다. 실제 점수가 있는 지표만 비교표에 채우고 미실행 항목은 미실행으로 표시한다.
 
 보완 지표 채택과 오류 검토 기준은 전체 결과를 보고 유리한 기준으로 바꾸지 않도록 먼저 확정한다. 의미 유사성·reference 겹침·정답률의 역할을 구분하며, 응답 검토의 사실 판정은 별도 근거가 필요하다.
 
@@ -43,11 +44,11 @@
 | S-NI | [MiniLLM/sinst](https://huggingface.co/datasets/MiniLLM/sinst/tree/84b8356a5b631002f92ad73adebd5ac9db5612cd), `11_/valid.jsonl` | 1,694 |
 | Vicuna | [MiniLLM/Vicuna](https://huggingface.co/datasets/MiniLLM/Vicuna/tree/05a18702266a6c51547034268d6d58bce214bd77), `valid.jsonl` | 80 |
 
-모델당 총 2,516문항, 10개 모델에서 총 25,160개 답변이다. 여러 지표로 같은 답변을 채점해도 새 답변을 생성하지 않는다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
+예비 평가는 Dolly 500문항 × 활성 8모델 = 4,000개 답변이다. 후보 축소 후 외부 3종까지 적용한 모델은 총 2,516문항이다. 여러 지표로 같은 답변을 채점해도 새 답변을 생성하지 않는다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
 
 ## 전처리와 누수 점검
 
-원문 instruction·input·전체 reference를 보존한다. GPT-2 wrapper와 배포 `prompt`의 일치는 세 추가 자료의 모든 행에서 확인했다. Qwen·Gemma의 chat wrapper와 OpenLLaMA의 BOS는 기존 SFT 조건을 따른다.
+원문 instruction·input·전체 reference를 보존한다. GPT-2 wrapper와 배포 `prompt`의 일치는 세 추가 자료의 모든 행에서 확인했다. Gemma의 chat wrapper와 OpenLLaMA의 BOS는 기존 SFT 조건을 따른다. 최초 10모델에서 수행한 tokenizer 감사와 공통 ID는 그대로 보존하고 현재 활성 8모델에 적용한다.
 
 학습·개발 집합과 casefold·공백 정규화 instruction이 같은 문항을 출력 확인 전에 공통 제외한다. 모든 tokenizer에서 전체 prompt와 새 토큰 예산 256의 합이 native context에 들어가는지 CPU로 확인한다. 어느 모델에서든 넘으면 그 ID를 전 모델에서 공통 제외한다. 이번 검사에서는 두 사유의 제외가 모두 0건이었고 원문을 자르지 않았다. 모델별 최대 prompt는 [자료 protocol](../results/generation_benchmarks_v1/protocol.json)에 있다.
 
@@ -68,7 +69,9 @@ Dolly의 정규화 prompt 중복 1건은 기존 500개 ID를 유지하기 위해
 
 기존 Dolly 응답 파일에는 문항별 마지막 EOS 여부가 없어 점수 CSV의 `length_capped` 열은 결측으로 둔다. Dolly의 상한 도달률 집계는 검증한 기존 생성 요약을 재사용한다. 새로 생성한 세 benchmark는 EOS를 확인한 문항별 상한 도달 여부를 기록한다.
 
-이후 모델마다 **SFT → 문서 → 생성 4종 → 생성 보고서 → SST-2·BoolQ 보조 평가 → 문서 → 다음 모델** 순서다. 모델별 실행과 전체 실행은 같은 worker 잠금을 사용한다. 새 생성의 중간 응답과 CPU·CUDA RNG 상태는 무시된 `tmp/generation_benchmarks_v1/`에 50문항마다 함께 저장한다. 이는 저장 주기이며 학습·샘플링 파라미터가 아니다. 중단 시 저장한 ID prefix와 fingerprint를 확인한 뒤 같은 RNG 상태에서 재개한다.
+이후 모델마다 **예비 SFT → 문서 → Dolly 500 생성 → 생성 보고서·문서 → 다음 모델** 순서다. `evaluate_dolly_pilot.py`는 기존 생성 구현의 실행 자료를 Dolly로 제한하며 생성·채점 알고리즘과 기존 결과 fingerprint는 바꾸지 않는다. 외부 3종과 새 SST-2·BoolQ는 현재 worker에서 실행하지 않는다. 모델별 실행과 전체 실행은 같은 worker 잠금을 사용한다.
+
+Dolly는 완료한 seed의 응답·요약을 검증해 재사용하며 미완료 seed를 중단한 경우 같은 seed로 처음부터 재생성한다. 후속 외부 3종의 중간 응답과 CPU·CUDA RNG 상태는 `tmp/generation_benchmarks_v1/`에 50문항마다 함께 저장하며, 해당 경로는 ID prefix·fingerprint·RNG 상태를 검증해 재개한다. 50은 저장 주기이며 학습·샘플링 파라미터가 아니다.
 
 처음 준비할 때:
 
@@ -83,6 +86,6 @@ python -B -X utf8 scripts/prepare_generation_benchmarks.py prepare
 
 ## 산출물과 완료 기준
 
-[생성 주 평가 보고서](../results/generation_benchmarks_v1/REPORT.md)에 표·그림과 동일 문항 차이를 모은다. `protocol.json`은 자료 revision·원문/준비 파일 hash·모델별 길이 감사·제외 ID를 보존한다. 모델별 `<benchmark>.json`의 완료 상태·평가 fingerprint·문항 수와 `<benchmark>_per_item.csv`의 hash·ID를 검증한다. 네 benchmark가 모두 완료된 모델만 생성 주 평가 완료로 센다.
+[생성 주 평가 보고서](../results/generation_benchmarks_v1/REPORT.md)에 표·그림과 동일 문항 차이를 모은다. `protocol.json`은 최초 10모델의 자료 revision·원문/준비 파일 hash·길이 감사·제외 ID를 보존한다. 활성 실행 범위는 `dolly_scope.py`와 `completion.json`에 기록한다. 모델별 `<benchmark>.json`의 완료 상태·평가 fingerprint·문항 수와 `<benchmark>_per_item.csv`의 hash·ID를 검증한다. 현재 예비 완료는 Dolly 기준이며 외부까지 네 자료를 마친 결과는 별도 구분한다.
 
 Git에는 검증한 점수·ID·category·집계·그림과 문서만 올린다. 원문·응답·RNG checkpoint·가중치·캐시·로그는 `tmp/`에 둔다. 기존 `results/dolly_sft_v1/`는 원래 Dolly·분류 평가의 이력을 유지한다. 추가 생성 주 평가가 끝나기 전에 그 이력의 완료를 전체 모델 선정 완료로 해석하지 않는다.

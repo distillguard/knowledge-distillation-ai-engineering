@@ -21,7 +21,7 @@
       "type": "pickString",
       "description": "실행할 모델 또는 전체 순차 실행. 기존 학습 중에는 중복 실행이 차단됩니다.",
       "options": [
-        "all", "gpt2_base", "gpt2_xl", "qwen_08b", "qwen_9b",
+        "all", "gpt2_base", "gpt2_xl",
         "opt_125m", "opt_27b", "openllama_3b", "openllama_7b",
         "gemma2_2b_it", "gemma2_9b_it"
       ],

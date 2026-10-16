@@ -1,6 +1,27 @@
 {
   "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "study_models": [
+    "gpt2_base",
+    "gpt2_xl",
+    "opt_125m",
+    "opt_27b",
+    "openllama_3b",
+    "openllama_7b",
+    "gemma2_2b_it",
+    "gemma2_9b_it"
+  ],
+  "excluded_models": [
+    "qwen_08b",
+    "qwen_9b"
+  ],
+  "required_benchmarks": [
+    "dolly"
+  ],
   "completed_models": [
+    "gpt2_base",
+    "gpt2_xl"
+  ],
+  "completed_extended_models": [
     "gpt2_base",
     "gpt2_xl"
   ],

@@ -2,7 +2,7 @@
 
 공개 자료 조사 기준일: 2026-10-14. 현재 범위 갱신일: 2026-10-16, Asia/Seoul.
 
-현재는 Dolly 고정·5계열 10모델의 직접 SFT와 생성 선정 평가를 진행한다. 공개 순위·저자 공개 SFT 점수는 조사 근거로만 구분하며 현재 직접 학습 결과로 채우지 않는다. 최신 실행 범위는 [SFT 계획](DOLLY_SFT_MODEL_SELECTION.md), 네 생성 benchmark·보완 지표·선정 단계는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
+현재는 Dolly 고정·4계열 8모델의 직접 SFT와 생성 선정 평가를 진행한다. 공개 순위·저자 공개 SFT 점수는 조사 근거로만 구분하며 현재 직접 학습 결과로 채우지 않는다. 최신 실행 범위는 [SFT 계획](DOLLY_SFT_MODEL_SELECTION.md), 네 생성 benchmark·보완 지표·선정 단계는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
 
 아래 능력별 benchmark 목록과 공개 점수 사례는 조사 자료다. 모든 benchmark를 추가 실행하는 계획은 아니다. 학습은 Dolly만 사용하고 한국어·수학·코드·다중 턴 확장은 후속으로 둔다.
 
@@ -33,7 +33,7 @@
 
 ### 2.1. 현재 비교 후보와 선정 근거
 
-현재 후보는 GPT-2 XL/base, Qwen3.5-9B/0.8B, OPT-2.7B/125M, OpenLLaMA-7B/3B, Gemma-2-9B-IT/2B-IT다. GPT-2 조합은 [MiniLLM §3.1](https://arxiv.org/html/2306.08543v4), 추가 계열은 [CaRE §4](https://arxiv.org/html/2609.36734v1)의 실험을 참고하되 고정 model ID·revision과 로컬 변경을 [SFT 명세](DOLLY_SFT_MODEL_SELECTION.md)에 기록한다. 최종 조합은 아직 선정하지 않았다.
+현재 후보는 GPT-2 XL/base, OPT-2.7B/125M, OpenLLaMA-7B/3B, Gemma-2-9B-IT/2B-IT다. GPT-2 조합은 [MiniLLM §3.1](https://arxiv.org/html/2306.08543v4), 추가 계열은 [CaRE §4](https://arxiv.org/html/2609.36734v1)의 실험을 참고하되 고정 model ID·revision과 로컬 변경을 [SFT 명세](DOLLY_SFT_MODEL_SELECTION.md)에 기록한다. 최종 조합은 아직 선정하지 않았다.
 
 공통 Dolly의 SFT 후 생성 과제별 차이·응답 오류·보완 지표·증류 실행 가능성을 확인한다. 검증 NLL은 모델 내부의 체크포인트 선택이며 계열 순위가 아니다. 최고 ROUGE-L·accuracy·최대 격차 하나로 자동 선정하거나 임의의 종합 가중합을 만들지 않는다.
 

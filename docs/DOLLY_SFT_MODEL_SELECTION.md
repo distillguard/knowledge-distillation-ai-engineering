@@ -1,18 +1,18 @@
 # Dolly 모델 SFT 비교 계획
 
-**절차 검토 (2026-10-16):** 현재 실행·결과의 `v1`은 두 학습률·3 epoch·개발 NLL 선택을 사용한 예비 비교다. MiniLLM의 SFT 기준 모델 탐색과 증류 전 학생 초기화를 구분하는 원문 절차를 검토 중이며, 적용 모델 범위는 아직 확정하지 않았다. 아래 고정된 v1 실행과 결과를 새 절차의 결과로 바꾸어 표시하지 않는다.
+**범위 결정 (2026-10-16):** Qwen 두 모델을 제외하고 4계열·8모델의 v1 예비 비교를 진행한다. 예비 생성 평가는 Dolly 500문항이며 외부 3종·새 보조 분류 평가는 유망 후보를 좁힌 뒤 수행한다. 기존 Qwen 학습·부분 평가·checkpoint와 이미 완료한 외부 결과는 보존한다. v1은 두 LR·3 epoch·개발 NLL 선택의 예비 비교이며 원문의 전체 SFT 탐색 결과로 표시하지 않는다.
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **3/10**, 생성 주 평가 4종 완료 **2/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **2/8**, Dolly 예비 생성 완료 **2/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
-갱신일: 2026-10-16. 목적은 이후 지식증류 비교에 사용할 교사·학생 조합의 선정이다. 5개 계열의 10개 모델을 Dolly 기준 응답으로 각각 추가 학습하고 공통 문항에서 평가한다. KD 손실·gate·Revival은 이 단계에 적용하지 않는다.
+갱신일: 2026-10-16. 목적은 이후 지식증류 비교에 사용할 교사·학생 조합의 선정이다. 4개 계열의 8개 모델을 Dolly 기준 응답으로 각각 추가 학습하고 공통 문항에서 평가한다. KD 손실·gate·Revival은 이 단계에 적용하지 않는다.
 
 ## 진행 흐름과 선정 범위
 
-**Dolly SFT → 모델별 최저 개발 NLL 체크포인트 → 네 생성 평가·보조 진단 → 보완 평가·오류 분석 → 증류 실행 점검 → 한 교사·학생 조합 선정**이다. 자동 worker의 평가 완료와 최종 조합 선정은 별개다. 현재 KD 학습은 실행하지 않았다.
+**예비 Dolly SFT → 모델별 최저 개발 NLL 체크포인트 → Dolly 500 생성 → 유망 후보 축소 → 후보의 원문 기반 SFT 탐색·외부 평가·오류 분석 → 증류 실행 점검 → 한 교사·학생 조합 선정**이다. 자동 worker의 예비 평가 완료와 최종 조합 선정은 별개다. 현재 KD 학습은 실행하지 않았다.
 
 학습은 Dolly만 사용한다. Self-Instruct·S-NI·Vicuna는 생성 평가에만 사용한다. NLL은 각 모델 내부의 LR·checkpoint 선택이고, 최종 조합을 다른 tokenizer의 NLL이나 ROUGE-L 하나로 확정하지 않는다. 보완 지표의 미결정 사항과 단계별 완료 근거는 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다.
 
@@ -24,19 +24,17 @@
 |---|---|---|---|
 | GPT-2 교사 | openai-community/gpt2-xl | BF16, 양자화 없음 | LoRA |
 | GPT-2 학생 | openai-community/gpt2 | BF16, 양자화 없음 | LoRA |
-| Qwen 교사 | Qwen/Qwen3.5-9B | NF4·double quantization, BF16 계산 | LoRA, 즉 QLoRA |
-| Qwen 학생 | Qwen/Qwen3.5-0.8B | BF16, 양자화 없음 | LoRA |
 | OPT 교사 / 학생 | facebook/opt-2.7b / opt-125m | BF16 먼저 실제 점검, 전용 VRAM에 맞지 않으면 NF4 | LoRA |
 | OpenLLaMA 교사 / 학생 | openlm-research/open_llama_7b / open_llama_3b | BF16 먼저 실제 점검, 전용 VRAM에 맞지 않으면 NF4 | LoRA |
 | Gemma 교사 / 학생 | google/gemma-2-9b-it / gemma-2-2b-it | 9B는 BF16 가중치만으로 VRAM 초과해 NF4, 2B는 실제 점검 | LoRA |
 
-기존 GPT-2 두 모델과 Qwen0.8B는 BF16, Qwen9B는 NF4를 유지한다. 추가 6개 모델은 BF16 가중치 크기가 물리 VRAM을 넘으면 NF4로 시작하고, 그렇지 않으면 BF16의 실제 적재·갱신·저장 점검부터 한다. CUDA OOM 또는 측정한 전용 VRAM 여유보다 높은 peak allocated가 확인될 때 NF4로 전환한다. 그 밖의 오류를 메모리 부족으로 간주하지 않는다. 실제 정밀도·전환 근거·메모리 수치를 모델별 protocol과 점검 JSON에 남긴다. 정규화와 LoRA는 FP32, 동결 embedding·출력 행렬은 BF16이다. 10개 모델 모두 LoRA 실험이다.
+현재 GPT-2 두 모델은 BF16이다. 제외한 Qwen0.8B·9B의 과거 BF16/NF4 기록은 보존한다. 추가 6개 모델은 BF16 가중치 크기가 물리 VRAM을 넘으면 NF4로 시작하고, 그렇지 않으면 BF16의 실제 적재·갱신·저장 점검부터 한다. CUDA OOM 또는 측정한 전용 VRAM 여유보다 높은 peak allocated가 확인될 때 NF4로 전환한다. 그 밖의 오류를 메모리 부족으로 간주하지 않는다. 실제 정밀도·전환 근거·메모리 수치를 모델별 protocol과 점검 JSON에 남긴다. 정규화와 LoRA는 FP32, 동결 embedding·출력 행렬은 BF16이다. 8개 모델 모두 LoRA 실험이다.
 
 추가 조합은 [CaRE §4의 Dolly 실험](https://arxiv.org/html/2609.36734v1)과 맞춘다. Gemma는 사용자 조건 동의·로컬 인증 후 다시 포함했다. 공식 가중치만 사용하고 원본 revision·파일 형식은 [추가 모델 registry](../results/dolly_sft_additional_v1/registry.json)에 고정한다. 기존 4개 모델의 학습 checkpoint와 protocol은 유지하며 추가 모델은 부모 protocol·동일 원본 자료·실행 소스 해시를 가진 별도 protocol을 만든다.
 
-원본 model ID·revision·소스 해시·라이브러리 버전은 [protocol.json](../results/dolly_sft_v1/protocol.json)에 고정한다. 과거 연구의 학습된 adapter는 초기값으로 사용하지 않는다. Qwen은 공개 checkpoint에서 텍스트 언어모델 부분만 불러오고 vision encoder는 사용하지 않는다.
+원본 model ID·revision·소스 해시·라이브러리 버전은 [protocol.json](../results/dolly_sft_v1/protocol.json)에 고정한다. 과거 연구의 학습된 adapter는 초기값으로 사용하지 않는다. 제외한 Qwen의 원본 revision과 텍스트 학습 이력도 기존 protocol에 남긴다.
 
-GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 거친 모델이다. [Qwen 공식 모델 카드](https://huggingface.co/Qwen/Qwen3.5-0.8B#model-overview)와 [Gemma 공식 카드](https://huggingface.co/google/gemma-2-2b-it)에서 학습 단계를 확인한다. 크기·학습 이력·어휘·prompt 형식·정밀도가 함께 다르므로 순수한 아키텍처 효과나 양자화 효과로 해석하지 않는다. 계열 각각의 교사–학생 격차와 오류 유형을 확인한다.
+GPT-2·OPT·OpenLLaMA는 pretrained 모델, Gemma-IT는 post-training을 거친 모델이다. [Qwen 공식 모델 카드](https://huggingface.co/Qwen/Qwen3.5-0.8B#model-overview)와 [Gemma 공식 카드](https://huggingface.co/google/gemma-2-2b-it)에서 학습 단계를 확인한다. 크기·학습 이력·어휘·prompt 형식·정밀도가 함께 다르므로 순수한 아키텍처 효과나 양자화 효과로 해석하지 않는다. 계열 각각의 교사–학생 격차와 오류 유형을 확인한다.
 
 ## 데이터와 전처리
 
@@ -69,7 +67,7 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 �
 
 공식 근거: [QLoRA 13B 스크립트](https://github.com/artidoro/qlora/blob/7f4e95a68dc076bea9b3a413d2b512eca6d004e5/scripts/finetune_guanaco_13b.sh), [33B 스크립트](https://github.com/artidoro/qlora/blob/7f4e95a68dc076bea9b3a413d2b512eca6d004e5/scripts/finetune_guanaco_33b.sh), [MiniLLM 부록 B.1](https://arxiv.org/html/2306.08543v4#A2.SS1).
 
-두 학습률은 각각 같은 원본에서 새 LoRA를 초기화해 학습한다. 모델마다 3개 epoch checkpoint 중 검증 손실이 가장 낮은 것을 고르고, 두 학습률의 선택 checkpoint를 같은 검증 기준으로 비교한다. 총 10모델 × 2학습률 = 20개 실행이며 완료되지 않은 실행을 결과로 간주하지 않는다.
+두 학습률은 각각 같은 원본에서 새 LoRA를 초기화해 학습한다. 모델마다 3개 epoch checkpoint 중 검증 손실이 가장 낮은 것을 고르고, 두 학습률의 선택 checkpoint를 같은 검증 기준으로 비교한다. 총 8모델 × 2학습률 = 16개 실행이며 완료되지 않은 실행을 결과로 간주하지 않는다.
 
 검증 손실은 microbatch 1에서 응답 토큰 NLL을 문항별 평균한 뒤 전체 문항에 평균한 값이다. 같은 모델의 checkpoint·학습률 선택에 사용한다. 서로 다른 tokenizer의 NLL을 직접 성능 순위로 비교하지 않는다.
 
@@ -89,17 +87,17 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 �
 
 학생 초기화는 선택된 SFT checkpoint에 3 epoch를 추가하는 단계로 해석하지 않는다. 원본 학생에서 별도 초기화를 수행한 뒤 증류로 이어지는 절차다. 현재 v1에서 직접 loss로 선택한 두 LR는 원문의 SFT 기준 모델 탐색에서 선택된 LR·batch를 재사용한 결과가 아니다.
 
-현재 열 모델에서는 GPT-2 base·Qwen0.8B·OPT125M이 1.3B 미만이고 나머지 일곱 모델은 1.3B 이상이다. 전 모델에 전체 탐색을 적용하면 10 × 3 LR × 2 batch = 60회 SFT, 총 3 × 6 × 20 + 7 × 6 × 10 = 780 model-epoch다. 기존 v1 계획의 10 × 2 × 3 = 60 model-epoch 대비 데이터 반복량이 13배이며, 실행 시간 배수는 아니다. 검증 생성 시간은 별도로 필요하다. 전 모델 적용과 예비 평가 후 후보군 축소 중 범위를 확인 중이며 새 탐색은 아직 시작하지 않았다.
+현재 여덟 모델에서는 GPT-2 base·OPT125M이 1.3B 미만이고 나머지 여섯 모델은 1.3B 이상이다. 전 모델에 전체 탐색을 적용하면 8 × 3 LR × 2 batch = 48회 SFT, 총 2 × 6 × 20 + 6 × 6 × 10 = 600 model-epoch다. 예비 계획의 8 × 2 × 3 = 48 model-epoch 대비 데이터 반복량이 12.5배이며 실행 시간 배수는 아니다. 이 전체 탐색을 현재 실행하지 않으며 유망 후보에 적용할 구체적인 범위는 예비 평가 후 정한다.
 
 우리 연구에 권하는 단계 배치는 **v1 예비 SFT·평가 → 유망 조합 추리기 → 해당 후보의 SFT 설정 탐색·재평가 → 최종 조합 선정 → 선정 학생의 3 epoch 초기화 → 본 증류 비교**다. SFT 설정 탐색은 최종 확정 전에, 학생 초기화는 확정 후 증류 직전에 둔다. 이 배치는 원문을 우리 모델 선정 문제에 적용한 연구 설계이며 원문의 모델 선정 알고리즘으로 인용하지 않는다. 후보군의 구체적인 범위는 아직 미정이다. 예비 조건에서 제외한 모델이 더 넓은 탐색에서도 열등하다는 결론은 내리지 않는다.
 
-Qwen9B도 원문 크기 구간상 1.3B 이상이다. [QLoRA 표 9](https://arxiv.org/pdf/2305.14314#page=23)의 2e-4는 LLaMA 7B·13B에서 사용한 값이며 Qwen9B·Dolly·NF4 조합의 최적값을 입증하지 않는다. v1의 1e-4/2e-4 비교에서는 더 낮은 LR를 제외한 영향과 모델 고유 성능을 분리하지 못한다. 원문 탐색 절차를 채택하더라도 로컬의 LoRA·일부 NF4·공통 데이터 필터는 별도 변경점이다. batch 32/64의 실제 구현·검증 생성 설정·소스와 결과 경로를 별도 protocol로 고정한 후 실행해야 하며 v1의 protocol·checkpoint는 덮어쓰지 않는다.
+**제외 모델의 과거 검토:** Qwen9B도 원문 크기 구간상 1.3B 이상이다. [QLoRA 표 9](https://arxiv.org/pdf/2305.14314#page=23)의 2e-4는 LLaMA 7B·13B에서 사용한 값이며 Qwen9B·Dolly·NF4 조합의 최적값을 입증하지 않는다. v1의 1e-4/2e-4 비교에서는 더 낮은 LR를 제외한 영향과 모델 고유 성능을 분리하지 못한다. 원문 탐색 절차를 채택하더라도 로컬의 LoRA·일부 NF4·공통 데이터 필터는 별도 변경점이다. batch 32/64의 실제 구현·검증 생성 설정·소스와 결과 경로를 별도 protocol로 고정한 후 실행해야 하며 v1의 protocol·checkpoint는 덮어쓰지 않는다.
 
 ## 공통 평가와 시각화
 
 **평가 역할:** 2026-10-16 사용자 결정에 따라 Dolly·Self-Instruct·S-NI (11_)·Vicuna의 생성 성능을 주 평가로 삼는다. SST-2·BoolQ는 label 편향과 확률 품질을 살피는 보조 진단이다. [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 다섯 instruction benchmark를 주 평가로 쓰고 SST-2·BoolQ는 LLaMA-7B 기반 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)은 네 공통 생성 benchmark에서 평가한다. 두 분류 점수만으로 교사·학생을 선정하지 않으며, 우리 Brier score를 논문의 ECE 재현으로 표시하지 않는다.
 
-교사가 학생보다 반드시 몇 점 높아야 한다는 고정 임계값은 두지 않는다. 목표 생성 과제의 동일 문항에서 관측한 차이·오류 유형·변동을 근거로 지도 유익성을 판단한다. 현재 한 개 생성 seed로 seed 간 변동이나 우위의 통계적 확실성을 결론내리지 않는다. [생성 평가 계획](GENERATION_EVALUATION.md)의 세 추가 자료를 공식 배포 revision으로 고정했고 모든 tokenizer의 같은 원문·길이·학습/개발 instruction 중복 감사를 통과했다. 학습 파라미터와 기존 평가 이력은 유지하며, 모델 선정 완료에는 네 생성 benchmark의 완료도 요구한다. 실제 완료 범위는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md)를 따른다.
+교사가 학생보다 반드시 몇 점 높아야 한다는 고정 임계값은 두지 않는다. 목표 생성 과제의 동일 문항에서 관측한 차이·오류 유형·변동을 근거로 지도 유익성을 판단한다. 현재 한 개 생성 seed로 seed 간 변동이나 우위의 통계적 확실성을 결론내리지 않는다. [생성 평가 계획](GENERATION_EVALUATION.md)의 세 추가 자료를 공식 배포 revision으로 고정했고 모든 tokenizer의 같은 원문·길이·학습/개발 instruction 중복 감사를 통과했다. 학습 파라미터와 기존 평가 이력은 유지하며, 예비 완료에는 Dolly 500문항을 요구하고 최종 조합 확정 전 유망 후보에 외부 생성 평가를 적용한다. 실제 완료 범위는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md)를 따른다.
 
 | 평가 | 공통 자료와 지표 |
 |---|---|
@@ -108,13 +106,13 @@ Qwen9B도 원문 크기 구간상 1.3B 이상이다. [QLoRA 표 9](https://arxiv
 | BoolQ | validation 중 공통 길이 기준을 통과한 3,269건, 같은 분류 지표. 원본 row 3154 한 건은 GPT-2의 1,024토큰 용량을 넘으므로 전 모델 공통 제외 |
 | Dolly 생성 | 모델 선정 단계: 500문항 × 공통 생성 seed 10 한 개. ROUGE-1/2/L의 문항 평균, 생성 길이·상한 도달률·빈 응답률 |
 
-**반복 수 결정:** 모델 선정 단계에서는 10개 모델 모두 같은 seed 10으로 생성 평가한다. Dolly는 500 × 1 × 10 = 5,000개이고 세 추가 자료를 포함한 총 평가 응답은 2,516 × 1 × 10 = 25,160개다. 기존 Dolly 응답은 재사용한다. 10은 MiniLLM의 seed 목록 중 첫 값을 공통 조건으로 고정한 것이며 최적 seed라는 의미는 아니다. 최종 선정 모델의 본 실험에서는 MiniLLM을 따라 seed 10/20/30/40/50의 5개 생성 반복을 사용한다. 두 단계의 반복 수는 학습 반복 수와 별개다. 현재 실행은 모델 선정까지만 수행하며 본 실험의 추가 학습·방법 비교는 이후 설계에 따른다.
+**반복 수 결정:** 예비 평가는 8개 모델에 공통 seed 10으로 Dolly 500문항을 적용해 총 4,000개 응답이다. 유망 후보에 외부 3종을 추가하면 모델당 총 2,516문항이다. 기존 응답은 검증해 재사용한다. seed 10은 MiniLLM의 seed 목록 중 첫 값을 공통 조건으로 고정한 것이며 최적 seed라는 의미는 아니다. 최종 선정 모델 본 실험의 생성 seed 10/20/30/40/50은 현재 예비 완료 조건이 아니다.
 
 분류는 같은 지시 내용과 label 후보의 조건부 sequence log probability로 판정한다. 자유 응답을 임의 파싱한 정답률과 구분한다. Brier score는 두 label 후보 사이에서 정규화한 확률임을 명시한다. 자료 revision·제외 행·파일 해시도 평가 명세에 남긴다.
 
 생성은 temperature=1, top-k=0, top-p=1, no-repeat-ngram=6과 생성 seed를 [MiniLLM 평가 코드](https://github.com/microsoft/LMOps/tree/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm)·부록 B.2에서 가져온다. **최대 새 토큰 256과 microbatch 1은 로컬 변경값**이다. 256은 전체 길이 상한 512에서 공통 최대 prompt 256을 뺀 보수적 응답 예산이다. 원본은 512에서 실제 padded prompt 길이를 빼므로 짧은 prompt에 더 긴 응답을 허용한다. 이번 고정 상한은 긴 응답의 점수를 낮출 수 있어 상한 도달률도 함께 보고한다. Batch 변경 때문에 seed가 같아도 원문과 생성 문장의 완전 일치를 요구하지 않는다.
 
-위 256토큰 생성 예산은 최초 네 tokenizer를 기준으로 정한 값으로 10개 모델에 동일하게 유지한다. 추가 tokenizer의 전체 원문 prompt는 256토큰을 넘을 수 있으므로 총 길이가 모두 512 이하라는 뜻은 아니다. 각 모델의 native context 내에서 입력 원문과 동일한 새 토큰 예산을 유지한다.
+위 256토큰 생성 예산은 최초 네 tokenizer를 기준으로 정한 값으로 8개 모델에 동일하게 유지한다. 추가 tokenizer의 전체 원문 prompt는 256토큰을 넘을 수 있으므로 총 길이가 모두 512 이하라는 뜻은 아니다. 각 모델의 native context 내에서 입력 원문과 동일한 새 토큰 예산을 유지한다.
 
 그림에는 평가가 완료된 모델의 SST-2·BoolQ accuracy/macro-F1, 단일 생성 seed의 Dolly ROUGE-L, 학습·검증 손실 곡선을 별도로 제시한다. 현재 단일 seed에서는 생성 seed 간 표준편차를 추정할 수 없으므로 JSON에 null로 남기고 표·그래프에 오차막대나 ±0을 붙이지 않는다. 본 실험의 5개 생성 반복에서 평균·표본 표준편차를 보고한다. 점수가 없는 모델은 공란으로 두며 이전 공개 SFT 모델 점수로 채우지 않는다. Dolly ROUGE를 accuracy로 해석하지 않는다.
 
@@ -122,7 +120,7 @@ Qwen9B도 원문 크기 구간상 1.3B 이상이다. [QLoRA 표 9](https://arxiv
 
 공통 파라미터 전체 표·현재 장비 사양·장비별 변경 범위·모델 하나씩 실행하는 방법은 [공통 실험 실행 지침](EXPERIMENT_GUIDE.md)을 따른다. 현재 microbatch·누적 횟수는 고정이며, 문서의 장비별 최적화 절차가 자동 적용된 상태는 아니다.
 
-현재 환경에서 다음 순서로 실행한다. Python은 Qwen3.5를 지원하는 transformers가 설치된 환경이어야 한다.
+현재 환경에서 다음 순서로 실행한다. Python은 현재 고정한 transformers·PEFT·PyTorch 환경을 사용한다.
 
 ```powershell
 python -m pip install --target tmp/dolly_sft_additional_v1/deps sentencepiece==0.2.2 protobuf==7.36.2
@@ -132,8 +130,8 @@ python -B scripts/run_dolly_sft.py
 
 위 두 tokenizer 의존성은 현재 프로젝트의 `tmp` 안에 설치되어 있다. 추가 모델 protocol에는 해당 버전도 기록한다. 기존 학습 환경 전체를 바꾸지 않고, 새 환경에서 실행할 때만 이 설치 단계를 수행한다.
 
-기존 데이터·점검 파일은 준비되어 있으므로 학습 중 `dolly_sft.py prepare`를 다시 실행하지 않는다. 추가 모델 파일 준비 후 worker는 **모델별 사전 점검 → 두 학습률 SFT → MD 갱신 → 공통 평가 → MD·그림 갱신 → 다음 모델**을 진행한다. 사용자 요청으로 예약된 후속 확인은 삭제했으며 활성 대화에서 epoch 완료 단위로 진행률을 보고한다. step 단위 중간 보고는 생략한다. 모델별 SFT·평가 완료와 실행 실패는 별도로 알린다. 별도 Python worker의 학습·평가·MD 갱신 순서는 유지한다. 실행 상태는 `results/dolly_sft_v1/worker_status.json`, 상세 로그는 `tmp/dolly_sft_v1/worker.log`에 남긴다. 실패 시 다음 단계로 진행하지 않고 실패 상태를 저장한다. 같은 worker의 중복 실행은 파일 잠금으로 막는다.
+기존 데이터·점검 파일은 준비되어 있으므로 학습 중 `dolly_sft.py prepare`를 다시 실행하지 않는다. 추가 모델 파일 준비 후 worker는 **모델별 사전 점검 → 두 학습률 SFT → MD 갱신 → Dolly 500 생성 → MD·그림 갱신 → 다음 모델**을 진행한다. 사용자 요청으로 예약된 후속 확인은 삭제했으며 활성 대화에서 epoch 완료 단위로 진행률을 보고한다. step 단위 중간 보고는 생략한다. 모델별 SFT·평가 완료와 실행 실패는 별도로 알린다. 별도 Python worker의 학습·평가·MD 갱신 순서는 유지한다. 실행 상태는 `results/dolly_sft_v1/worker_status.json`, 상세 로그는 `tmp/dolly_sft_v1/worker.log`에 남긴다. 실패 시 다음 단계로 진행하지 않고 실패 상태를 저장한다. 같은 worker의 중복 실행은 파일 잠금으로 막는다.
 
 사전 점검은 실제 가중치 갱신·유한 gradient·EOS/padding 마스크·adapter 저장/재적재 logits 일치·cache 생성·16건 누적 Trainer 갱신·검증·optimizer checkpoint 저장을 확인한다. 일회성 점검 점수를 본 SFT 성능으로 보고하지 않는다. Trainer 일회성 점검에만 warmup=0을 사용해 실제 한 번의 가중치 변화를 확인하며, 본 학습은 위 3% warmup을 유지한다.
 
-공개 요약은 `results/dolly_sft_v1/`, 대형 checkpoint·예측·생성 응답과 로그는 Git에서 제외한 `tmp/dolly_sft_v1/`에 저장한다. 학습은 epoch checkpoint에서 재개하며 완료한 후보는 재학습하지 않는다. 생성은 완료 seed 단위로 재개한다. CUDA의 Qwen 고속 커널이 없는 현재 Windows 환경에서는 정확한 PyTorch 대체 구현이 사용되므로 속도는 실측 기록을 따른다. 짧은 점검 통과가 장시간 안정성을 보장하지는 않는다.
+공개 요약은 `results/dolly_sft_v1/`, 대형 checkpoint·예측·생성 응답과 로그는 Git에서 제외한 `tmp/dolly_sft_v1/`에 저장한다. 학습은 epoch checkpoint에서 재개하며 완료한 후보는 재학습하지 않는다. 생성은 완료 seed 단위로 재개한다. 제외한 Qwen의 실행은 중지했으며 보존한 checkpoint를 자동 재개하지 않는다. 짧은 점검 통과가 장시간 안정성을 보장하지는 않는다.

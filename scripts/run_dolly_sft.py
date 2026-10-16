@@ -1,4 +1,4 @@
-"""Train, document and evaluate one model at a time across five model families."""
+"""Train, document and evaluate one model at a time within the active pilot scope."""
 
 import argparse
 from datetime import datetime, timezone
@@ -7,7 +7,8 @@ import subprocess
 import sys
 from filelock import FileLock
 from dolly_sft import LOCAL, OUT, ROOT, protocol, write_json
-from dolly_study import ADDED, MODELS
+from dolly_study import ADDED
+from dolly_scope import EXCLUDED_MODELS, MODELS
 from prepare_generation_benchmarks import prepared_protocol
 
 
@@ -26,7 +27,7 @@ def main(argv=None):
                     "generation_protocol_fingerprint": generation["fingerprint"],
                     "started_at_utc": datetime.now(timezone.utc).isoformat(),
                     "log": (LOCAL / "worker.log").relative_to(ROOT).as_posix(),
-                    "study_models": list(MODELS), "requested_models": list(names)}
+                    "study_models": list(MODELS), "excluded_models": list(EXCLUDED_MODELS), "requested_models": list(names)}
         stage = "starting"
         name = None
         try:
@@ -34,9 +35,8 @@ def main(argv=None):
                 for name in names:
                     commands = (("training", ["dolly_study.py" if name in ADDED else "dolly_sft.py", "train", "--model", name]),
                                 ("sft_documentation", ["report_dolly_sft.py"]),
-                                ("generation_evaluation", ["evaluate_generation_benchmarks.py", "--model", name]),
+                                ("generation_evaluation", ["evaluate_dolly_pilot.py", "--model", name]),
                                 ("generation_report", ["report_generation_benchmarks.py"]),
-                                ("evaluation", ["evaluate_dolly_sft.py", "--model", name]),
                                 ("report", ["report_dolly_sft.py"]))
                     for stage, arguments in commands:
                         write_json(OUT / "worker_status.json", {**identity, "status": "running", "stage": stage, "model": name})

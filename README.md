@@ -2,23 +2,23 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **3/10**, 생성 주 평가 4종 완료 **2/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **2/8**, Dolly 예비 생성 완료 **2/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
 **큰 교사 모델의 예측을 작은 학생 모델이 배우는 지식증류에서, 학습 방식에 따라 학생의 응답과 성능이 어떻게 달라지는지 탐구한다.**
 
-현재는 **Dolly를 공통 데이터로 고정하고, GPT-2·Qwen3.5·OPT·OpenLLaMA·Gemma-2의 교사·학생 후보 총 10개 모델을 각각 SFT해 비교하는 단계**다. 모델별 기준선을 확보한 뒤 KL 방향·confidence gate·Revival에 따른 변화를 분석한다. 주요 산출물은 확률분포·학습 신호·응답 변화를 설명하는 시각화와 평가 결과다.
+현재는 **Dolly를 공통 데이터로 고정하고, GPT-2·OPT·OpenLLaMA·Gemma-2의 교사·학생 후보 총 8개 모델을 각각 SFT해 비교하는 단계**다. 모델별 기준선을 확보한 뒤 KL 방향·confidence gate·Revival에 따른 변화를 분석한다. 주요 산출물은 확률분포·학습 신호·응답 변화를 설명하는 시각화와 평가 결과다.
 
 ## 실험 흐름
 
-**원문 절차 검토:** 현재 두 LR·3 epoch·검증 NLL 선택의 v1은 예비 비교다. MiniLLM의 SFT 기준 모델 탐색(검증 ROUGE-L) 후 증류 전 학생 초기화(3 epoch·검증 loss)를 분리하는 절차를 검토 중이다. 적용 모델 범위는 미정이며 새 탐색은 미실행이다. [원문 설정과 적용 범위](docs/DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 따른다.
+**범위 축소 (2026-10-16):** Qwen 두 모델을 제외하고 4계열·8모델의 예비 비교를 진행한다. 예비 생성 평가는 Dolly 500문항부터 수행하며 외부 3종·새 보조 분류 평가는 후보 축소 후 진행한다. 기존 결과는 보존한다. **예비 비교 → 유망 후보의 원문 기반 SFT 탐색·외부 평가 → 최종 한 조합 → 학생 초기화·본 증류 비교**로 진행한다. [원문 설정과 적용 단계](docs/DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 따른다.
 
-**Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**
+**Dolly SFT → 모델별 체크포인트 선택 → Dolly 예비 생성 평가 → 유망 후보의 설정 탐색·외부 평가 → 교사·학생 조합 선정 → 증류 방식 비교**
 
-1. **독립적인 SFT:** 5계열·10개 모델을 같은 Dolly 기준 응답으로 LoRA 학습한다. 학습률 후보마다 같은 공개 revision에서 시작하며 이 단계에는 KD를 적용하지 않는다.
+1. **독립적인 SFT:** 4계열·8개 모델을 같은 Dolly 기준 응답으로 LoRA 학습한다. 학습률 후보마다 같은 공개 revision에서 시작하며 이 단계에는 KD를 적용하지 않는다.
 2. **체크포인트 선택:** 각 모델 내부에서 두 LR·epoch별 개발 NLL로 adapter를 선택한다. 다른 tokenizer의 NLL로 모델 순위를 매기지 않는다.
-3. **선정 평가:** 네 생성 benchmark와 SST-2·BoolQ 보조 진단을 수행한다. 보완 지표·응답 검토·증류 실행 점검 후 한 조합과 선정 근거를 확정한다.
+3. **선정 평가:** 우선 Dolly 500문항을 비교하고 외부 3종·새 보조 진단은 유망 후보에 수행한다. 보완 지표·응답 검토·증류 실행 점검 후 한 조합과 선정 근거를 확정한다.
 4. **본 증류 비교:** 선정 조합에서 FKL/RKL·Hard/Soft gate·Revival 유무와 결합을 대조한다. 같은 학생의 SFT 기준선 대비 분포·학습 신호·응답 변화를 시각화한다.
 
 현재는 SFT와 선정 평가를 진행 중이다. 원문 사용값과 로컬 검증 선택값을 구분하고, 효율성 순위나 근거 없는 최적 설정을 연구 결론으로 삼지 않는다.
@@ -30,12 +30,11 @@
 | 계열 | 교사 후보 | 학생 후보 | 현재 확인 범위 |
 |---|---|---|---|
 | **GPT-2** | [GPT-2 XL](https://huggingface.co/openai-community/gpt2-xl), 약 1.56B | [GPT-2 base](https://huggingface.co/openai-community/gpt2), 약 124M | 둘 다 BF16 가중치, 양자화 없음, LoRA 학습 |
-| **Qwen3.5** | [Qwen3.5-9B](https://huggingface.co/Qwen/Qwen3.5-9B) | [Qwen3.5-0.8B](https://huggingface.co/Qwen/Qwen3.5-0.8B) | 9B만 NF4·double quantization과 LoRA, 0.8B는 BF16 가중치와 LoRA |
 | **OPT** | [OPT-2.7B](https://huggingface.co/facebook/opt-2.7b) | [OPT-125M](https://huggingface.co/facebook/opt-125m) | BF16 먼저 점검, 전용 VRAM에 맞지 않으면 NF4 |
 | **OpenLLaMA** | [OpenLLaMA-7B](https://huggingface.co/openlm-research/open_llama_7b) | [OpenLLaMA-3B](https://huggingface.co/openlm-research/open_llama_3b) | BF16 먼저 점검, 전용 VRAM에 맞지 않으면 NF4 |
 | **Gemma-2** | [Gemma-2-9B-IT](https://huggingface.co/google/gemma-2-9b-it) | [Gemma-2-2B-IT](https://huggingface.co/google/gemma-2-2b-it) | 9B는 BF16 가중치만으로 VRAM 초과해 NF4, 2B는 실제 점검으로 확정 |
 
-LoRA는 10개 모델에 공통 적용한다. 추가한 OPT·OpenLLaMA·Gemma 조합은 [CaRE의 Dolly 실험](https://arxiv.org/html/2609.36734v1)에서 가져왔다. 추가 모델은 BF16 가중치 크기와 실제 적재·갱신·저장 점검의 전용 VRAM 사용량을 근거로 양자화 여부를 결정한다. GPT-2·OPT·OpenLLaMA는 pretrained, Qwen·Gemma-IT는 post-trained 모델이므로 시작점·크기·tokenizer·정밀도 차이를 포함한 후보 조합 비교로 해석한다.
+LoRA는 8개 모델에 공통 적용한다. 추가한 OPT·OpenLLaMA·Gemma 조합은 [CaRE의 Dolly 실험](https://arxiv.org/html/2609.36734v1)에서 가져왔다. 추가 모델은 BF16 가중치 크기와 실제 적재·갱신·저장 점검의 전용 VRAM 사용량을 근거로 양자화 여부를 결정한다. GPT-2·OPT·OpenLLaMA는 pretrained, Gemma-IT는 post-trained 모델이므로 시작점·크기·tokenizer·정밀도 차이를 포함한 후보 조합 비교로 해석한다.
 
 공통 데이터는 [Databricks Dolly-15K](https://huggingface.co/datasets/databricks/databricks-dolly-15k)다. 사람이 작성한 영어 지시·응답 **15,011건**으로, 질의응답·분류·정보 추출·요약·창작 등 8개 과제를 포함한다.
 
@@ -50,13 +49,13 @@ Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입�
 
 | 평가 대상 | 확인할 지표와 자료 |
 |---|---|
-| **생성 벤치마크의 교사·학생 차이 — 주 평가** | Dolly 500·Self-Instruct 242·S-NI (11_) 1,694·Vicuna 80문항. ROUGE-1/2/L·동일 문항의 차이와 오류. 선정 단계는 공통 생성 seed 10 한 개 |
+| **생성 벤치마크의 교사·학생 차이 — 주 평가** | 예비 Dolly 500문항. 후보 후속은 Self-Instruct 242·S-NI (11_) 1,694·Vicuna 80문항. ROUGE-1/2/L·동일 문항의 차이와 오류. 선정 단계는 공통 생성 seed 10 한 개 |
 | **분류 편향·확률 품질 — 보조 진단** | SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류. 현재 Brier와 논문의 ECE를 구분 |
 | **증류 전후의 학생 변화** | 학생의 SFT 기준선 대비 수행 변화, 교사·학생의 확률분포, gate·불확실성·갱신 수용/거절 |
 
 자유 생성의 ROUGE를 문항 정답률로 해석하지 않는다. Revival의 지도 유익성을 분석할 때는 신뢰할 수 있는 정오 판정 기준을 별도로 마련한다. 학습·설정 선택용 검증·최종 평가의 역할을 구분하고, 이미 모델 선정에 사용한 점수를 독립적인 최종 증거로 부르지 않는다.
 
-모델 선정의 생성 평가는 모델당 2,516문항이며 기존 Dolly 응답은 검증해 재사용한다. 자료 revision·다중 정답·전처리·실행·완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md)을 따른다. 단일 생성 seed에서는 seed 간 표준편차와 오차막대를 제시하지 않는다. 최종 선정 모델 본 실험의 생성 seed는 10/20/30/40/50이며 학습 seed 반복과 구분한다.
+예비 생성 평가는 모델당 Dolly 500문항이며 외부 3종까지 적용한 후보는 총 2,516문항이다. 기존 Dolly 응답은 검증해 재사용한다. 자료 revision·다중 정답·전처리·실행·완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md)을 따른다. 단일 생성 seed에서는 seed 간 표준편차와 오차막대를 제시하지 않는다. 최종 선정 모델 본 실험의 생성 seed는 10/20/30/40/50이며 학습 seed 반복과 구분한다.
 
 검증 NLL은 각 모델의 SFT 체크포인트를 고르는 기준이며 다른 계열의 순위표가 아니다. 현재 ROUGE-L은 1차 후보 비교이고 최종 조합은 미정이다. METEOR·BERTScore는 보완 지표로 검토했으나 아직 채점하지 않았다. 원본 대비 SFT 전후의 생성 성능 향상도 아직 측정하지 않았다.
 
@@ -72,9 +71,9 @@ Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입�
 
 ## 진행 현황과 남은 단계
 
-자동 실행은 모델마다 **SFT → 문서 → 네 생성 평가 → 생성 보고서 → SST-2·BoolQ → 문서 → 다음 모델** 순서다. 최신 완료 수는 문서 상단과 [SFT 진행 기록](docs/SFT_PROGRESS.md)을 따른다. 일부 LR·일부 benchmark 완료를 모델 전체 완료로 표시하지 않는다.
+자동 실행은 모델마다 **예비 SFT → 문서 → Dolly 500 생성 → 생성 보고서·문서 → 다음 모델** 순서다. 최신 완료 수는 문서 상단과 [SFT 진행 기록](docs/SFT_PROGRESS.md)을 따른다. 일부 LR·일부 benchmark 완료를 모델 전체 완료로 표시하지 않는다.
 
-SFT 이후 조합 선정까지 남은 작업은 네 생성 평가·보조 진단 완료, 보완 지표의 명세·채점, 모델×benchmark×지표 비교와 오류 검토, 후보 조합의 실제 증류 연산·메모리 점검, 선정 이유와 한계의 기록이다. 세부 완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)에 있다.
+SFT 이후 조합 선정까지 남은 작업은 Dolly 예비 비교와 후보군 축소, 해당 후보의 원문 기반 SFT 탐색·외부 생성 평가·보조 진단, 보완 지표의 명세·채점, 모델×benchmark×지표 비교와 오류 검토, 후보 조합의 실제 증류 연산·메모리 점검, 선정 이유와 한계의 기록이다. 세부 완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)에 있다.
 
 직접 SFT 결과와 저자가 공개한 SFT checkpoint의 과거 평가를 분리한다. 원본 대비 SFT 생성 향상 폭·METEOR·BERTScore·본 KD 결과는 아직 없다. 과거 데이터 후보 조사와 한국어 적용은 후속 자료로 보관한다.
 
@@ -104,4 +103,4 @@ tmp/                      로컬 모델·자료·checkpoint·응답·로그, Git
 - [공개 SFT 모델 평가 결과](docs/SFT_BASELINE_EVALUATION.md) · [Dolly 구성](docs/DOLLY_DATA_OVERVIEW.md)
 - 논문 해설: [Hinton](papers/01_hinton_2015_ko.md) · [MiniLLM](papers/02_minillm_2024_ko.md) · [CaRE-KD](papers/03_care_kd_2026_ko.md)
 
-연결된 계획·보고서의 과거 검토에는 이전의 데이터 3종 × 모델 2종 설계가 남아 있다. 현재 실행 범위는 **Dolly 고정·5개 계열의 10개 모델 LoRA SFT 비교**다. 진행 상태는 결과 폴더와 모델별 진행 기록을 따른다.
+연결된 계획·보고서의 과거 검토에는 이전의 데이터 3종 × 모델 2종 설계가 남아 있다. 현재 실행 범위는 **Dolly 고정·4개 계열의 8개 모델 LoRA SFT 비교**다. 진행 상태는 결과 폴더와 모델별 진행 기록을 따른다.

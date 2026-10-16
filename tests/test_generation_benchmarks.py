@@ -9,11 +9,47 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import evaluate_generation_benchmarks as evaluation
+import evaluate_dolly_pilot as pilot
+import report_generation_benchmarks as report
 from prepare_generation_benchmarks import group, normalize
 import torch
 
 
 class GenerationTests(unittest.TestCase):
+    def test_dolly_pilot_completion_does_not_claim_four_benchmark_completion(self):
+        with tempfile.TemporaryDirectory(dir=evaluation.ROOT / "tmp") as folder:
+            root = Path(folder)
+            (root / "gpt2_base_selected.json").touch()
+            metrics = dict.fromkeys(("rouge1", "rouge2", "rougeL", "exact_match", "generated_tokens", "empty", "length_capped"), 10)
+            data = {"fingerprint": "test", "counts": {"dolly": {"source": 1, "included": 1, "excluded": 0}}}
+            with patch.object(report, "ROOT", root), patch.object(report, "OUT", root), \
+                    patch.object(report, "MODELS", ("gpt2_base",)), patch.object(report, "result_dir", return_value=root), \
+                    patch.object(report, "prepared_protocol", return_value=data), \
+                    patch.object(report, "load_completed", return_value={"dolly": {"n": 1, "metrics": metrics}}):
+                report.main()
+            completion = json.loads((root / "completion.json").read_text(encoding="utf-8"))
+            self.assertEqual(completion["completed_models"], ["gpt2_base"])
+            self.assertEqual(completion["completed_extended_models"], [])
+            self.assertEqual(completion["required_benchmarks"], ["dolly"])
+            self.assertIn("| 10.00 | 후속 | 후속 | 후속 | — |", (root / "REPORT.md").read_text(encoding="utf-8"))
+
+    def test_pilot_schedules_only_dolly_and_restores_benchmarks_on_failure(self):
+        original = evaluation.BENCHMARKS
+        for fail in (False, True):
+            def check(name):
+                self.assertEqual(name, "gpt2_base")
+                self.assertEqual(evaluation.BENCHMARKS, {"dolly": original["dolly"]})
+                if fail:
+                    raise RuntimeError("evaluation failed")
+            with self.subTest(fail=fail), patch.object(evaluation, "evaluate", side_effect=check) as run:
+                if fail:
+                    with self.assertRaises(RuntimeError):
+                        pilot.main(["--model", "gpt2_base"])
+                else:
+                    pilot.main(["--model", "gpt2_base"])
+                run.assert_called_once_with("gpt2_base")
+            self.assertIs(evaluation.BENCHMARKS, original)
+
     def test_preserves_multiple_references_and_full_text(self):
         row = normalize({"instruction": "Task\ntext", "output": ["first", "second"]}, "row:0")
         self.assertEqual(row["references"], ["first", "second"])

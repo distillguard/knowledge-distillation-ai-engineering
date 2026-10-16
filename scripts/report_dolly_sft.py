@@ -1,7 +1,6 @@
 """Make tables and figures only from completed, matching Dolly SFT evaluations."""
 
 import csv
-from datetime import datetime, timezone
 import json
 import math
 import matplotlib
@@ -9,7 +8,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from dolly_sft import LR_CANDIDATES, MODELS as INITIAL_MODELS, OUT, ROOT, sha
-from dolly_study import LABELS, MODELS, model_protocol, result_dir, selected_record
+from dolly_study import LABELS, model_protocol, result_dir, selected_record
+from dolly_scope import MODELS, REQUIRED_BENCHMARKS
 from evaluate_dolly_sft import SEEDS
 
 
@@ -39,10 +39,13 @@ def progress():
     generation = read(generation_path) if generation_path.exists() else {"completed_models": [], "completed_benchmarks": {}}
     if generation_path.exists():
         assert generation["data_protocol_fingerprint"] == read(generation_path.parent / "protocol.json")["fingerprint"]
-    lines = ["# Dolly 모델별 SFT 진행", "", "5개 계열·10개 모델. 완료는 두 학습률 후보 학습과 검증 기반 adapter 선택을 모두 마친 상태다. 수치는 직접 실행한 결과만 기록한다.", "",
-             "| 모델 | 완료 LR 후보 | 선택 LR | 검증 NLL | 가중치 | 생성 주 평가 4종 | 기존 Dolly·분류 보조 평가 | SFT 완료 확인 시각 (UTC) |", "|---|---|---|---|---|---|---|---|"]
+        assert generation["study_models"] == list(MODELS) and generation["required_benchmarks"] == list(REQUIRED_BENCHMARKS)
+    lines = ["# Dolly 모델별 SFT 진행", "", f"4개 계열·{len(MODELS)}개 모델의 예비 비교. 완료는 두 학습률 후보 학습과 검증 기반 adapter 선택을 모두 마친 상태다. 수치는 직접 실행한 결과만 기록한다.", "",
+             "Qwen 두 모델은 2026-10-16 범위 축소로 제외했다. 기존 결과·checkpoint는 보존하며 아래 완료 수와 현재 순위에는 포함하지 않는다. 원문 기반 SFT 탐색은 유망 후보를 좁힌 뒤, 본 KD는 최종 한 조합에서 수행한다.", "",
+             "| 모델 | 완료 LR 후보 | 선택 LR | 검증 NLL | 가중치 | 예비 Dolly 생성 | 기존 Dolly·분류 보조 평가 |", "|---|---|---|---|---|---|---|"]
     selected, evaluated = [], []
-    for name, label in LABELS.items():
+    for name in MODELS:
+        label = LABELS[name]
         folder = result_dir(name)
         completed = []
         for lr in LR_CANDIDATES:
@@ -54,7 +57,7 @@ def progress():
         assert all(run["protocol_fingerprint"] == spec["fingerprint"] for run in completed)
         precision = spec["precision"][name]["base_weights"] if spec else "GPU 점검 후 확정"
         precision = "NF4" if "NF4" in precision else ("BF16" if "BF16" in precision else precision)
-        lr, loss, finished = "—", "—", "—"
+        lr, loss = "—", "—"
         if chosen_path.exists():
             chosen = selected_record(name)
             assert len(completed) == 2 and chosen["protocol_fingerprint"] == spec["fingerprint"]
@@ -62,23 +65,23 @@ def progress():
             assert math.isclose(chosen["development_nll"], min(r["selected_development"]["eval_loss"] for r in completed))
             selected.append(name)
             lr, loss = f'{chosen["learning_rate"]:.0e}', f'{chosen["development_nll"]:.4f}'
-            finished = datetime.fromtimestamp(chosen_path.stat().st_mtime, timezone.utc).isoformat(timespec="seconds")
         evaluation_path = OUT / f"{name}_evaluation.json"
         if evaluation_path.exists():
             evaluated.append(name)
-        primary = len(generation["completed_benchmarks"].get(name, []))
-        lines.append(f'| {label} | {len(completed)}/2 | {lr} | {loss} | {precision} | {primary}/4 | {"완료" if evaluation_path.exists() else "대기"} | {finished} |')
+        primary = "dolly" in generation["completed_benchmarks"].get(name, [])
+        lines.append(f'| {label} | {len(completed)}/2 | {lr} | {loss} | {precision} | {"완료" if primary else "대기"} | {"완료" if evaluation_path.exists() else "후속"} |')
     lines += ["", "NLL은 각 모델 내부의 checkpoint·학습률 선택에 사용한다. 다른 tokenizer의 NLL로 성능 순위를 매기지 않는다.", "",
-              "각 모델 SFT 후 Dolly·Self-Instruct·S-NI (11_)·Vicuna의 생성 주 평가를 먼저 수행하고 SST-2·BoolQ를 보조 진단한다. Dolly 생성은 기존 응답을 검증해 재사용하며 중복 생성하지 않는다. 생성 seed는 10 한 개이고 seed 간 표준편차는 미추정이다.", "",
+              "각 모델 SFT 후 예비 Dolly 500문항을 먼저 평가한다. 외부 세 benchmark와 SST-2·BoolQ는 후보 축소 후 진행하며 이미 완료한 결과는 보존한다. Dolly 생성은 기존 응답을 검증해 재사용하며 중복 생성하지 않는다. 생성 seed는 10 한 개이고 seed 간 표준편차는 미추정이다.", "",
               "[생성 벤치마크의 교사·학생 비교](../results/generation_benchmarks_v1/REPORT.md)", "",
-              "네 생성 평가의 완료는 1차 후보 비교의 완료다. 보완 지표·오류 분석·후보 KD 실행 점검 후 최종 조합을 선정한다. METEOR·BERTScore는 아직 미구현·미채점이며, 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다."]
+              "Dolly 예비 평가 완료 후 유망 조합을 추리고 해당 후보의 원문 기반 SFT 탐색·외부 생성 평가·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. METEOR·BERTScore는 아직 미구현·미채점이며, 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다."]
     (ROOT / "docs/SFT_PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     for filename in ("README.md", "docs/RESEARCH_PLAN.md", "docs/RESEARCH_REPORT.md", "docs/DOLLY_SFT_MODEL_SELECTION.md"):
         path = ROOT / filename
         progress_link = "docs/SFT_PROGRESS.md" if path.parent == ROOT else "SFT_PROGRESS.md"
         report_link = "results/dolly_sft_v1/REPORT.md" if path.parent == ROOT else "../results/dolly_sft_v1/REPORT.md"
         generation_link = "results/generation_benchmarks_v1/REPORT.md" if path.parent == ROOT else "../results/generation_benchmarks_v1/REPORT.md"
-        block = (f"현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **{len(selected)}/10**, 생성 주 평가 4종 완료 **{len(generation['completed_models'])}/10**, 기존 Dolly·분류 보조 평가 완료 **{len(evaluated)}/10**이다. "
+        block = (f"현재 예비 비교 범위는 **4개 계열·{len(MODELS)}개 모델**이며, SFT 선택 완료 **{len(selected)}/{len(MODELS)}**, Dolly 예비 생성 완료 **{len(generation['completed_models'])}/{len(MODELS)}**, 기존 Dolly·분류 보조 평가 완료 **{len(evaluated)}/{len(MODELS)}**이다. "
+                 "외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. "
                  f"생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록]({progress_link}), "
                  f"교사·학생의 생성 성능 차이는 [생성 주 평가]({generation_link}), 분류 편향 등은 [기존 Dolly·분류 보조 평가]({report_link})를 따른다. 최종 조합은 아직 확정하지 않았다.")
         path.write_text(replace_progress(path.read_text(encoding="utf-8"), block), encoding="utf-8")
@@ -91,7 +94,7 @@ def main():
     runs = {name: read(OUT / f"{name}_evaluation.json") for name in MODELS if (OUT / f"{name}_evaluation.json").exists()}
     if not runs:
         selected = progress()
-        (OUT / "REPORT.md").write_text(f"# Dolly 모델 SFT 평가 결과\n\nSFT 선택 완료 {len(selected)}/10. 아직 완료된 선정 평가가 없다. [모델별 학습 상태](../../docs/SFT_PROGRESS.md)를 따른다.\n", encoding="utf-8")
+        (OUT / "REPORT.md").write_text(f"# Dolly 모델 SFT 평가 결과\n\nSFT 선택 완료 {len(selected)}/{len(MODELS)}. 아직 완료된 선정 평가가 없다. [모델별 학습 상태](../../docs/SFT_PROGRESS.md)를 따른다.\n", encoding="utf-8")
         print("Updated SFT progress; no completed evaluations yet", flush=True)
         return
     labels = []
@@ -137,7 +140,7 @@ def main():
         axis.set(title=title, ylim=(0, 110), xticks=x, xticklabels=["SST-2 (n=872)", "BoolQ (n=3,269)"])
         axis.grid(axis="y", alpha=.18); axis.set_axisbelow(True)
     axes[0].set_ylabel("Score (%)"); axes[1].legend(frameon=False, fontsize=8, loc="upper left", bbox_to_anchor=(1, 1))
-    figure.suptitle(f"Auxiliary classification after Dolly LoRA SFT · {len(runs)}/10 candidates")
+    figure.suptitle(f"Auxiliary classification after Dolly LoRA SFT · {len(runs)}/{len(MODELS)} candidates")
     figure.savefig(OUT / "classification.png", dpi=180); plt.close(figure)
     figure, axis = plt.subplots(figsize=(12, 5.5), layout="constrained")
     values = [run["dolly_generation"]["rougeL"] for run in runs.values()]
@@ -161,7 +164,7 @@ def main():
     figure.suptitle("Development loss · compare checkpoints within each model")
     figure.savefig(OUT / "development_nll.png", dpi=180); plt.close(figure)
     lines = ["# 기존 Dolly·분류 보조 평가", "", "교사·학생 선정의 주 자료는 [네 생성 벤치마크 비교](../generation_benchmarks_v1/REPORT.md)다. 아래 SST-2·BoolQ는 편향·확률 품질의 보조 진단이며, 현재 Brier score는 MiniLLM의 ECE 재현과 구분한다.", "",
-             f"5개 계열·10개 모델 중 SFT 선택 완료 {len(selected)}/10, 기존 평가 완료 {len(runs)}/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.", "",
+             f"4개 계열·{len(MODELS)}개 모델의 예비 비교 중 SFT 선택 완료 {len(selected)}/{len(MODELS)}, 기존 평가 완료 {len(runs)}/{len(MODELS)}. Qwen 두 모델의 기존 결과는 범위 밖으로 보존한다. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.", "",
              "| 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |",
              "|---|---|---|---|"]
     for label, run in zip(labels, runs.values()):

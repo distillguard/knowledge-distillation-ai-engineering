@@ -2,7 +2,7 @@
 
 갱신일: 2026-10-16, Asia/Seoul.
 
-현재 결정은 **학습 Dolly 고정 → 같은 자료로 5계열·10모델 SFT → 생성·보조 평가 → 조합 선정 → KD 비교**다. 공통 학습 11,117건·개발 검증 975건·Dolly 선정 평가 500건을 사용한다. 외부 Self-Instruct·S-NI·Vicuna는 생성 평가용이며 학습에 포함하지 않는다. 상세 명세는 [현재 SFT 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
+현재 결정은 **학습 Dolly 고정 → 같은 자료로 4계열·8모델 SFT → 생성·보조 평가 → 조합 선정 → KD 비교**다. 공통 학습 11,117건·개발 검증 975건·Dolly 선정 평가 500건을 사용한다. 외부 Self-Instruct·S-NI·Vicuna는 생성 평가용이며 학습에 포함하지 않는다. 상세 명세는 [현재 SFT 계획](DOLLY_SFT_MODEL_SELECTION.md)과 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
 
 아래 후보 표와 원자료 조사는 데이터의 역할·제작 과정·품질·누수를 검토한 근거로 보관한다. UltraChat·MetaMathQA·한국어·WizardCoder는 현재 SFT의 추가 학습 자료가 아니다. 데이터별 SFT를 진행하던 과거 설계와 예비 갱신 기록은 [후속 비교 문서](DATASET_SFT_COMPARISON.md)에 분리했다.
 

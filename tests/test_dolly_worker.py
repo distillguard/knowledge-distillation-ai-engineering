@@ -33,10 +33,10 @@ class WorkerTests(unittest.TestCase):
             with self.subTest(model=name), patch.object(worker.subprocess, "run") as run:
                 worker.main(["--model", name])
                 commands = [call.args[0] for call in run.call_args_list]
-                self.assertEqual(len(commands), 6)
+                self.assertEqual(len(commands), 5)
                 self.assertEqual([Path(command[5]).name for command in commands],
-                                 [engine, "report_dolly_sft.py", "evaluate_generation_benchmarks.py",
-                                  "report_generation_benchmarks.py", "evaluate_dolly_sft.py", "report_dolly_sft.py"])
+                                 [engine, "report_dolly_sft.py", "evaluate_dolly_pilot.py",
+                                  "report_generation_benchmarks.py", "report_dolly_sft.py"])
                 self.assertEqual(commands[0][-3:], ["train", "--model", name])
                 self.assertEqual(commands[2][-2:], ["--model", name])
                 for call in run.call_args_list:
@@ -47,10 +47,21 @@ class WorkerTests(unittest.TestCase):
                 self.assertEqual(self.status()["status"], "completed")
 
     def test_default_runs_all_models_in_order(self):
+        self.assertEqual(worker.MODELS, ("gpt2_base", "gpt2_xl", "opt_125m", "opt_27b",
+                                        "openllama_3b", "openllama_7b", "gemma2_2b_it", "gemma2_9b_it"))
         with patch.object(worker.subprocess, "run") as run:
             worker.main([])
-            self.assertEqual(run.call_count, 6 * len(worker.MODELS))
-            self.assertEqual([call.args[0][-1] for call in run.call_args_list[::6]], list(worker.MODELS))
+            self.assertEqual(run.call_count, 40)
+            self.assertEqual([call.args[0][-1] for call in run.call_args_list[::5]], list(worker.MODELS))
+            self.assertEqual(self.status()["excluded_models"], ["qwen_08b", "qwen_9b"])
+
+    def test_vscode_and_reporters_use_same_scope(self):
+        import report_dolly_sft
+        import report_generation_benchmarks
+        tasks = json.loads((worker.ROOT / ".vscode/tasks.json").read_text(encoding="utf-8"))
+        self.assertEqual(tasks["inputs"][0]["options"], ["all", *worker.MODELS])
+        self.assertEqual(report_dolly_sft.MODELS, worker.MODELS)
+        self.assertEqual(report_generation_benchmarks.MODELS, worker.MODELS)
 
     def test_held_lock_prevents_duplicate_execution(self):
         self.local.mkdir()
