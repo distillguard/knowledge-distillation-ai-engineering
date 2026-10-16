@@ -36,6 +36,8 @@ Dolly의 정규화 prompt 중복 1건은 기존 500개 ID를 유지하기 위해
 
 이미 완료된 GPT-2 base·XL의 생성 평가를 먼저 확인한다. 기존 Dolly 응답과 fingerprint가 일치하면 다시 생성하지 않고 문항별 점수를 재계산한다. 미완료 SFT는 저장된 checkpoint와 기존 LR·에포크·정밀도를 보존해 이어간다.
 
+기존 Dolly 응답 파일에는 문항별 마지막 EOS 여부가 없어 점수 CSV의 `length_capped` 열은 결측으로 둔다. Dolly의 상한 도달률 집계는 검증한 기존 생성 요약을 재사용한다. 새로 생성한 세 benchmark는 EOS를 확인한 문항별 상한 도달 여부를 기록한다.
+
 이후 모델마다 **SFT → 문서 → 생성 4종 → 생성 보고서 → SST-2·BoolQ 보조 평가 → 문서 → 다음 모델** 순서다. 모델별 실행과 전체 실행은 같은 worker 잠금을 사용한다. 새 생성의 중간 응답과 CPU·CUDA RNG 상태는 무시된 `tmp/generation_benchmarks_v1/`에 50문항마다 함께 저장한다. 이는 저장 주기이며 학습·샘플링 파라미터가 아니다. 중단 시 저장한 ID prefix와 fingerprint를 확인한 뒤 같은 RNG 상태에서 재개한다.
 
 처음 준비할 때:
