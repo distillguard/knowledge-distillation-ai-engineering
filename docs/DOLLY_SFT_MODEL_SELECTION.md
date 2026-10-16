@@ -69,6 +69,10 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 �
 
 ## 공통 평가와 시각화
 
+**평가 역할:** 현재 생성 성능의 주 관측은 Dolly이며, SST-2·BoolQ는 label 편향과 확률 품질을 살피는 보조 진단이다. [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 다섯 instruction benchmark를 주 평가로 쓰고 SST-2·BoolQ는 LLaMA-7B 기반 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)은 Dolly·Self-Instruct·Super-Natural Instructions·Vicuna에서 생성 성능을 평가한다. 현재의 두 분류 점수만으로 교사·학생을 선정하지 않으며, 우리 Brier score를 논문의 ECE 재현으로 표시하지 않는다.
+
+교사가 학생보다 반드시 몇 점 높아야 한다는 고정 임계값은 두지 않는다. 목표 생성 과제의 동일 문항에서 관측한 차이·오류 유형·변동을 근거로 지도 유익성을 판단한다. 현재 한 개 생성 seed로 seed 간 변동이나 우위의 통계적 확실성을 결론내리지 않는다. Self-Instruct·Super-Natural Instructions·Vicuna는 기존 SFT adapter로 추가할 후속 평가 후보이며 아직 실행하지 않았다. 이 구분은 기존 학습 파라미터와 아래 실행 중 평가의 완료 조건을 변경하지 않는다.
+
 | 평가 | 공통 자료와 지표 |
 |---|---|
 | SST-2 | validation 872건, accuracy·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·혼동행렬 |

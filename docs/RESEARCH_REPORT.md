@@ -182,6 +182,8 @@ Dolly 500문항·생성 seed 10에서 ROUGE-L은 base 14.68, XL 20.13이다. SST
 
 현재 두 모델의 생성 관측은 seed 하나의 결과이며 seed 간 변동과 통계적 유의성을 추정하지 않는다. 나머지 후보 평가와 실제 증류 전후의 대응 비교가 남아 있다. 학습 곡선은 에포크 종료 시 NLL을 표시하고, 최적 checkpoint 복원 후의 재평가를 마지막 에포크의 추가 관측으로 그리지 않는다.
 
+**평가 역할의 확인:** [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 생성 benchmark를 주 평가로 삼고, SST-2·BoolQ는 LLaMA-7B 기반 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)도 Dolly·Self-Instruct·Super-Natural Instructions·Vicuna의 생성 결과를 중심으로 보고한다. 우리 분류 평가 두 개는 보조 진단이며, Dolly에서 관측한 XL의 +5.45 ROUGE-L과 분류 과제별 결과를 분리해서 해석한다. 현재의 공통 3에포크 LoRA 실행은 MiniLLM의 10/20에포크 SFT 기준선 재현이 아니다. 다만 XL은 두 LR 모두 2에포크에서 검증 NLL이 가장 낮고 3에포크에 상승했으므로, 학습을 늘리면 생성·분류 성능 차이가 커진다고 단정할 근거도 없다. 후속 생성 평가의 범위와 미실행 상태는 [선정 계획](DOLLY_SFT_MODEL_SELECTION.md#공통-평가와-시각화)에 기록한다.
+
 ### 7.6. 데이터 비교 준비의 실측
 
 세 원자료의 전체 구조·길이를 확인했다. 검토용 포맷의 완전한 입력+응답이 GPT-2 native 1,024토큰을 넘은 비율은 Dolly 1.38%, UltraChat train_sft 59.63%, MetaMathQA 0.23%다. UltraChat은 대화 전체를 센 값이며 최종 제외율이 아니다. MetaMathQA는 원문 13,929종에서 나온 증강이므로 원문 group 분할이 필요하다. 세 데이터의 직접 SFT accuracy는 아직 측정하지 않았다. 전체 조건·hash·한계는 [비교 프로토콜](DATASET_SFT_COMPARISON.md)과 연결한 JSON을 따른다.

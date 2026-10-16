@@ -189,7 +189,7 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 
 단일 LR 후보의 완료, 진행 JSON의 `step=max_steps`, checkpoint 파일 생성만으로 모델 SFT 전체 완료를 선언하지 않는다. 두 LR 후보를 검증해 selected JSON을 만든 시점에 **SFT 완료**, 공통 평가와 지표·fingerprint 검증까지 마친 시점에 **평가 완료**를 보고한다.
 
-모델 하나가 끝날 때마다 선택 LR·자기 모델의 NLL·실제 정밀도·평가 수·분류 점수·Dolly 지표를 연결한다. 과거 공개 SFT 모델의 점수로 이번 직접 학습 결과를 채우지 않는다. 실패한 모델은 원인과 마지막 정상 checkpoint를 남기고 결과 수치를 만들지 않는다.
+모델 하나가 끝날 때마다 선택 LR·자기 모델의 NLL·실제 정밀도·평가 수·분류 점수·Dolly 지표를 연결한다. 생성 성능의 주 관측은 Dolly이며 SST-2·BoolQ는 보조 진단이다. 분류 accuracy만으로 교사를 선정하거나 고정 점수 차이를 교사 자격 기준으로 쓰지 않는다. 원문 평가와 후속 생성 benchmark의 구분은 [선정 계획의 평가 역할](DOLLY_SFT_MODEL_SELECTION.md#공통-평가와-시각화)을 따른다. 과거 공개 SFT 모델의 점수로 이번 직접 학습 결과를 채우지 않는다. 실패한 모델은 원인과 마지막 정상 checkpoint를 남기고 결과 수치를 만들지 않는다.
 
 ## 재개와 산출물
 
