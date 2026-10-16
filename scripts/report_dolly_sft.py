@@ -70,7 +70,8 @@ def progress():
         lines.append(f'| {label} | {len(completed)}/2 | {lr} | {loss} | {precision} | {primary}/4 | {"완료" if evaluation_path.exists() else "대기"} | {finished} |')
     lines += ["", "NLL은 각 모델 내부의 checkpoint·학습률 선택에 사용한다. 다른 tokenizer의 NLL로 성능 순위를 매기지 않는다.", "",
               "각 모델 SFT 후 Dolly·Self-Instruct·S-NI (11_)·Vicuna의 생성 주 평가를 먼저 수행하고 SST-2·BoolQ를 보조 진단한다. Dolly 생성은 기존 응답을 검증해 재사용하며 중복 생성하지 않는다. 생성 seed는 10 한 개이고 seed 간 표준편차는 미추정이다.", "",
-              "[생성 벤치마크의 교사·학생 비교](../results/generation_benchmarks_v1/REPORT.md)"]
+              "[생성 벤치마크의 교사·학생 비교](../results/generation_benchmarks_v1/REPORT.md)", "",
+              "네 생성 평가의 완료는 1차 후보 비교의 완료다. 보완 지표·오류 분석·후보 KD 실행 점검 후 최종 조합을 선정한다. METEOR·BERTScore는 아직 미구현·미채점이며, 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다."]
     (ROOT / "docs/SFT_PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     for filename in ("README.md", "docs/RESEARCH_PLAN.md", "docs/RESEARCH_REPORT.md", "docs/DOLLY_SFT_MODEL_SELECTION.md"):
         path = ROOT / filename

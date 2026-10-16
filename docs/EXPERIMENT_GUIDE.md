@@ -1,6 +1,6 @@
 # 공통 실험 조건과 장비별 실행 지침
 
-갱신일: 2026-10-15. 적용 범위: Dolly 기반 교사·학생 후보의 독립적인 LoRA SFT와 모델 선정 평가.
+갱신일: 2026-10-16. 적용 범위: Dolly 기반 교사·학생 후보의 독립적인 LoRA SFT와 모델 선정 평가.
 
 목적은 컴퓨터나 실행 담당자가 달라도 같은 자료·학습량·선택 기준을 사용하고, 장비에 맞춘 실행 차이는 별도로 기록하는 것이다. 이후 KD 방법 비교는 선정한 교사·학생 조합에서 수행한다. 이 문서는 현재 코드의 조건과 향후 장비 최적화 절차를 구분한다.
 
@@ -72,14 +72,17 @@ LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/a
 | SST-2 | 같은 validation 872건, label sequence의 조건부 log probability로 판정 |
 | BoolQ | 같은 validation 3,269건. 원본 row 3154는 기존 공통 길이 검사에서 제외 |
 | 분류 지표 | accuracy, macro-F1, balanced accuracy, weighted-F1, MCC, 클래스별 recall, 혼동행렬, 두 label 사이에서 정규화한 Brier score |
-| Dolly 생성 | 같은 500문항, 생성 seed `10` 한 개, 모델당 500응답·전체 5,000응답 |
+| 생성 주 평가 | Dolly 500·Self-Instruct 242·S-NI 1,694·Vicuna 80, 모델당 2,516응답·10모델 총 25,160응답. 공통 생성 seed `10` 한 개 |
 | 생성 파라미터 | `do_sample=True`, `temperature=1`, `top_k=0`, `top_p=1`, `no_repeat_ngram_size=6`, `max_new_tokens=256`, `use_cache=True` |
 | 생성 종료 | 모델별 tokenizer EOS와 공식 generation config의 EOS. 실제 목록 기록 |
-| 생성 지표 | ROUGE-1/2/L F1 ×100, 생성 길이, 상한 도달률, 빈 응답률 |
+| 현재 생성 지표 | ROUGE-1/2/L F1 ×100, 정규화 exact match, 생성 길이, 상한 도달률, 빈 응답률 |
+| 보완 지표 | METEOR·BERTScore 검토, 아직 미구현·미채점. 채택 시 저장 응답 재사용, 별도 채점 명세·결과 |
 | 반복 해석 | 생성 seed 간 표준편차는 `null`. 오차막대·±0 없음 |
 | 최종 선정 후 본 실험 | 생성 seed `10/20/30/40/50` 예정. 학습 seed 5회 반복을 뜻하지 않음 |
 
 생성의 temperature는 sampling 조건이며 KD 분포의 온도 T와 다르다. KD의 T·gate·MC dropout 횟수·Revival 기준은 이 SFT 단계의 설정값이 아니다. 이후 문헌 근거와 검증 절차로 별도 명세한다. 현재 관찰한 선정 평가 자료를 독립적인 최종 test로 부르지 않는다.
+
+검증 NLL은 각 모델의 체크포인트 선택이고 네 생성 평가 완료는 1차 후보 비교의 완료다. 최종 조합은 보완 평가·오류 분석·후보 KD 실행 점검 후 근거를 남겨 선정한다. [선정 단계별 완료 기준](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. 원본 대비 SFT 생성 향상은 별도 미실행 평가이며 공개 SFT checkpoint로 대체하지 않는다.
 
 ## 현재 장비와 실행 환경
 

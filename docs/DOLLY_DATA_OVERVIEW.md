@@ -1,6 +1,6 @@
 # Dolly 데이터의 구성과 이번 평가에서의 사용
 
-확인일: 2026-10-15, Asia/Seoul. 원본 파일과 MiniLLM 공개 평가 파일을 직접 집계했다. [집계 코드](../scripts/summarize_dolly.py)·[revision/파일 hash/개수](../results/sft_baselines/dolly_composition.json)를 함께 보관한다.
+원자료 확인일: 2026-10-15. 현재 역할 갱신일: 2026-10-16, Asia/Seoul. 원본 파일과 MiniLLM 공개 평가 파일을 직접 집계했다. [집계 코드](../scripts/summarize_dolly.py)·[revision/파일 hash/개수](../results/sft_baselines/dolly_composition.json)를 함께 보관한다.
 
 ## 원본은 무엇인가
 
@@ -35,9 +35,11 @@
 
 그래프는 같은 과제 순서·같은 백분율 축을 사용한다. 두 자료의 개수가 다르므로 막대 길이는 각 자료 안의 비중으로 비교한다. 공개 평가용 500문항은 원본과 과제 비중이 다르며 전체 15,011행을 대표하는 새 무작위 표본이라고 주장하지 않는다.
 
-## 이번에 사용한 파일은 무엇인가
+## 원자료와 현재 분할의 역할
 
-이번 성능 확인은 저자가 공개한 SFT 완료 두 모델을 [MiniLLM/dolly](https://huggingface.co/datasets/MiniLLM/dolly/tree/d131636138be0ff3fd0901c12c1739844d337279)의 **`valid.jsonl` 500행**으로 평가한 것이다. 공식 평가 코드는 이 파일을 test 역할로 읽는다. 각 모델에서 동일한 500문항을 5개 생성 seed로 실행했다. 새로운 SFT 학습이나 15,011행 전체 평가를 한 것은 아니다.
+현재 직접 SFT는 [MiniLLM/dolly](https://huggingface.co/datasets/MiniLLM/dolly/tree/d131636138be0ff3fd0901c12c1739844d337279)의 고정 배포본에서 중복·길이를 점검한 **학습 11,117건·개발 검증 975건·선정 평가 500건**을 사용한다. 생성 선정 평가는 seed 10 한 개다. 추가 외부 benchmark 3종은 학습에 사용하지 않는다. 분할·mask·모델별 길이는 [현재 SFT 계획](DOLLY_SFT_MODEL_SELECTION.md)을 따른다.
+
+저자가 공개한 SFT 완료 두 모델을 같은 valid 500행·5개 생성 seed로 평가한 과거 기록은 [공개 기준선](SFT_BASELINE_EVALUATION.md)에 별도로 보관한다. 이하의 raw 입력 일치와 490행 재평가 설명은 그 과거 조사다. 현재 직접 SFT의 학습·개발 집합은 선정 평가와의 정규화 instruction 중복을 제외했다.
 
 MiniLLM 파일은 `context → input`, `response → output`, `category → topic` 이름을 사용하고, 실제 모델에 주는 `prompt` 문자열을 추가로 제공한다. 이번 평가는 제공된 prompt를 그대로 사용했다. 평가 자료에서 비어 있지 않은 input은 **91문항(18.2%)**이며 모든 prompt는 사용한 tokenizer에서 256토큰 이하였다.
 
@@ -55,6 +57,6 @@ MiniLLM 파일은 `context → input`, `response → output`, `category → topi
 
 ## 어떤 지표를 적용하는가
 
-Dolly는 다양한 자유 생성 과제를 함께 담는다. 전체를 단일 정답 label 집합으로 바꿔 accuracy·macro-F1을 계산하지 않는다. 이번에는 ROUGE-1/2/L·단어 겹침 F1·Exact Match와 reference token NLL/perplexity·토큰 예측 정확도·응답 길이·생성 형태를 구분해 보고했다. 사실성·창작 품질은 reference 겹침만으로 판정하지 않는다.
+Dolly는 다양한 자유 생성 과제를 함께 담는다. 전체를 단일 정답 label 집합으로 바꿔 accuracy·macro-F1을 계산하지 않는다. 과거 공개 SFT 기준선에서는 ROUGE-1/2/L·단어 겹침 F1·Exact Match·reference NLL/perplexity·토큰 예측 정확도 등을 구분해 보고했다. 현재 생성 선정 평가는 ROUGE-1/2/L·정규화 exact match·응답 길이·상한 도달·빈 응답을 기록하며, METEOR·BERTScore는 아직 채점하지 않았다. 사실성·창작 품질은 reference 겹침만으로 판정하지 않는다.
 
-accuracy·macro-F1은 별도의 SST-2·BoolQ에서 정해진 label로 계산했다. Dolly의 `classification` 73문항도 질문마다 분류 기준과 정답 표현이 다를 수 있으므로, 하나의 공통 label 공간이라고 자동 가정하지 않는다. 향후 KD에 쓸 공통 train/development/최종 평가 분할은 아직 별도 선정 전이다.
+accuracy·macro-F1은 별도의 SST-2·BoolQ에서 정해진 label로 계산했다. Dolly의 `classification` 73문항도 질문마다 분류 기준과 정답 표현이 다를 수 있으므로, 하나의 공통 label 공간이라고 자동 가정하지 않는다. 현재 직접 SFT의 train/development/선정 평가 분할은 고정돼 있다. 본 KD의 prefix·학습량·독립 최종 평가 역할은 별도 결정 사항이다.

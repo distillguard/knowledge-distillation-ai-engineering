@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+  "n": 242,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 16.467519260775486,
+    "rouge2": 4.472817837491363,
+    "rougeL": 12.889882079848299,
+    "exact_match": 0.4132231404958678,
+    "generated_tokens": 69.55371900826447,
+    "empty": 0,
+    "length_capped": 0.06198347107438017
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/gpt2_xl/self_inst_per_item.csv",
+  "per_item_csv_sha256": "c81acae420c7f8caf394186f83fcab4ae4f2a7a622145c7be861c42b8649b8a5"
+}

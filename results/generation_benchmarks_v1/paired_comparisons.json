@@ -10,6 +10,16 @@
       "teacher_higher": 317,
       "tie": 31,
       "student_higher": 152
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "benchmark": "self_inst",
+      "n": 242,
+      "mean_rougeL_difference": 5.291835428174232,
+      "teacher_higher": 137,
+      "tie": 31,
+      "student_higher": 74
     }
   ]
 }

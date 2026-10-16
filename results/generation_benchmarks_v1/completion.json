@@ -11,7 +11,8 @@
       "vicuna"
     ],
     "gpt2_xl": [
-      "dolly"
+      "dolly",
+      "self_inst"
     ]
   }
 }

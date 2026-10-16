@@ -16,6 +16,22 @@
 
 현재 원본 대비 SFT 전후 비교는 개발 NLL에만 있으며, 동일 문항의 원본 생성 기준선은 아직 평가하지 않았다. 저자 공개 SFT checkpoint를 미학습 원본으로 표시하지 않는다.
 
+## 조합 선정까지의 단계와 완료 기준
+
+| 단계 | 현재 실행·결정 | 완료 근거 |
+|---|---|---|
+| SFT 체크포인트 | 각 모델에서 두 LR·epoch별 개발 NLL 선택 | 두 LR 완료·selected adapter hash. 계열 간 NLL 순위와 구분 |
+| 생성 주 평가 | 동일 2,516문항, 생성 seed 10 한 개 | 네 benchmark의 JSON·문항별 CSV·같은 ID·fingerprint 검증 |
+| 보완 지표 | METEOR·BERTScore 미구현·미채점 | 채택 지표·평가 모델·revision·길이 처리·다중 정답·집계 명세 후 저장 응답 채점 |
+| 보조 진단 | SST-2·BoolQ | accuracy·macro-F1·클래스별 오류·Brier. 생성 평가의 대체가 아님 |
+| 비교·오류 분석 | 모델×benchmark×지표와 계열 내 차이 | 과제별 일관성, 지시 준수·사실 오류·반복·누락, 사례 선정 근거 |
+| 증류 실행 점검 | 후보 조합의 logits·어휘·prefix·학생 갱신·메모리 | 실제 KD 연산·필요한 생성·MC 경로의 통과 기록 |
+| 최종 조합 | 미정 | model ID·revision·SFT adapter·정밀도·선정 자료·이유와 한계 동결 |
+
+현재 `completion.json`과 자동 보고서의 완료 수는 네 생성 benchmark의 실행 완료다. 보완 지표·오류 검토·증류 실행 점검·사람의 선정 판단까지 자동으로 완료됐다는 뜻이 아니다. 실제 점수가 있는 지표만 비교표에 채우고 미실행 항목은 미실행으로 표시한다.
+
+보완 지표 채택과 오류 검토 기준은 전체 결과를 보고 유리한 기준으로 바꾸지 않도록 먼저 확정한다. 의미 유사성·reference 겹침·정답률의 역할을 구분하며, 응답 검토의 사실 판정은 별도 근거가 필요하다.
+
 ## 문헌과 자료
 
 [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 다섯 생성 benchmark를 사용하고 SST-2·BoolQ는 LLaMA-7B의 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)의 Dolly 학습 instruction-following 실험과 겹치는 네 생성 benchmark를 우선 평가한다. Unnatural Instructions, chat·수학·코드 전용 평가는 이번 추가 실행에 포함하지 않는다.
@@ -27,7 +43,7 @@
 | S-NI | [MiniLLM/sinst](https://huggingface.co/datasets/MiniLLM/sinst/tree/84b8356a5b631002f92ad73adebd5ac9db5612cd), `11_/valid.jsonl` | 1,694 |
 | Vicuna | [MiniLLM/Vicuna](https://huggingface.co/datasets/MiniLLM/Vicuna/tree/05a18702266a6c51547034268d6d58bce214bd77), `valid.jsonl` | 80 |
 
-모델당 총 2,516문항이다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
+모델당 총 2,516문항, 10개 모델에서 총 25,160개 답변이다. 여러 지표로 같은 답변을 채점해도 새 답변을 생성하지 않는다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
 
 ## 전처리와 누수 점검
 

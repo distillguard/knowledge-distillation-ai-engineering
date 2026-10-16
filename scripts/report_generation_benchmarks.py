@@ -26,6 +26,7 @@ def main():
     lines = ["# 생성 벤치마크의 교사·학생 비교", "",
              f"주 평가: 네 생성 benchmark. 완료 {len(complete)}/10모델. SST-2·BoolQ는 [보조 분류 진단](../dolly_sft_v1/REPORT.md)으로 분리한다.", "",
              "모든 모델에 동일 원문 ID·새 토큰 예산 256·생성 seed 10을 적용한다. 원 논문 그대로의 재현은 아니다. 단일 seed이므로 seed 간 SD와 오차막대를 표시하지 않는다. ROUGE는 정답과의 겹침을 측정하며 사실성이나 사람의 선호를 직접 측정하지 않는다.", "",
+             "이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. METEOR·BERTScore와 원본 대비 SFT 전후의 생성 평가는 아직 미실행이다. 최종 조합은 보완 평가·오류 분석·후보 KD 실행 점검 후 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.", "",
              "| 모델 | Dolly | Self-Instruct | S-NI (11_) | Vicuna | 네 과제 평균 |", "|---|---:|---:|---:|---:|---:|"]
     for name, run in runs.items():
         cells = [f'{run[key]["metrics"]["rougeL"]:.2f}' if key in run else "대기" for key in BENCHMARKS]
