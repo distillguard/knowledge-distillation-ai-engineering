@@ -20,7 +20,8 @@
   "completed_models": [
     "gpt2_base",
     "gpt2_xl",
-    "opt_125m"
+    "opt_125m",
+    "opt_27b"
   ],
   "completed_extended_models": [
     "gpt2_base",
@@ -40,6 +41,9 @@
       "vicuna"
     ],
     "opt_125m": [
+      "dolly"
+    ],
+    "opt_27b": [
       "dolly"
     ]
   }

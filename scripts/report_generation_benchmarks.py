@@ -83,7 +83,7 @@ def main():
                  yticklabels=[LABELS[t] + " → " + LABELS[s] for t, s in names], title="Paired teacher − student gap · seed 10")
         for index in np.ndindex(grid.shape):
             value = grid[index]
-            axis.text(index[1], index[0], f"{value:+.2f}" if np.isfinite(value) else "pending", ha="center", va="center",
+            axis.text(index[1], index[0], f"{value:+.2f}" if np.isfinite(value) else ("pending" if list(BENCHMARKS)[index[1]] in REQUIRED_BENCHMARKS else "deferred"), ha="center", va="center",
                       color="white" if np.isfinite(value) and abs(value) > .6 * bound else "black")
         figure.colorbar(plotted, ax=axis, label="Teacher − student ROUGE-L")
         figure.savefig(OUT / "teacher_student_gaps.png", dpi=180); plt.close(figure)

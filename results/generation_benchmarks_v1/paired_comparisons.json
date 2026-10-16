@@ -40,6 +40,16 @@
       "teacher_higher": 54,
       "tie": 0,
       "student_higher": 26
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "benchmark": "dolly",
+      "n": 500,
+      "mean_rougeL_difference": 4.439577850426151,
+      "teacher_higher": 302,
+      "tie": 38,
+      "student_higher": 160
     }
   ]
 }
