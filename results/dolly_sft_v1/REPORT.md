@@ -2,7 +2,7 @@
 
 교사·학생 선정의 주 자료는 [네 생성 벤치마크 비교](../generation_benchmarks_v1/REPORT.md)다. 아래 SST-2·BoolQ는 편향·확률 품질의 보조 진단이며, 현재 Brier score는 MiniLLM의 ECE 재현과 구분한다.
 
-4개 계열·8개 모델의 예비 비교 중 SFT 선택 완료 2/8, 기존 평가 완료 2/8. Qwen 두 모델의 기존 결과는 범위 밖으로 보존한다. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
+4개 계열·8개 모델의 예비 비교 중 SFT 선택 완료 3/8, 기존 평가 완료 2/8. Qwen 두 모델의 기존 결과는 범위 밖으로 보존한다. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
 
 | 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |
 |---|---|---|---|
