@@ -19,7 +19,8 @@ class WorkerTests(unittest.TestCase):
         root = Path(self.temporary.name)
         self.local, self.out = root / "worker", root / "results"
         for name, value in (("LOCAL", self.local), ("OUT", self.out),
-                            ("protocol", lambda: {"fingerprint": "test"})):
+                            ("protocol", lambda: {"fingerprint": "test"}),
+                            ("prepared_protocol", lambda: {"fingerprint": "generation-test"})):
             patcher = patch.object(worker, name, value)
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -32,20 +33,24 @@ class WorkerTests(unittest.TestCase):
             with self.subTest(model=name), patch.object(worker.subprocess, "run") as run:
                 worker.main(["--model", name])
                 commands = [call.args[0] for call in run.call_args_list]
-                self.assertEqual(len(commands), 4)
+                self.assertEqual(len(commands), 6)
                 self.assertEqual([Path(command[5]).name for command in commands],
-                                 [engine, "report_dolly_sft.py", "evaluate_dolly_sft.py", "report_dolly_sft.py"])
+                                 [engine, "report_dolly_sft.py", "evaluate_generation_benchmarks.py",
+                                  "report_generation_benchmarks.py", "evaluate_dolly_sft.py", "report_dolly_sft.py"])
                 self.assertEqual(commands[0][-3:], ["train", "--model", name])
                 self.assertEqual(commands[2][-2:], ["--model", name])
+                for call in run.call_args_list:
+                    self.assertTrue(call.kwargs["env"]["PYTHONPATH"].startswith(str(worker.ROOT / "tmp/dolly_sft_additional_v1/deps")))
                 self.assertEqual(self.status()["requested_models"], [name])
                 self.assertEqual(self.status()["study_models"], list(worker.MODELS))
+                self.assertEqual(self.status()["generation_protocol_fingerprint"], "generation-test")
                 self.assertEqual(self.status()["status"], "completed")
 
     def test_default_runs_all_models_in_order(self):
         with patch.object(worker.subprocess, "run") as run:
             worker.main([])
-            self.assertEqual(run.call_count, 4 * len(worker.MODELS))
-            self.assertEqual([call.args[0][-1] for call in run.call_args_list[::4]], list(worker.MODELS))
+            self.assertEqual(run.call_count, 6 * len(worker.MODELS))
+            self.assertEqual([call.args[0][-1] for call in run.call_args_list[::6]], list(worker.MODELS))
 
     def test_held_lock_prevents_duplicate_execution(self):
         self.local.mkdir()
@@ -61,7 +66,7 @@ class WorkerTests(unittest.TestCase):
                 worker.main([])
             self.assertEqual(run.call_count, 3)
             self.assertEqual(self.status()["status"], "failed")
-            self.assertEqual(self.status()["stage"], "evaluation")
+            self.assertEqual(self.status()["stage"], "generation_evaluation")
             self.assertEqual(self.status()["model"], worker.MODELS[0])
 
 

@@ -1,0 +1,25 @@
+{
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "selected_adapter": {
+    "status": "selected",
+    "protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+    "learning_rate": 0.0002,
+    "adapter": "tmp/dolly_sft_v1/runs/gpt2_base_lr2e-04/best_adapter",
+    "development_nll": 2.26702880859375
+  },
+  "adapter_sha256": "64c541566a8d4d4241e5a00d1d3e3ed6d972942afd2108b8b1f3eb3a21adf48d",
+  "evaluation_script_sha256": "3f784bd20bd34869499ec56ea4f2bc61c8c39b31b896cb2a1ac3b47fe15edfc6",
+  "dolly_evaluation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
+  "generation": {
+    "seed": 10,
+    "max_new_tokens": 256,
+    "temperature": 1,
+    "top_k": 0,
+    "top_p": 1,
+    "no_repeat_ngram_size": 6,
+    "microbatch": 1,
+    "sample_sd_across_generation_seeds": null
+  },
+  "fingerprint": "00afc58baa07ef271c0a20db7168d821dc2adc1854dc493a687b01a153643a36"
+}

@@ -1,0 +1,3 @@
+# Experiment protocols fingerprint the exact source bytes.
+scripts/*.py text eol=lf
+tests/*.py text eol=lf

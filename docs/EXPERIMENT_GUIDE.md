@@ -156,7 +156,11 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 # 공통 환경 확인
 & $StudyPython -c "import torch, transformers; print(torch.__version__, transformers.__version__)"
 
-# GPT-2 base 하나: 두 LR 학습 → MD 갱신 → 공통 평가 → MD·그림 갱신
+# 생성 평가 자료 준비: 첫 실행 전, 고정 revision 다운로드와 CPU 감사
+& $StudyPython -B -X utf8 scripts/prepare_generation_benchmarks.py fetch
+& $StudyPython -B -X utf8 scripts/prepare_generation_benchmarks.py prepare
+
+# GPT-2 base 하나: 두 LR 학습 → MD → 생성 주 평가 4종 → 보조 분류 → MD·그림
 & $StudyPython -u -B -X utf8 scripts/run_dolly_sft.py --model gpt2_base
 
 # OPT-2.7B 하나: 추가 모델 GPU 점검부터 같은 순서
@@ -168,7 +172,7 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 
 각 명령은 독립적인 선택지다. 같은 worker 잠금을 사용하므로 기존 전체 실행 중 모델별 실행을 추가하면 학습을 시작하기 전에 종료된다. 저수준 `dolly_sft.py train`을 직접 실행하면 이 worker 잠금을 우회하므로 운영에는 위 실행기를 사용한다. 현재 자동 실행은 계속 진행 중이며 VSCode용 작업을 추가했다는 이유로 재시작하지 않는다.
 
-단일 모델 실행의 worker 상태가 `completed`라는 것은 `requested_models`에 기록된 요청만 끝났다는 뜻이다. 전체 완료는 10개 모델의 selected·평가 JSON을 모두 확인해 판단한다.
+단일 모델 실행의 worker 상태가 `completed`라는 것은 `requested_models`에 기록된 요청만 끝났다는 뜻이다. 전체 완료는 10개 모델의 selected·기존 평가 JSON과 네 생성 benchmark의 완료를 모두 확인해 판단한다. worker는 로컬 SentencePiece 의존 경로를 자식 프로세스의 `PYTHONPATH`에 먼저 넣어 Transformers가 tokenizer 의존성을 올바르게 감지하게 한다.
 
 ## 모델별 필수 결과물과 완료 판정
 
@@ -184,12 +188,13 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 | 실제 adapter | selected JSON의 `adapter` 경로 안 `adapter_config.json`, `adapter_model.safetensors` | 파일 존재·정상 재적재. Git에 가중치를 올리지 않음 |
 | 평가 조건 | 공통 평가 디렉터리의 `<model>_evaluation_protocol.json` | 선택 adapter·학습 명세·평가 코드 fingerprint 일치, 같은 데이터 revision·제외 행·생성 조건 |
 | Dolly 생성 | 같은 위치의 `<model>_generation_seed10.json` | `seed=10`, `n=500`, ROUGE·생성 길이·상한·빈 응답 지표. 실제 응답 500개는 `tmp/dolly_sft_v1/evaluation/<model>_seed10_responses.json` |
-| 최종 선정 평가 | 같은 위치의 `<model>_evaluation.json` | `status=completed`, SST-2 `n=872`, BoolQ `n=3269`, 생성 seed SD는 `null`, fingerprint 일치 |
+| 생성 주 평가 | `results/generation_benchmarks_v1/<model>/{dolly,self_inst,sni_11,vicuna}.json`과 문항별 점수 CSV | 네 자료 모두 완료, protocol·adapter fingerprint·CSV hash·동일 ID·각 문항 수 일치. SD `null` |
+| 기존 Dolly·분류 보조 평가 | 같은 위치의 `<model>_evaluation.json` | `status=completed`, SST-2 `n=872`, BoolQ `n=3269`, 생성 seed SD는 `null`, fingerprint 일치 |
 | 표·그림·문서 | `scores.csv`, `classification.png`, `dolly_rouge.png`, `development_nll.png`, `REPORT.md`, `docs/SFT_PROGRESS.md` | 완료한 모델의 실제 결과만 포함. 미완료 모델을 0점으로 채우지 않음 |
 
 단일 LR 후보의 완료, 진행 JSON의 `step=max_steps`, checkpoint 파일 생성만으로 모델 SFT 전체 완료를 선언하지 않는다. 두 LR 후보를 검증해 selected JSON을 만든 시점에 **SFT 완료**, 공통 평가와 지표·fingerprint 검증까지 마친 시점에 **평가 완료**를 보고한다.
 
-모델 하나가 끝날 때마다 선택 LR·자기 모델의 NLL·실제 정밀도·평가 수·분류 점수·Dolly 지표를 연결한다. 생성 성능의 주 관측은 Dolly이며 SST-2·BoolQ는 보조 진단이다. 분류 accuracy만으로 교사를 선정하거나 고정 점수 차이를 교사 자격 기준으로 쓰지 않는다. 원문 평가와 후속 생성 benchmark의 구분은 [선정 계획의 평가 역할](DOLLY_SFT_MODEL_SELECTION.md#공통-평가와-시각화)을 따른다. 과거 공개 SFT 모델의 점수로 이번 직접 학습 결과를 채우지 않는다. 실패한 모델은 원인과 마지막 정상 checkpoint를 남기고 결과 수치를 만들지 않는다.
+모델 하나가 끝날 때마다 선택 LR·자기 모델의 NLL·실제 정밀도·네 생성 benchmark 점수와 교사−학생 차이·분류 보조 진단을 연결한다. 분류 accuracy만으로 교사를 선정하거나 고정 점수 차이를 교사 자격 기준으로 쓰지 않는다. 자료·전처리·우선순위·생성 재개는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다. 과거 공개 SFT 모델의 점수로 이번 직접 학습 결과를 채우지 않는다. 실패한 모델은 원인과 마지막 정상 checkpoint를 남기고 결과 수치를 만들지 않는다.
 
 ## 재개와 산출물
 
@@ -199,6 +204,7 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 |---|---|---|
 | `results/dolly_sft_v1/` | 기존 모델 학습 요약·선택, 10개 모델 평가·표·그림 | 검증한 완료 요약만 반영 |
 | `results/dolly_sft_additional_v1/<model>/` | 추가 모델 준비·protocol·점검·학습·선택 요약 | 검증한 요약만 반영 |
+| `results/generation_benchmarks_v1/` | 생성 주 평가 protocol·문항별 점수·집계·교사−학생 차이·그림 | 검증한 실제 결과만 반영. 원문·응답 제외 |
 | `docs/SFT_PROGRESS.md`와 연구 MD | 모델별 완료 상태와 실제 선택 근거 | 반영 |
 | `tmp/` | 원자료·토큰화 자료·모델 cache·checkpoint·생성 원문·로그 | 제외 |
 | 토큰·인증 파일 | 로컬 인증 | 제외. 명령 인자나 문서에 토큰 입력 금지 |

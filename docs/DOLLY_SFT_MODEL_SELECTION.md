@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 선정 평가 완료 **2/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](../results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 생성 주 평가 4종 완료 **0/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -69,17 +69,18 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Qwen·Gemma-IT는 post-training을 �
 
 ## 공통 평가와 시각화
 
-**평가 역할:** 현재 생성 성능의 주 관측은 Dolly이며, SST-2·BoolQ는 label 편향과 확률 품질을 살피는 보조 진단이다. [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 다섯 instruction benchmark를 주 평가로 쓰고 SST-2·BoolQ는 LLaMA-7B 기반 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)은 Dolly·Self-Instruct·Super-Natural Instructions·Vicuna에서 생성 성능을 평가한다. 현재의 두 분류 점수만으로 교사·학생을 선정하지 않으며, 우리 Brier score를 논문의 ECE 재현으로 표시하지 않는다.
+**평가 역할:** 2026-10-16 사용자 결정에 따라 Dolly·Self-Instruct·S-NI (11_)·Vicuna의 생성 성능을 주 평가로 삼는다. SST-2·BoolQ는 label 편향과 확률 품질을 살피는 보조 진단이다. [MiniLLM §3.1·3.3](https://arxiv.org/html/2306.08543v4)은 다섯 instruction benchmark를 주 평가로 쓰고 SST-2·BoolQ는 LLaMA-7B 기반 calibration 분석에 사용한다. [CaRE-KD §4](https://arxiv.org/html/2609.36734v1)은 네 공통 생성 benchmark에서 평가한다. 두 분류 점수만으로 교사·학생을 선정하지 않으며, 우리 Brier score를 논문의 ECE 재현으로 표시하지 않는다.
 
-교사가 학생보다 반드시 몇 점 높아야 한다는 고정 임계값은 두지 않는다. 목표 생성 과제의 동일 문항에서 관측한 차이·오류 유형·변동을 근거로 지도 유익성을 판단한다. 현재 한 개 생성 seed로 seed 간 변동이나 우위의 통계적 확실성을 결론내리지 않는다. Self-Instruct·Super-Natural Instructions·Vicuna는 기존 SFT adapter로 추가할 후속 평가 후보이며 아직 실행하지 않았다. 이 구분은 기존 학습 파라미터와 아래 실행 중 평가의 완료 조건을 변경하지 않는다.
+교사가 학생보다 반드시 몇 점 높아야 한다는 고정 임계값은 두지 않는다. 목표 생성 과제의 동일 문항에서 관측한 차이·오류 유형·변동을 근거로 지도 유익성을 판단한다. 현재 한 개 생성 seed로 seed 간 변동이나 우위의 통계적 확실성을 결론내리지 않는다. [생성 평가 계획](GENERATION_EVALUATION.md)의 세 추가 자료를 공식 배포 revision으로 고정했고 모든 tokenizer의 같은 원문·길이·학습/개발 instruction 중복 감사를 통과했다. 학습 파라미터와 기존 평가 이력은 유지하며, 모델 선정 완료에는 네 생성 benchmark의 완료도 요구한다. 실제 완료 범위는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md)를 따른다.
 
 | 평가 | 공통 자료와 지표 |
 |---|---|
+| 생성 주 평가 4종 | Dolly 500·Self-Instruct 242·S-NI (11_) 1,694·Vicuna 80문항, 공통 seed 10. ROUGE-L·문항별 교사−학생 차이. 다중 정답의 최고 점수 사용 |
 | SST-2 | validation 872건, accuracy·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·혼동행렬 |
 | BoolQ | validation 중 공통 길이 기준을 통과한 3,269건, 같은 분류 지표. 원본 row 3154 한 건은 GPT-2의 1,024토큰 용량을 넘으므로 전 모델 공통 제외 |
 | Dolly 생성 | 모델 선정 단계: 500문항 × 공통 생성 seed 10 한 개. ROUGE-1/2/L의 문항 평균, 생성 길이·상한 도달률·빈 응답률 |
 
-**반복 수 결정:** 모델 선정 단계에서는 10개 모델 모두 같은 seed 10으로 생성 평가한다. 전체 생성 수는 500 × 1 × 10 = 5,000개다. 10은 MiniLLM의 seed 목록 중 첫 값을 공통 조건으로 고정한 것이며 최적 seed라는 의미는 아니다. 최종 선정 모델의 본 실험에서는 MiniLLM을 따라 seed 10/20/30/40/50의 5개 생성 반복을 사용한다. 두 단계의 반복 수는 학습 반복 수와 별개다. 현재 실행은 모델 선정까지만 수행하며 본 실험의 추가 학습·방법 비교는 이후 설계에 따른다.
+**반복 수 결정:** 모델 선정 단계에서는 10개 모델 모두 같은 seed 10으로 생성 평가한다. Dolly는 500 × 1 × 10 = 5,000개이고 세 추가 자료를 포함한 총 평가 응답은 2,516 × 1 × 10 = 25,160개다. 기존 Dolly 응답은 재사용한다. 10은 MiniLLM의 seed 목록 중 첫 값을 공통 조건으로 고정한 것이며 최적 seed라는 의미는 아니다. 최종 선정 모델의 본 실험에서는 MiniLLM을 따라 seed 10/20/30/40/50의 5개 생성 반복을 사용한다. 두 단계의 반복 수는 학습 반복 수와 별개다. 현재 실행은 모델 선정까지만 수행하며 본 실험의 추가 학습·방법 비교는 이후 설계에 따른다.
 
 분류는 같은 지시 내용과 label 후보의 조건부 sequence log probability로 판정한다. 자유 응답을 임의 파싱한 정답률과 구분한다. Brier score는 두 label 후보 사이에서 정규화한 확률임을 명시한다. 자료 revision·제외 행·파일 해시도 평가 명세에 남긴다.
 

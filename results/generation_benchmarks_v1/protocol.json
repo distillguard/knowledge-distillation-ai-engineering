@@ -1,0 +1,352 @@
+{
+  "status": "passed",
+  "preparation_script_sha256": "2bebc0952579ee201009767527cafddc7ae2bc6aa3cc37771c84a2bfe9472fe7",
+  "tokenizer_study_script_sha256": "880f4c3976c8d6c3564a46285bda3f740a884870c8a7f6227e463129393a6b46",
+  "tokenizer_models": {
+    "gpt2_base": {
+      "id": "openai-community/gpt2",
+      "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+    },
+    "gpt2_xl": {
+      "id": "openai-community/gpt2-xl",
+      "revision": "15ea56dee5df4983c59b2538573817e1667135e2"
+    },
+    "qwen_08b": {
+      "id": "Qwen/Qwen3.5-0.8B",
+      "revision": "2fc06364715b967f1860aea9cf38778875588b17"
+    },
+    "qwen_9b": {
+      "id": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+    },
+    "opt_125m": {
+      "id": "facebook/opt-125m",
+      "revision": "27dcfa74d334bc871f3234de431e71c6eeba5dd6"
+    },
+    "opt_27b": {
+      "id": "facebook/opt-2.7b",
+      "revision": "905a4b602cda5c501f1b3a2650a4152680238254"
+    },
+    "openllama_3b": {
+      "id": "openlm-research/open_llama_3b",
+      "revision": "141067009124b9c0aea62c76b3eb952174864057"
+    },
+    "openllama_7b": {
+      "id": "openlm-research/open_llama_7b",
+      "revision": "6fb184ff23774c25bf84b3628e49c8b78372c7be"
+    },
+    "gemma2_2b_it": {
+      "id": "google/gemma-2-2b-it",
+      "revision": "299a8560bedf22ed1c72a8a11e7dce4a7f9f51f8"
+    },
+    "gemma2_9b_it": {
+      "id": "google/gemma-2-9b-it",
+      "revision": "11c9b309abf73637e4b6f9a3fa1e92e615547819"
+    }
+  },
+  "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "sources": {
+    "dolly": {
+      "source": "unchanged SFT selection_evaluation.jsonl",
+      "n": 500
+    },
+    "self_inst": {
+      "id": "MiniLLM/self-inst",
+      "revision": "ad9edcc55ec5623f6d9d2472963bda3701681af8",
+      "file": "valid.jsonl",
+      "sha256": "18922e8ac8a6034ecf0ec8026e24473a30297aaa2e7182d6beb56682586af525",
+      "n": 242
+    },
+    "sni_11": {
+      "id": "MiniLLM/sinst",
+      "revision": "84b8356a5b631002f92ad73adebd5ac9db5612cd",
+      "file": "11_/valid.jsonl",
+      "sha256": "8c62f31543f02f3dc44ceb62436ec633ab7add9a94307a7dd1977f90378576a6",
+      "n": 1694
+    },
+    "vicuna": {
+      "id": "MiniLLM/Vicuna",
+      "revision": "05a18702266a6c51547034268d6d58bce214bd77",
+      "file": "valid.jsonl",
+      "sha256": "04f5fabc7e2660a778ef86f7d2779f69a8f108b892074517566b7d714a269c3a",
+      "n": 80
+    }
+  },
+  "counts": {
+    "dolly": {
+      "source": 500,
+      "included": 500,
+      "excluded": 0,
+      "included_ids_sha256": "7673026cc39578e9a6e1e985c05aa4f233db0353a9103626dc708bba57d24923"
+    },
+    "self_inst": {
+      "source": 242,
+      "included": 242,
+      "excluded": 0,
+      "included_ids_sha256": "822fea6e1548b1e504a08bec0bba6d4643f068720e7aa5ba5222a324cffac4a2"
+    },
+    "sni_11": {
+      "source": 1694,
+      "included": 1694,
+      "excluded": 0,
+      "included_ids_sha256": "d8f092fc9828f9f015f0f633af213a0734c800dc01486c659dcbf8ecddee13bd"
+    },
+    "vicuna": {
+      "source": 80,
+      "included": 80,
+      "excluded": 0,
+      "included_ids_sha256": "0dbc64084a17c4b776a6955338a6705417522f13a06ddaa8a355fda80e49dfd4"
+    }
+  },
+  "files_sha256": {
+    "tmp/dolly_sft_v1/train.jsonl": "077eb04813a86ebb0c74794e21e1530098d94c0cc9ce38a21c974d9ee531ef07",
+    "tmp/dolly_sft_v1/development.jsonl": "0747660d8729c44af8a76e2246a1af96bd51fa389f2a7d180128c5d9e21561cc",
+    "tmp/dolly_sft_v1/selection_evaluation.jsonl": "5875f24707ee13761ed33ebacdfde5830add0599b98c3814e17aa436d89b89a1",
+    "tmp/generation_benchmarks_v1/sources/self_inst/valid.jsonl": "18922e8ac8a6034ecf0ec8026e24473a30297aaa2e7182d6beb56682586af525",
+    "tmp/generation_benchmarks_v1/sources/sni_11/11_/valid.jsonl": "8c62f31543f02f3dc44ceb62436ec633ab7add9a94307a7dd1977f90378576a6",
+    "tmp/generation_benchmarks_v1/sources/vicuna/valid.jsonl": "04f5fabc7e2660a778ef86f7d2779f69a8f108b892074517566b7d714a269c3a",
+    "tmp/generation_benchmarks_v1/prepared/dolly.jsonl": "05c64aebda69e839a9169968ce6fcd5806da3a425f3e544cd461a08d7cbf1be7",
+    "tmp/generation_benchmarks_v1/prepared/self_inst.jsonl": "1cde260e48f3e238a42c4d343712932e5723e7745ff2c6ea89a017dee7b5be39",
+    "tmp/generation_benchmarks_v1/prepared/sni_11.jsonl": "c220a428c37e7233ab76c6d82d92d99093fd10adcc77f41722e1d6383b8c9606",
+    "tmp/generation_benchmarks_v1/prepared/vicuna.jsonl": "543243c2c3a71ed15a02f8e98ce460d2cd2212364a69c9a13260a443024f43e8"
+  },
+  "tokenizer_audit": {
+    "gpt2_base": {
+      "native_context": 1024,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 256
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 248
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 256
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 68
+        }
+      }
+    },
+    "gpt2_xl": {
+      "native_context": 1024,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 256
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 248
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 256
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 68
+        }
+      }
+    },
+    "qwen_08b": {
+      "native_context": 262144,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 253
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 223
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 254
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 52
+        }
+      }
+    },
+    "qwen_9b": {
+      "native_context": 262144,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 253
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 223
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 254
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 52
+        }
+      }
+    },
+    "opt_125m": {
+      "native_context": 2048,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 256
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 248
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 256
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 68
+        }
+      }
+    },
+    "opt_27b": {
+      "native_context": 2048,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 256
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 248
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 256
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 68
+        }
+      }
+    },
+    "openllama_3b": {
+      "native_context": 2048,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 293
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 276
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 293
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 73
+        }
+      }
+    },
+    "openllama_7b": {
+      "native_context": 2048,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 293
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 276
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 293
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 73
+        }
+      }
+    },
+    "gemma2_2b_it": {
+      "native_context": 8192,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 250
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 209
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 247
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 51
+        }
+      }
+    },
+    "gemma2_9b_it": {
+      "native_context": 8192,
+      "benchmarks": {
+        "dolly": {
+          "checked": 500,
+          "max_prompt_tokens": 250
+        },
+        "self_inst": {
+          "checked": 242,
+          "max_prompt_tokens": 209
+        },
+        "sni_11": {
+          "checked": 1694,
+          "max_prompt_tokens": 247
+        },
+        "vicuna": {
+          "checked": 80,
+          "max_prompt_tokens": 51
+        }
+      }
+    }
+  },
+  "exclusions": {
+    "dolly": [],
+    "self_inst": [],
+    "sni_11": [],
+    "vicuna": []
+  },
+  "duplicate_normalized_prompts_retained": {
+    "dolly": 1,
+    "self_inst": 0,
+    "sni_11": 0,
+    "vicuna": 0
+  },
+  "gpt2_prompt_reformatted_count": {
+    "dolly": 0,
+    "self_inst": 0,
+    "sni_11": 0,
+    "vicuna": 0
+  },
+  "policy": {
+    "sampling": "all distributed rows of Self-Instruct, S-NI 11_, and Vicuna; unchanged Dolly 500",
+    "overlap": "exclude casefold/whitespace-normalized instruction matches to SFT train/development; semantic contamination not audited",
+    "length": "same full text and shared IDs for all ten tokenizers; exclude any row whose full prompt plus 256 new tokens exceeds a native context; no text truncation",
+    "prompt": "same model-native wrapper as Dolly SFT, preserving instruction/input fields",
+    "sni": "publisher's 11_ directory, not a new reference-length filter",
+    "generation": "same seed 10 and sampling as existing Dolly selection; not an exact paper reproduction"
+  },
+  "fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0"
+}

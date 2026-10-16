@@ -1,0 +1,12 @@
+{
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "completed_models": [],
+  "completed_benchmarks": {
+    "gpt2_base": [
+      "dolly"
+    ],
+    "gpt2_xl": [
+      "dolly"
+    ]
+  }
+}

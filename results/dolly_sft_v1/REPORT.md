@@ -1,6 +1,8 @@
-# Dolly 모델 SFT 평가 결과
+# 기존 Dolly·분류 보조 평가
 
-5개 계열·10개 모델 중 SFT 선택 완료 2/10, 선정 평가 완료 2/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
+교사·학생 선정의 주 자료는 [네 생성 벤치마크 비교](../generation_benchmarks_v1/REPORT.md)다. 아래 SST-2·BoolQ는 편향·확률 품질의 보조 진단이며, 현재 Brier score는 MiniLLM의 ECE 재현과 구분한다.
+
+5개 계열·10개 모델 중 SFT 선택 완료 2/10, 기존 평가 완료 2/10. 이번 직접 LoRA SFT 결과이며 이전 공개 SFT 점수와 구분한다.
 
 | 모델 | SST-2 Acc / macro-F1 (%) | BoolQ Acc / macro-F1 (%) | Dolly ROUGE-L (생성 seed 10) |
 |---|---|---|---|

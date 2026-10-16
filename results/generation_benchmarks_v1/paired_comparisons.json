@@ -1,0 +1,15 @@
+{
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "comparisons": [
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "benchmark": "dolly",
+      "n": 500,
+      "mean_rougeL_difference": 5.447496672322596,
+      "teacher_higher": 317,
+      "tie": 31,
+      "student_higher": 152
+    }
+  ]
+}

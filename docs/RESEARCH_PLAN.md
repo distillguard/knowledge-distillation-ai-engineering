@@ -2,9 +2,11 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 선정 평가 완료 **2/10**이다. Dolly 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 평가 점수와 그림은 [직접 SFT 평가 결과](../results/dolly_sft_v1/REPORT.md)를 따른다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 생성 주 평가 4종 완료 **0/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
+
+2026-10-16 평가 우선순위: [생성 평가 계획](GENERATION_EVALUATION.md)의 Dolly·Self-Instruct·S-NI (11_)·Vicuna에서 교사·학생의 차이를 먼저 확인한다. SST-2·BoolQ는 편향·확률 품질의 보조 진단이며 두 분류 점수만으로 조합을 선정하지 않는다. 기존 SFT 조건·분할은 유지하고 완료된 GPT-2 두 모델의 추가 생성 평가부터 진행한다.
 
 계획 갱신일: 2026-10-15, Asia/Seoul. 장비·공개 데이터의 조회일은 각 항목에 별도로 기록한다.
 

@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+  "n": 500,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 27.32714449061832,
+    "rouge2": 10.185534566390684,
+    "rougeL": 20.128742739015564,
+    "exact_match": 2,
+    "generated_tokens": 76.466,
+    "empty": 0,
+    "length_capped": 0.056
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/gpt2_xl/dolly_per_item.csv",
+  "per_item_csv_sha256": "d4cb6ab47ecc6b3d545716dc5f0b5d9f147f8981cc8b8e7e2b59beb9cb3e0d01"
+}
