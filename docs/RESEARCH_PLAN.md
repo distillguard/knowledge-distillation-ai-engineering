@@ -8,6 +8,8 @@
 
 계획 갱신일: 2026-10-16, Asia/Seoul.
 
+**SFT 절차 검토:** 아래 실행 중인 v1은 두 LR·3 epoch·개발 NLL 선택의 예비 비교다. MiniLLM의 SFT 기준 모델 탐색과 증류 전 학생 초기화를 분리하는 원문 절차를 검토 중이며, 적용 모델 범위와 새 실행 protocol은 아직 확정하지 않았다. [원문 설정·780 model-epoch 산출·9B 적용 한계](DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 확인하고 기존 결과와 구분한다.
+
 현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 생성 평가는 Dolly·Self-Instruct·S-NI·Vicuna의 공통 2,516문항으로 수행한다. 현재 5계열·10모델의 독립적인 LoRA SFT와 평가를 진행 중이며 KD 학습은 미실행이다.
 
 검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. METEOR·BERTScore는 보완 후보로 검토했으나 아직 구현·채점하지 않았다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차와 미결정 항목은 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.

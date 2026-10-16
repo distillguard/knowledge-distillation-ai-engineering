@@ -2,6 +2,8 @@
 
 갱신일: 2026-10-16, Asia/Seoul
 
+**결과 해석 범위:** 현재 v1은 두 LR·3 epoch·개발 NLL 선택의 예비 비교다. MiniLLM 원문의 SFT 기준 모델 탐색(검증 ROUGE-L)과 증류 전 학생 초기화(3 epoch·검증 loss)는 별도 단계다. 이 절차의 적용 범위를 검토 중이며 새 탐색 결과는 없다. [원문과 현재 설정의 차이](DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 모델 성능 해석에 포함한다.
+
 <!-- SFT_PROGRESS:START -->
 
 현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **3/10**, 생성 주 평가 4종 완료 **2/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
