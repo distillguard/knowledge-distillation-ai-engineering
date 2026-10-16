@@ -1,0 +1,7 @@
+{
+  "status": "selected",
+  "protocol_fingerprint": "27d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da677",
+  "learning_rate": 0.0001,
+  "adapter": "tmp/dolly_sft_additional_v1/opt_27b/runs/opt_27b_lr1e-04/best_adapter",
+  "development_nll": 1.6361541748046875
+}
