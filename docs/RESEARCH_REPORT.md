@@ -4,7 +4,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 생성 주 평가 4종 완료 **1/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 비교 범위는 **5개 계열·10개 모델**이며, SFT 선택 완료 **2/10**, 생성 주 평가 4종 완료 **2/10**, 기존 Dolly·분류 보조 평가 완료 **2/10**이다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -163,6 +163,8 @@ SeqKD는 교사가 생성한 문장을 학습 대상으로 사용하는 방식�
 ### 7.5. 직접 SFT와 생성 평가의 초기 관측
 
 GPT-2 base·XL은 두 LR 후보를 각각 3epoch 학습했고 LR 2e-4가 선택됐다. 선택 checkpoint는 base epoch 3, XL epoch 2다. Dolly 500문항·생성 seed 10의 ROUGE-L은 base 14.68, XL 20.13으로 차이는 +5.45다. 두 모델의 분류 진단에서는 XL의 BoolQ accuracy 62.43%가 다수 클래스 기준선 62.16%와 가깝고 macro-F1은 42.49%여서 accuracy만으로 교사 성능을 판단하지 않는다.
+
+2026-10-16에 두 모델의 네 생성 benchmark 평가를 모두 완료했다. XL/base의 ROUGE-L은 Dolly 20.13/14.68, Self-Instruct 12.89/7.60, S-NI 20.95/12.00, Vicuna 14.28/11.56이다. 네 과제에 같은 가중치를 준 평균은 17.06/11.46으로 XL이 +5.60 높다. 이는 해당 공통 문항·생성 seed에서 reference 겹침의 차이이며 사람의 선호·사실성 판정이나 증류 효과의 증거는 아니다. 최종 조합은 아직 선정하지 않았다.
 
 현재 관측은 단일 생성 seed이며 seed 간 변동이나 통계적 유의성을 추정하지 않는다. GPT-2 XL은 두 LR 모두 epoch 2의 개발 NLL이 가장 낮고 epoch 3에 상승했으므로 epoch 증가가 생성 점수 개선을 보장한다고 해석하지 않는다. 이 3epoch LoRA 비교는 MiniLLM의 전체 10/20epoch SFT baseline 재현이 아니다.
 

@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+  "n": 80,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 26.07395029756787,
+    "rouge2": 4.627042548825791,
+    "rougeL": 14.281789459761537,
+    "exact_match": 0,
+    "generated_tokens": 142.625,
+    "empty": 0,
+    "length_capped": 0.15
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/gpt2_xl/vicuna_per_item.csv",
+  "per_item_csv_sha256": "1b8fba8c680e44ed31931520d724128d9c8f7f3c69eeff547e717ed43b4682cf"
+}

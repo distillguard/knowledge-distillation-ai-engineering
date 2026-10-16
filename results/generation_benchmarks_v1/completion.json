@@ -1,7 +1,8 @@
 {
   "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
   "completed_models": [
-    "gpt2_base"
+    "gpt2_base",
+    "gpt2_xl"
   ],
   "completed_benchmarks": {
     "gpt2_base": [
@@ -12,7 +13,9 @@
     ],
     "gpt2_xl": [
       "dolly",
-      "self_inst"
+      "self_inst",
+      "sni_11",
+      "vicuna"
     ]
   }
 }

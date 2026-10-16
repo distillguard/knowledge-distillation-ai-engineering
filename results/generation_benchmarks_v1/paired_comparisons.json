@@ -20,6 +20,26 @@
       "teacher_higher": 137,
       "tie": 31,
       "student_higher": 74
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "benchmark": "sni_11",
+      "n": 1694,
+      "mean_rougeL_difference": 8.946250138522954,
+      "teacher_higher": 1156,
+      "tie": 47,
+      "student_higher": 491
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "benchmark": "vicuna",
+      "n": 80,
+      "mean_rougeL_difference": 2.724915201769812,
+      "teacher_higher": 54,
+      "tie": 0,
+      "student_higher": 26
     }
   ]
 }
