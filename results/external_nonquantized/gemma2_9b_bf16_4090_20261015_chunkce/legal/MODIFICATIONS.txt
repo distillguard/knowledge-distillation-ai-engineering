@@ -1,0 +1,23 @@
+MODIFICATION NOTICE - GEMMA-2-9B-IT DOLLY LORA SFT
+
+Run: gemma2_9b_bf16_4090_20261015_chunkce
+Training completed: 2026-10-16 (Asia/Seoul)
+Trained for and published by GitHub account kimhrin.
+Base: google/gemma-2-9b-it
+Base revision: 11c9b309abf73637e4b6f9a3fa1e92e615547819
+Training source commit: 163d48c9f9cbb844c596b882f010887266e1f5ee
+
+The following NEW files contain task-specific model modifications learned
+from the fixed Dolly training split by LoRA SFT. They are not original Google
+model files. Each adapter is the epoch-1 checkpoint selected by development
+NLL from its independent 3-epoch training run:
+
+tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/runs/gemma2_9b_it_lr1e-04/best_adapter/adapter_model.safetensors
+tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/runs/gemma2_9b_it_lr2e-04/best_adapter/adapter_model.safetensors
+
+Their accompanying adapter_config.json files specify the added LoRA layers
+(r=64, alpha=16, dropout=0.05, all-linear). The base model was frozen in BF16
+without quantization; LoRA parameters were trained/stored in FP32. Effective
+batch 16, seed 0, and checkpointed cross-entropy with 64-token chunks were used.
+The final selected adapter is LR 1e-4. No base weights are included or modified
+in this package, and no downstream performance evaluation is claimed.

@@ -1,0 +1,7 @@
+{
+  "status": "selected",
+  "protocol_fingerprint": "69d62b288478c268486314d8a36e98bd0a5b1460718e89f2263881508a64e056",
+  "learning_rate": 0.0001,
+  "adapter": "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/runs/gemma2_9b_it_lr1e-04/best_adapter",
+  "development_nll": 1.3143589496612549
+}

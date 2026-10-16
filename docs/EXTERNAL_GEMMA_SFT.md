@@ -2,7 +2,7 @@
 
 이 경로는 별도 PC에서 `google/gemma-2-9b-it`의 **BF16 기반 가중치 + LoRA SFT만** 실행하고, 완료한 산출물을 원래 PC로 가져오기 위한 것이다. 기존 `run_dolly_sft.py`의 10개 모델 실행과 기존 결과는 그대로 둔다. SST-2·BoolQ·Dolly 생성 평가는 이 명령의 작업 범위에 포함하지 않는다. 학습 중 개발 검증 NLL은 checkpoint와 학습률을 선택하기 위해 계산한다.
 
-실행기는 NF4/FP16으로 자동 전환하지 않는다. BF16 지원·실제 forward/backward·optimizer 갱신·검증·adapter 저장/재적재 등의 사전 점검에 실패하면 학습을 중단한다. **RTX 4090 24GB에서 기존 조건의 실학습이 성공한다고 보장한 결과는 아직 없다.** 메모리가 부족하면 오류와 점검 기록을 확인한다. 이 실행에서 LoRA rank·입력 길이·학습량을 줄여 결과를 기존 조건으로 기록하지 않는다.
+실행기는 NF4/FP16으로 자동 전환하지 않는다. BF16 지원·실제 forward/backward·optimizer 갱신·검증·adapter 저장/재적재 등의 사전 점검에 실패하면 학습을 중단한다. **RTX 4090 24GB에서 아래 checkpointed CE 조건으로 두 LR의 3epoch SFT를 완료했다.** [실측 결과와 어댑터 다운로드](../results/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/README.md)에 상세 기록을 보존했다. 다른 환경에서 메모리가 부족하면 오류와 점검 기록을 확인한다. 이 실행에서 LoRA rank·입력 길이·학습량을 줄여 결과를 기존 조건으로 기록하지 않는다.
 
 ## 유지하는 실험 조건
 
@@ -162,8 +162,10 @@ tokenizer.padding_side = "right"
 
 Git에 올릴 때는 외부 실행의 검증한 요약 경로만 명시적으로 선택한다. `.gitignore`는 `tmp/`, adapter 가중치, checkpoint를 제외한다. 입력 zip·결과 zip·원문·HF 인증 정보·모델 파라미터를 Git에 추가하지 않는다.
 
+완료한 두 어댑터를 공개 전달할 때는 Git 이력 대신 GitHub Release의 배포 ZIP을 사용한다. 원본 handoff ZIP을 그대로 담고 Gemma 약관·NOTICE·사용 조건·수정 고지를 동봉한 바깥 ZIP으로 배포한다. [완료 결과](../results/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/README.md)에 다운로드·체크섬·내부 ZIP 가져오기 절차가 있다.
+
 ## 검증 범위
 
 2026-10-16에 Linux RTX 4090 24GB에서 전체 테스트 43개가 통과했다. 이 중 CUDA BF16·어휘 256,000의 손실값과 gradient를 기존 Hugging Face 구현과 비교하는 검사를 포함한다. 기본 손실 구현은 메모리 부족으로 중단됐다. `checkpointed-ce`와 `expandable_segments:True`에서는 실제 최장 입력 496토큰으로 optimizer 상태를 유지한 두 번째 누적 갱신·검증·checkpoint 저장 및 adapter 독립 재적재까지 통과했으며, peak allocated는 약 21.60GiB였다.
 
-첫 LR의 본 SFT 갱신을 확인했지만 두 LR의 실학습 완료와 최종 NLL은 아직 확인하지 않았다. 사전 점검 수치를 완성된 SFT 성능으로 해석하지 않는다. 입력/결과 묶음 검사는 별도로 조건 고정·경로 분리·무결성을 확인한다.
+두 LR의 본 학습이 각각 3epoch·2,085 optimizer step까지 완료됐고, 각 epoch 1의 checkpoint를 개발 NLL로 선택했다. 최종 선택은 LR `1e-4`, 개발 NLL `1.3143589496612549`다. SST-2·BoolQ·Dolly 생성 평가는 수행하지 않았다. 결과 묶음의 파일별 SHA256과 완료·선택·소스 조건을 검증하고 원래 PC로 가져오기를 완료했다.
