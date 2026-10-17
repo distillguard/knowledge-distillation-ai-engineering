@@ -1,0 +1,19 @@
+{
+  "protocol_fingerprint": "4d5ff6de37899aeafddc2aaf7d4098e54bfc4b5f4513ab5c5b58a41d284058c4",
+  "models": {
+    "openllama_3b": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 101703680,
+      "sequence_tokens": 563,
+      "loss": 1.8880257606506348,
+      "reload_logits_equal": true,
+      "quantized_linear_layers": 0,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "peak_allocated_mib": 9120.5,
+      "peak_reserved_mib": 9694.0,
+      "seconds_including_load_and_checks": 8.427
+    }
+  }
+}

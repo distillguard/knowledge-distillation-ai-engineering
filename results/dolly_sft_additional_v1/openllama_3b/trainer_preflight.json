@@ -1,0 +1,26 @@
+{
+  "protocol_fingerprint": "4d5ff6de37899aeafddc2aaf7d4098e54bfc4b5f4513ab5c5b58a41d284058c4",
+  "probe_script_sha256": "af41cb31b4630fda914a178231aa05da230fddbc66cc5d75cd44b92bc343ccba",
+  "models": {
+    "openllama_3b": {
+      "status": "passed",
+      "optimizer_updates": 1,
+      "real_training_baseline": false,
+      "accumulated_examples": 16,
+      "checkpoint_has_optimizer_and_adapter": true,
+      "lora_weights_changed": true,
+      "probe_warmup_steps": 0,
+      "training_metrics": {
+        "train_runtime": 6.0899,
+        "train_samples_per_second": 2.627,
+        "train_steps_per_second": 0.164,
+        "train_loss": 1.899200201034546,
+        "epoch": 1.0
+      },
+      "probe_validation_loss": 0.3349232077598572,
+      "peak_allocated_mib": 8523.2,
+      "peak_reserved_mib": 9062.0,
+      "seconds": 6.558
+    }
+  }
+}

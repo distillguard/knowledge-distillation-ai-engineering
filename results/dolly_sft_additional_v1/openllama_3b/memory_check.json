@@ -1,0 +1,6 @@
+{
+  "protocol_fingerprint": "4d5ff6de37899aeafddc2aaf7d4098e54bfc4b5f4513ab5c5b58a41d284058c4",
+  "available_before_probe_bytes": 15908995072,
+  "peak_allocated_bytes": 9563537408.0,
+  "fits_dedicated_budget": true
+}
