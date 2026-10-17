@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "dc574e3735ac552615d43506a699368df44d732ba90785adc62f7373e2570e4a",
+  "n": 500,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 29.180011090760818,
+    "rouge2": 11.0898350990701,
+    "rougeL": 21.862759478367312,
+    "exact_match": 2.6,
+    "generated_tokens": 71.704,
+    "empty": 0,
+    "length_capped": 0.034
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/openllama_3b/dolly_per_item.csv",
+  "per_item_csv_sha256": "259dbd0b89176af03bab4b8b5fa92863f8a1fae892320b348dcb7cfe7582712a"
+}
