@@ -50,6 +50,16 @@
       "teacher_higher": 302,
       "tie": 38,
       "student_higher": 160
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
+      "benchmark": "dolly",
+      "n": 500,
+      "mean_rougeL_difference": 2.1220536548610855,
+      "teacher_higher": 258,
+      "tie": 32,
+      "student_higher": 210
     }
   ]
 }

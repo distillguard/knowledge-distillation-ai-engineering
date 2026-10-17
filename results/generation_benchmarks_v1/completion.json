@@ -22,7 +22,8 @@
     "gpt2_xl",
     "opt_125m",
     "opt_27b",
-    "openllama_3b"
+    "openllama_3b",
+    "openllama_7b"
   ],
   "completed_extended_models": [
     "gpt2_base",
@@ -48,6 +49,9 @@
       "dolly"
     ],
     "openllama_3b": [
+      "dolly"
+    ],
+    "openllama_7b": [
       "dolly"
     ]
   }

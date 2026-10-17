@@ -1,0 +1,25 @@
+{
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "training_protocol_fingerprint": "52f6b4e28c285866ef253d92ad59c21a290546f206970e6d6392cf08d9b922aa",
+  "selected_adapter": {
+    "status": "selected",
+    "protocol_fingerprint": "52f6b4e28c285866ef253d92ad59c21a290546f206970e6d6392cf08d9b922aa",
+    "learning_rate": 0.0002,
+    "adapter": "tmp/dolly_sft_additional_v1/openllama_7b/runs/openllama_7b_lr2e-04/best_adapter",
+    "development_nll": 1.3576457500457764
+  },
+  "adapter_sha256": "c98926f52a8d7a8e9a49975e59a5ab82f62e546dd0506d04488f5209cb0bf96d",
+  "evaluation_script_sha256": "3f784bd20bd34869499ec56ea4f2bc61c8c39b31b896cb2a1ac3b47fe15edfc6",
+  "dolly_evaluation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
+  "generation": {
+    "seed": 10,
+    "max_new_tokens": 256,
+    "temperature": 1,
+    "top_k": 0,
+    "top_p": 1,
+    "no_repeat_ngram_size": 6,
+    "microbatch": 1,
+    "sample_sd_across_generation_seeds": null
+  },
+  "fingerprint": "bad1800ef57584ce0c1953f82a94f2440d95a01f93d26fbc8522c432ed8f8c8f"
+}

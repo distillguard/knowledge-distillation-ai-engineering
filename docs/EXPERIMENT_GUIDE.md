@@ -148,7 +148,7 @@ Batch 크기와 accumulation의 관계는 [Transformers 문서](https://huggingf
 | Gemma-2-2B-IT·학생 | `--model gemma2_2b_it` | BF16부터 실제 점검, 맞지 않으면 NF4 |
 | Gemma-2-9B-IT·교사 | `--model gemma2_9b_it` | 현재 장비는 BF16 가중치만으로 VRAM 초과하므로 NF4 |
 
-현재 장비에서 같은 작업을 PowerShell로 실행하는 예시는 다음과 같다. 다른 장비에서는 Python 경로를 해당 환경에 맞춘다. 모델·데이터 준비와 해당 장비의 사전 점검이 완료된 작업 폴더를 전제로 한다.
+현재 장비에서 같은 작업을 PowerShell로 실행하는 예시는 다음과 같다. 다른 장비에서는 Python 경로를 해당 환경에 맞춘다. 모델·데이터 준비와 해당 장비의 사전 점검이 완료된 작업 폴더를 전제로 한다. Gemma의 최초 학습 전에는 아래 분할 가중치 인덱스 보완도 수행한다.
 
 ```powershell
 $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
@@ -173,6 +173,35 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 각 명령은 독립적인 선택지다. 같은 worker 잠금을 사용하므로 기존 전체 실행 중 모델별 실행을 추가하면 학습을 시작하기 전에 종료된다. 저수준 `dolly_sft.py train`을 직접 실행하면 이 worker 잠금을 우회하므로 운영에는 위 실행기를 사용한다. 현재 자동 실행은 계속 진행 중이며 VSCode용 작업을 추가했다는 이유로 재시작하지 않는다.
 
 단일 모델 실행의 worker 상태가 `completed`라는 것은 `requested_models`에 기록된 요청만 끝났다는 뜻이다. 예비 완료는 활성 8개 모델의 selected와 Dolly 500문항의 검증된 생성 결과로 판단한다. 외부 3종·보조 분류의 전체 완료는 예비 완료 요건이 아니다. worker는 로컬 SentencePiece 의존 경로를 자식 프로세스의 `PYTHONPATH`에 먼저 넣어 Transformers가 tokenizer 의존성을 올바르게 감지하게 한다.
+
+### Gemma 분할 가중치 인덱스 보완
+
+고정된 준비 코드의 다운로드 목록에는 `model.safetensors.index.json`이 빠져 있다. Gemma의 가중치 shard가 모두 있어도 이 인덱스가 없으면 모델 적재가 실패한다. 기존 실행의 소스 지문을 보존하면서 아래 명령으로 동일 revision의 메타데이터를 보완한다. 모델 사용 조건 동의와 로컬 Hugging Face 인증이 필요하다. 토큰은 출력하거나 저장소에 기록하지 않는다.
+
+```powershell
+@'
+import json, sys
+from pathlib import Path
+sys.path.insert(0, 'scripts')
+import dolly_study as study
+from huggingface_hub import hf_hub_download, get_token
+token = get_token()
+standard = Path.home() / '.cache/huggingface/token'
+if token is None and standard.is_file():
+    token = standard.read_text(encoding='utf-8').strip()
+registry = study.read(study.REGISTRY)
+for name in ('gemma2_2b_it', 'gemma2_9b_it'):
+    entry = registry[name]
+    path = Path(hf_hub_download(entry['id'], 'model.safetensors.index.json',
+                revision=entry['revision'], cache_dir=str(study.HUB), token=token))
+    shards = set(json.loads(path.read_text(encoding='utf-8'))['weight_map'].values())
+    assert shards == set(entry['weight_files'])
+    assert all((path.parent / shard).is_file() for shard in shards)
+    print(name, 'index and shards verified')
+'@ | & $StudyPython -B -X utf8 -
+```
+
+2026-10-17에 이 절차로 2B의 2개 shard·288개 tensor, 9B의 4개 shard·464개 tensor 연결을 확인하고 worker를 재개했다. 기존 가중치와 학습·평가 명세는 그대로 사용한다.
 
 ## 모델별 필수 결과물과 완료 판정
 
