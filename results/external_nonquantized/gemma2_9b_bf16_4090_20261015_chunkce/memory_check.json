@@ -1,0 +1,18 @@
+{
+  "protocol_fingerprint": "69d62b288478c268486314d8a36e98bd0a5b1460718e89f2263881508a64e056",
+  "available_before_probe_bytes": 24029036544,
+  "available_before_training_bytes": 24031133696,
+  "peak_allocated_bytes": 23191711907.84,
+  "probe_budgets": [
+    {
+      "available_bytes": 24029036544,
+      "peak_allocated_bytes": 21978006159.36
+    },
+    {
+      "available_bytes": 24029036544,
+      "peak_allocated_bytes": 23191711907.84
+    }
+  ],
+  "fits_dedicated_budget": true,
+  "quantization_fallback": false
+}

@@ -1,0 +1,20 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "total_memory_bytes": 25247481856,
+  "free_memory_bytes": 24029036544,
+  "cuda": "12.8",
+  "python": "3.12.14",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "cuda_allocator_config": "expandable_segments:True",
+  "versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0",
+    "sentencepiece": "0.2.2",
+    "protobuf": "7.36.2"
+  },
+  "recorded_at_utc": "2026-10-15T15:30:15.277298+00:00",
+  "protocol_fingerprint": "69d62b288478c268486314d8a36e98bd0a5b1460718e89f2263881508a64e056"
+}

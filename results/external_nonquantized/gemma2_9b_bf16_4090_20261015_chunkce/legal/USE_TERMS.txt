@@ -1,0 +1,18 @@
+TERMS FOR THE DISTRIBUTED GEMMA MODEL DERIVATIVES
+
+The two LoRA adapters distributed with this notice are derivatives of
+google/gemma-2-9b-it. Your use, reproduction, modification, distribution, and
+redistribution of these adapters and any model incorporating them are subject
+to the Gemma Terms of Use, copied in GEMMA_TERMS.txt.
+
+As a condition of the grant to use and redistribute these adapters, you must
+comply with the use restrictions in Section 3.2 of those Terms, including the
+Gemma Prohibited Use Policy (copied in GEMMA_PROHIBITED_USE_POLICY.txt), and
+all applicable laws and regulations. These restrictions are incorporated as
+enforceable terms of this distribution. You must pass these restrictions,
+the Agreement, and the required notices to subsequent recipients as required
+by Section 3.1. No separate license in the code repository overrides these
+requirements for the adapters.
+
+Official terms: https://ai.google.dev/gemma/terms
+Official policy: https://ai.google.dev/gemma/prohibited_use_policy

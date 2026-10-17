@@ -27,6 +27,8 @@
 
 팀원은 비양자화 SFT를 별도로 진행한다. 현재 컴퓨터는 아래 BF16/NF4 정책으로 계속하며, 동일 모델의 양자화·비양자화 결과를 확보하면 [공통 대조 조건](docs/EXPERIMENT_GUIDE.md#양자화-조건의-역할-분담)에 따라 비교한다.
 
+별도 RTX 4090에서 **Gemma-2-9B-IT BF16 비양자화 LoRA SFT의 두 LR·각 3epoch를 완료**했다. 이 외부 실행의 [조건·NLL·어댑터 다운로드](results/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/README.md)를 별도 보존하며, 위 공통 비교의 평가 완료 수에는 합산하지 않는다.
+
 | 계열 | 교사 후보 | 학생 후보 | 현재 확인 범위 |
 |---|---|---|---|
 | **GPT-2** | [GPT-2 XL](https://huggingface.co/openai-community/gpt2-xl), 약 1.56B | [GPT-2 base](https://huggingface.co/openai-community/gpt2), 약 124M | 둘 다 BF16 가중치, 양자화 없음, LoRA 학습 |
