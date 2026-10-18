@@ -75,13 +75,15 @@ LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/a
 | 생성 파라미터 | `do_sample=True`, `temperature=1`, `top_k=0`, `top_p=1`, `no_repeat_ngram_size=6`, `max_new_tokens=256`, `use_cache=True` |
 | 생성 종료 | 모델별 tokenizer EOS와 공식 generation config의 EOS. 실제 목록 기록 |
 | 현재 생성 지표 | ROUGE-1/2/L F1 ×100, 정규화 exact match, 생성 길이, 상한 도달률, 빈 응답률 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4 추가 실행 승인, 아직 채점 준비 중·미채점. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
+| 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 준비, 실제 모델 응답 채점 대기. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
 | 반복 해석 | 생성 seed 간 표준편차는 `null`. 오차막대·±0 없음 |
 | 최종 선정 후 본 실험 | 생성 seed `10/20/30/40/50` 예정. 학습 seed 5회 반복을 뜻하지 않음 |
 
 생성의 temperature는 sampling 조건이며 KD 분포의 온도 T와 다르다. KD의 T·gate·MC dropout 횟수·Revival 기준은 이 SFT 단계의 설정값이 아니다. 이후 문헌 근거와 검증 절차로 별도 명세한다. 현재 관찰한 선정 평가 자료를 독립적인 최종 test로 부르지 않는다.
 
 검증 NLL은 각 모델의 체크포인트 선택이고 동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 후보를 추린다. 해당 후보의 외부 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT 탐색은 시작하지 않는다. MiniLLM의 전체 SFT 탐색·학생 초기화는 선정한 한 조합의 본 실험 설계로 남긴다. [선정 단계별 완료 기준과 원본 평가 명령](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. 원본 대비 SFT 생성 향상은 아직 미실행이며 공개 SFT checkpoint로 대체하지 않는다.
+
+보완 채점은 `run_supplementary_metrics.py prepare`로 자산을 준비하고, 원본/SFT 응답을 모두 확보한 뒤 `run_supplementary_metrics.py score`로 실행한다. [전용 환경과 산출물](GENERATION_EVALUATION.md#보완-채점의-전용-환경과-산출물)의 설치·모델별 명령을 따른다. 별도 자식 프로세스의 Transformers 4.46.3·BERTScore slow tokenizer를 사용하며 기존 SFT 환경은 유지한다. 보완 채점도 공통 GPU 잠금을 사용한다.
 
 ## 현재 장비와 실행 환경
 

@@ -204,7 +204,7 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
 | 원본/SFT 비교 | 활성 8개 원본의 Dolly 기준선 추가 승인, 미실행 | 같은 ID·prompt·정밀도·생성 조건으로 원본/SFT/변화량 비교 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4 추가 승인, 채점 준비 중·미채점 | 평가 모델·길이 처리·다중 정답·집계 명세 필요. 후보 분류에는 ECE 추가 |
+| 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 완료, 실제 응답 채점 대기 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |
 | 본 실험 생성 반복 | 10/20/30/40/50 예정 | 학습 seed 반복과 구분. 독립 최종 test의 대체가 아님 |
