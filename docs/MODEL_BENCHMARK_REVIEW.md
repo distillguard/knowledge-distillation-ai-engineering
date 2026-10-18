@@ -108,6 +108,6 @@ RTX 5060 Ti 16GB급에서 **모델별 평가를 차례로 실행할 수 있는�
 
 ## 7. 현재 판단과 다음 산출물
 
-예비 생성 평가는 Dolly 500문항부터 시작한다. 후보 축소 후 Dolly·Self-Instruct·S-NI·Vicuna를 모두 적용한 경우 2,516문항이며 SST-2·BoolQ는 보조 진단이다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행을 승인했으며 아직 구현·채점하지 않았다. 다음 산출물은 동일 조건 원본/SFT 비교, 모델×benchmark×실제 지표의 표·그림, 같은 문항의 오류 분석, 후보 조합의 KD 실행 점검과 선정 이유다.
+예비 생성 평가는 Dolly 500문항부터 시작한다. 후보 축소 후 Dolly·Self-Instruct·S-NI·Vicuna를 모두 적용한 경우 2,516문항이며 SST-2·BoolQ는 보조 진단이다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행을 승인했으며 아직 실제 채점하지 않았다. 다음 산출물은 동일 조건 원본/SFT 비교, 모델×benchmark×실제 지표의 표·그림, 같은 문항의 오류 분석, 후보 조합의 KD 실행 점검과 선정 이유다.
 
 현재 점수는 SFT 후 모델 간 비교다. 원본 대비 SFT의 생성 향상과 본 KD의 SFT 학생 대비 향상은 각각 별도 평가가 필요하다. 이미 선정에 사용한 자료를 독립적인 최종 test로 다시 표시하지 않는다. 상세 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다.

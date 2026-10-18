@@ -75,7 +75,7 @@ LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/a
 | 생성 파라미터 | `do_sample=True`, `temperature=1`, `top_k=0`, `top_p=1`, `no_repeat_ngram_size=6`, `max_new_tokens=256`, `use_cache=True` |
 | 생성 종료 | 모델별 tokenizer EOS와 공식 generation config의 EOS. 실제 목록 기록 |
 | 현재 생성 지표 | ROUGE-1/2/L F1 ×100, 정규화 exact match, 생성 길이, 상한 도달률, 빈 응답률 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4 추가 실행 승인, 아직 미구현·미채점. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
+| 보완 지표 | METEOR·BERTScore·Distinct-4 추가 실행 승인, 아직 채점 준비 중·미채점. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
 | 반복 해석 | 생성 seed 간 표준편차는 `null`. 오차막대·±0 없음 |
 | 최종 선정 후 본 실험 | 생성 seed `10/20/30/40/50` 예정. 학습 seed 5회 반복을 뜻하지 않음 |
 

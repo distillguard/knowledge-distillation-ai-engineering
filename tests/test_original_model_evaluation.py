@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import weakref
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import evaluate_original_models as original
@@ -147,6 +148,35 @@ class OriginalEvaluationTests(unittest.TestCase):
             load.assert_called_once_with("gpt2_base")
             generate.assert_called_once()
         self.assertTrue(all(not layer.disable_adapters for layer in layers))
+
+    def test_cleanup_releases_adapter_layers_before_emptying_cuda_cache(self):
+        from peft import LoraConfig, get_peft_model
+        from peft.tuners.lora import LoraLayer
+
+        references = []
+
+        def load(name):
+            base = torch.nn.Sequential(torch.nn.Linear(2, 2))
+            base.gradient_checkpointing_disable = lambda: None
+            model = get_peft_model(base, LoraConfig(r=1, lora_alpha=1, target_modules=["0"]))
+            references.extend(weakref.ref(layer) for layer in model.modules() if isinstance(layer, LoraLayer))
+            return model
+
+        def check_cleanup():
+            self.assertTrue(references)
+            self.assertTrue(all(reference() is None for reference in references))
+
+        with tempfile.TemporaryDirectory(dir=original.ROOT / "tmp") as folder, \
+                patch.object(original, "OUT", Path(folder)), \
+                patch.object(original.evaluation, "prepared_protocol", return_value={}), \
+                patch.object(original, "identity", return_value={"fingerprint": "test"}), \
+                patch.object(original, "rows", return_value=[{"id": "a"}]), \
+                patch.object(original, "load_completed", return_value=None), \
+                patch.object(original.study, "load_model", load), \
+                patch.object(original.study, "tokenizer_for", return_value=None), \
+                patch.object(original, "generate", lambda *args: None), \
+                patch.object(torch.cuda, "empty_cache", check_cleanup):
+            original.evaluate("gpt2_base", ["dolly"])
 
 
 if __name__ == "__main__":

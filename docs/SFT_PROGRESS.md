@@ -21,4 +21,4 @@ NLL은 각 모델 내부의 checkpoint·학습률 선택에 사용한다. 다른
 
 [생성 벤치마크의 교사·학생 비교](../results/generation_benchmarks_v1/REPORT.md)
 
-동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 조합을 추리고 외부 생성 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT는 시작하지 않는다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행 승인 상태이며 아직 미구현·미채점이다. 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다.
+동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 조합을 추리고 외부 생성 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT는 시작하지 않는다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행 승인 상태이며 아직 채점 준비 중·미채점이다. 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다.

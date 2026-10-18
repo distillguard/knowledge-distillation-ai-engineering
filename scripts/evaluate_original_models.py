@@ -153,6 +153,7 @@ def evaluate(name, keys, classification=False):
     tokenizer = study.tokenizer_for(name)
     model.eval().requires_grad_(False)
     model.gradient_checkpointing_disable()
+    layers = []
     try:
         from peft.tuners.lora import LoraLayer
         layers = [module for module in model.modules() if isinstance(module, LoraLayer)]
@@ -165,7 +166,7 @@ def evaluate(name, keys, classification=False):
             if classification:
                 classify(name, model, tokenizer, spec)
     finally:
-        del model
+        del model, layers
         gc.collect()
         torch.cuda.empty_cache()
 

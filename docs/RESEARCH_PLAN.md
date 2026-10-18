@@ -12,7 +12,7 @@
 
 현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 예비 생성 평가는 Dolly 500문항으로 수행하고 외부 3종은 후보 축소 후 적용한다. 현재 4계열·8모델의 독립적인 LoRA SFT와 평가를 진행 중이며 KD 학습은 미실행이다.
 
-검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. 2026-10-18 사용자 결정에 따라 원본/SFT 전후 기준선, METEOR·BERTScore·Distinct-4, 후보의 ECE·기존 분류 지표를 추가 실행한다. 현재 추가 지표는 미구현·미채점이며 원본 생성 기준선도 미실행이다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
+검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. 2026-10-18 사용자 결정에 따라 원본/SFT 전후 기준선, METEOR·BERTScore·Distinct-4, 후보의 ECE·기존 분류 지표를 추가 실행한다. 현재 추가 지표는 채점 준비 중·미채점이며 원본 생성 기준선도 미실행이다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
 
 ## 1. 목적과 원칙
 
@@ -256,7 +256,7 @@ CaRE 식 (3)의 기준 정의는 c(P)=1−H(P)/log|V|, Δc=c(P)−c(Q), g_hard=1
 | 1. 모델별 체크포인트 선택 | 같은 모델의 두 LR 후보·epoch별 개발 NLL 비교 | 완료된 두 LR JSON, 선택 adapter와 hash. 다른 tokenizer의 NLL로 계열 순위를 정하지 않음 |
 | 2. 예비 생성 평가 | 활성 8모델의 Dolly 500문항에 직접 응답 | 같은 ID·생성 seed 10·명세, Dolly 점수와 문항별 기록 |
 | 2.1. 원본 기준선 | 활성 8개 원본의 같은 Dolly 500문항 추론 평가 | 같은 model revision·정밀도·prompt·seed·ID, 원본/SFT/변화량 표. 기존 SFT·응답 재사용 |
-| 3. 보완 지표 | 원본/SFT의 METEOR·BERTScore·Distinct-4 채점 | 아직 미구현·미채점. 채점 모델·길이·tokenizer·다중 정답·집계 고정, 추가 SFT 불필요 |
+| 3. 보완 지표 | 원본/SFT의 METEOR·BERTScore·Distinct-4 채점 | 아직 채점 준비 중·미채점. 채점 모델·길이·tokenizer·다중 정답·집계 고정, 추가 SFT 불필요 |
 | 4. 후보 후속 평가 | 후보 축소 후 원본/SFT의 외부 3종·SST-2·BoolQ | 생성 지표와 accuracy·macro-F1·클래스별 오류·Brier·ECE. 기존 완료 결과 재사용 |
 | 5. 비교·오류 분석 | 모델×benchmark×지표 표, 계열 내 교사−학생 차이, 실제 응답 오류 확인 | 과제별 우위의 일관성, 지시 준수·사실 오류·반복·누락과 사례 선정 근거 |
 | 6. 증류 실행 점검 | 후보 조합의 같은 어휘 좌표·prefix·학생 갱신과 필요한 생성 경로 확인 | 실제 forward/backward·메모리·step 시간. 적재 성공만으로 판정하지 않음 |

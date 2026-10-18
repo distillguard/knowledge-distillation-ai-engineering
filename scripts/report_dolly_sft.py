@@ -73,7 +73,7 @@ def progress():
     lines += ["", "NLL은 각 모델 내부의 checkpoint·학습률 선택에 사용한다. 다른 tokenizer의 NLL로 성능 순위를 매기지 않는다.", "",
               "각 모델 SFT 후 예비 Dolly 500문항을 먼저 평가한다. 외부 세 benchmark와 SST-2·BoolQ는 후보 축소 후 진행하며 이미 완료한 결과는 보존한다. Dolly 생성은 기존 응답을 검증해 재사용하며 중복 생성하지 않는다. 생성 seed는 10 한 개이고 seed 간 표준편차는 미추정이다.", "",
               "[생성 벤치마크의 교사·학생 비교](../results/generation_benchmarks_v1/REPORT.md)", "",
-              "동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 조합을 추리고 외부 생성 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT는 시작하지 않는다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행 승인 상태이며 아직 미구현·미채점이다. 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다."]
+              "동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 조합을 추리고 외부 생성 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT는 시작하지 않는다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 추가 실행 승인 상태이며 아직 채점 준비 중·미채점이다. 단계별 완료 기준은 [생성 평가 계획](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다."]
     (ROOT / "docs/SFT_PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     for filename in ("README.md", "docs/RESEARCH_PLAN.md", "docs/RESEARCH_REPORT.md", "docs/DOLLY_SFT_MODEL_SELECTION.md"):
         path = ROOT / filename
