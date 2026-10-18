@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **7/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -21,7 +21,7 @@
 3. **선정 평가:** 우선 Dolly 500문항을 비교하고 외부 3종·새 보조 진단은 유망 후보에 수행한다. 보완 지표·응답 검토·증류 실행 점검 후 한 조합과 선정 근거를 확정한다.
 4. **본 증류 비교:** 선정 조합에서 FKL/RKL·Hard/Soft gate·Revival 유무와 결합을 대조한다. 같은 학생의 SFT 기준선 대비 분포·학습 신호·응답 변화를 시각화한다.
 
-현재는 SFT와 선정 평가를 진행 중이다. 원문 사용값과 로컬 검증 선택값을 구분하고, 효율성 순위나 근거 없는 최적 설정을 연구 결론으로 삼지 않는다.
+8모델의 예비 SFT와 Dolly 500 생성 평가를 완료했고, 원본/SFT 비교와 후보 검증으로 이어간다. 원문 사용값과 로컬 검증 선택값을 구분하고, 효율성 순위나 근거 없는 최적 설정을 연구 결론으로 삼지 않는다.
 
 ## 모델·데이터 구성
 
@@ -30,9 +30,9 @@
 | 계열 | 교사 후보 | 학생 후보 | 현재 확인 범위 |
 |---|---|---|---|
 | **GPT-2** | [GPT-2 XL](https://huggingface.co/openai-community/gpt2-xl), 약 1.56B | [GPT-2 base](https://huggingface.co/openai-community/gpt2), 약 124M | 둘 다 BF16 가중치, 양자화 없음, LoRA 학습 |
-| **OPT** | [OPT-2.7B](https://huggingface.co/facebook/opt-2.7b) | [OPT-125M](https://huggingface.co/facebook/opt-125m) | BF16 먼저 점검, 전용 VRAM에 맞지 않으면 NF4 |
-| **OpenLLaMA** | [OpenLLaMA-7B](https://huggingface.co/openlm-research/open_llama_7b) | [OpenLLaMA-3B](https://huggingface.co/openlm-research/open_llama_3b) | BF16 먼저 점검, 전용 VRAM에 맞지 않으면 NF4 |
-| **Gemma-2** | [Gemma-2-9B-IT](https://huggingface.co/google/gemma-2-9b-it) | [Gemma-2-2B-IT](https://huggingface.co/google/gemma-2-2b-it) | 9B는 BF16 가중치만으로 VRAM 초과해 NF4, 2B는 실제 점검으로 확정 |
+| **OPT** | [OPT-2.7B](https://huggingface.co/facebook/opt-2.7b) | [OPT-125M](https://huggingface.co/facebook/opt-125m) | 두 모델 모두 BF16 |
+| **OpenLLaMA** | [OpenLLaMA-7B](https://huggingface.co/openlm-research/open_llama_7b) | [OpenLLaMA-3B](https://huggingface.co/openlm-research/open_llama_3b) | 7B NF4·3B BF16, 실제 갱신·저장 점검 완료 |
+| **Gemma-2** | [Gemma-2-9B-IT](https://huggingface.co/google/gemma-2-9b-it) | [Gemma-2-2B-IT](https://huggingface.co/google/gemma-2-2b-it) | 9B NF4·2B BF16, 실제 갱신·저장 점검 완료 |
 
 LoRA는 8개 모델에 공통 적용한다. 추가한 OPT·OpenLLaMA·Gemma 조합은 [CaRE의 Dolly 실험](https://arxiv.org/html/2609.36734v1)에서 가져왔다. 추가 모델은 BF16 가중치 크기와 실제 적재·갱신·저장 점검의 전용 VRAM 사용량을 근거로 양자화 여부를 결정한다. GPT-2·OPT·OpenLLaMA는 pretrained, Gemma-IT는 post-trained 모델이므로 시작점·크기·tokenizer·정밀도 차이를 포함한 후보 조합 비교로 해석한다.
 
@@ -99,6 +99,7 @@ tmp/                      로컬 모델·자료·checkpoint·응답·로그, Git
 - [공통 파라미터·장비별 실행 지침](docs/EXPERIMENT_GUIDE.md) · [VSCode 실행 작업](.vscode/tasks.json)
 - [연구계획](docs/RESEARCH_PLAN.md) · [연구보고서 초안](docs/RESEARCH_REPORT.md)
 - [현재 Dolly 모델 SFT 비교 계획](docs/DOLLY_SFT_MODEL_SELECTION.md) · [모델별 진행](docs/SFT_PROGRESS.md) · [실행 명세와 점검 결과](results/dolly_sft_v1)
+- [원본/SFT 생성 비교표·전후 그림](results/model_selection_v1/REPORT.md) · [생성 평가 명세](docs/GENERATION_EVALUATION.md)
 - [데이터 선정 조사](docs/DATA_SELECTION.md) · [이전 데이터 후보별 SFT 비교 설계](docs/DATASET_SFT_COMPARISON.md)
 - [공개 SFT 모델 평가 결과](docs/SFT_BASELINE_EVALUATION.md) · [Dolly 구성](docs/DOLLY_DATA_OVERVIEW.md)
 - 논문 해설: [Hinton](papers/01_hinton_2015_ko.md) · [MiniLLM](papers/02_minillm_2024_ko.md) · [CaRE-KD](papers/03_care_kd_2026_ko.md)

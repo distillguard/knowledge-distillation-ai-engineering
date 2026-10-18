@@ -172,7 +172,7 @@ $StudyPython = 'C:\lightjudge\.venv\Scripts\python.exe'
 & $StudyPython -u -B -X utf8 scripts/run_dolly_sft.py --model all
 ```
 
-각 명령은 독립적인 선택지다. 같은 worker 잠금을 사용하므로 기존 전체 실행 중 모델별 실행을 추가하면 학습을 시작하기 전에 종료된다. 저수준 `dolly_sft.py train`을 직접 실행하면 이 worker 잠금을 우회하므로 운영에는 위 실행기를 사용한다. 현재 자동 실행은 계속 진행 중이며 VSCode용 작업을 추가했다는 이유로 재시작하지 않는다.
+각 명령은 독립적인 선택지다. 같은 worker 잠금을 사용하므로 기존 전체 실행 중 모델별 실행을 추가하면 학습을 시작하기 전에 종료된다. 저수준 `dolly_sft.py train`을 직접 실행하면 이 worker 잠금을 우회하므로 운영에는 위 실행기를 사용한다. 2026-10-19에 활성 8모델의 예비 SFT·Dolly 생성 worker는 정상 종료했다. 원본/SFT 비교 이후의 후속 평가는 같은 잠금으로 순차 실행하며, 이미 완료한 SFT를 재시작하지 않는다.
 
 단일 모델 실행의 worker 상태가 `completed`라는 것은 `requested_models`에 기록된 요청만 끝났다는 뜻이다. 예비 완료는 활성 8개 모델의 selected와 Dolly 500문항의 검증된 생성 결과로 판단한다. 외부 3종·보조 분류의 전체 완료는 예비 완료 요건이 아니다. worker는 로컬 SentencePiece 의존 경로를 자식 프로세스의 `PYTHONPATH`에 먼저 넣어 Transformers가 tokenizer 의존성을 올바르게 감지하게 한다.
 

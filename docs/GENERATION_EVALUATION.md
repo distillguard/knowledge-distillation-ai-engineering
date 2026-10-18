@@ -128,6 +128,8 @@ python -u -B -X utf8 scripts/run_supplementary_metrics.py score --model all --ph
 
 결과는 `results/supplementary_metrics_v1/<original 또는 sft>/<model>/<benchmark>/`의 `protocol.json`, `result.json`, `per_item.csv`에 저장한다. METEOR·raw BERTScore P/R/F1은 ×100, corpus Distinct-4는 고유/전체 4-gram 개수와 비율을 기록한다. 문항별 BERT reference/응답의 전체·유효 토큰 수와 집계 영향 문항 수도 남긴다. 새 응답 생성이나 SFT epoch 증가는 없다. 외부 3종은 후보 축소 후 준비된 응답에만 같은 채점기를 적용한다.
 
+원본 또는 보완 채점의 모델별 완료 후 `python -B -X utf8 scripts/report_model_selection.py`로 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)를 갱신한다. 원본 응답·자료·adapter와 CSV를 검증하고, 완료한 항목만 모델×자료×지표 표와 전후 그림에 반영한다. SFT−원본 및 교사−학생의 동일 문항 차이는 별도 집계하며 미완료 지표는 채우지 않는다. 보고서 생성 자체가 최종 조합의 자동 선정을 뜻하지 않는다.
+
 ## 산출물과 완료 기준
 
 [생성 주 평가 보고서](../results/generation_benchmarks_v1/REPORT.md)에 표·그림과 동일 문항 차이를 모은다. `protocol.json`은 최초 10모델의 자료 revision·원문/준비 파일 hash·길이 감사·제외 ID를 보존한다. 활성 실행 범위는 `dolly_scope.py`와 `completion.json`에 기록한다. 모델별 `<benchmark>.json`의 완료 상태·평가 fingerprint·문항 수와 `<benchmark>_per_item.csv`의 hash·ID를 검증한다. 현재 예비 완료는 Dolly 기준이며 외부까지 네 자료를 마친 결과는 별도 구분한다.

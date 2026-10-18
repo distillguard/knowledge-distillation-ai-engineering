@@ -1,0 +1,220 @@
+{
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "sources": [
+    {
+      "phase": "sft",
+      "model": "gpt2_base",
+      "benchmark": "dolly",
+      "generation_fingerprint": "00afc58baa07ef271c0a20db7168d821dc2adc1854dc493a687b01a153643a36",
+      "raw_responses_sha256": "1cf8877040fb269dd274ae10f06b2cb61b402e2f1f41408cbfc0aefec075d7cd",
+      "primary_csv_sha256": "b2fbc25d52c90ea29e26d286bc57f3f7a56ff7602ebee910987639822793682d",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_base",
+      "benchmark": "self_inst",
+      "generation_fingerprint": "00afc58baa07ef271c0a20db7168d821dc2adc1854dc493a687b01a153643a36",
+      "raw_responses_sha256": "069cd93addfdc42e181357e98732459f81fe45639d1d6f926a915a0124214374",
+      "primary_csv_sha256": "a207d249f1123827e6c37b59f7360d5e530487cb45db99d3fd376c1f7f857da6",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_base",
+      "benchmark": "sni_11",
+      "generation_fingerprint": "00afc58baa07ef271c0a20db7168d821dc2adc1854dc493a687b01a153643a36",
+      "raw_responses_sha256": "02261414481d1a7c426c12a506e6d43eb6b049da5dcb70650b0fcbf85e6308a0",
+      "primary_csv_sha256": "3456a5681e2fedf20a4e55afeb710e069945635b38529f1738f0448c4b398843",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_base",
+      "benchmark": "vicuna",
+      "generation_fingerprint": "00afc58baa07ef271c0a20db7168d821dc2adc1854dc493a687b01a153643a36",
+      "raw_responses_sha256": "3e6b6999f2ca2b936c8cf874e54775f8fbb1f7df4660485a0ea7d86e041f7c71",
+      "primary_csv_sha256": "868c18fcc967fcfebe5030ad2d86df800eacc66f4bf912241daa492cfc1c200b",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_xl",
+      "benchmark": "dolly",
+      "generation_fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+      "raw_responses_sha256": "f2382960586b75ad61030be7cf14b113d0cbca56335c71eadd8eb953ba00b957",
+      "primary_csv_sha256": "d4cb6ab47ecc6b3d545716dc5f0b5d9f147f8981cc8b8e7e2b59beb9cb3e0d01",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_xl",
+      "benchmark": "self_inst",
+      "generation_fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+      "raw_responses_sha256": "f96ac326f8a434eb5633d7b70909dbbda15124d47f61668da91797acd0766586",
+      "primary_csv_sha256": "c81acae420c7f8caf394186f83fcab4ae4f2a7a622145c7be861c42b8649b8a5",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_xl",
+      "benchmark": "sni_11",
+      "generation_fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+      "raw_responses_sha256": "f6005ff3521668817acb80cb551488e79967e43d603ef58b7e5e781914de2cd0",
+      "primary_csv_sha256": "94fc135e3c91015be06c2099e618ae1443ed49f0dd6889bc72a0ab40bf6a4302",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "gpt2_xl",
+      "benchmark": "vicuna",
+      "generation_fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+      "raw_responses_sha256": "19309489cbcc8b928eb5b3422e7a9b9bdfe306f9a72d03166e050cb07fb195d1",
+      "primary_csv_sha256": "1b8fba8c680e44ed31931520d724128d9c8f7f3c69eeff547e717ed43b4682cf",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "sft",
+      "model": "opt_125m",
+      "benchmark": "dolly",
+      "generation_fingerprint": "271ab59bf07acafcac1588245eba107d982684d73216df6fde4c8e405c9f92fb",
+      "raw_responses_sha256": "bd815dc8570130dac6011e65e7212671f0d480424dfcd87480851fd73d57db48",
+      "primary_csv_sha256": "88a80842efe0aa2de9123dd617f5bd32a521a5bc1add82dd2a9e5b81b9af6f6d",
+      "training_protocol_fingerprint": "7da45188f5b684430a203946844a921b13850dac9c494448d91893c243493439"
+    },
+    {
+      "phase": "sft",
+      "model": "opt_27b",
+      "benchmark": "dolly",
+      "generation_fingerprint": "feef577974bd4d07052bd8e75fcf58ad49a7adbbd5135501bd3415e1c1db8e66",
+      "raw_responses_sha256": "d36c74a5e4c5cbc3314a4f46c003173a17d53e1e8840ad0d1f702bda11c59313",
+      "primary_csv_sha256": "fbb3bdea5298be08e896452b802d49b809fb8e30111f1d441c2659ed1d4e821d",
+      "training_protocol_fingerprint": "27d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da677"
+    },
+    {
+      "phase": "sft",
+      "model": "openllama_3b",
+      "benchmark": "dolly",
+      "generation_fingerprint": "dc574e3735ac552615d43506a699368df44d732ba90785adc62f7373e2570e4a",
+      "raw_responses_sha256": "253235dd8819ed4b2a0141d91f1161c700d74aa3a3f5c08ea4fcc8fb515be0ff",
+      "primary_csv_sha256": "259dbd0b89176af03bab4b8b5fa92863f8a1fae892320b348dcb7cfe7582712a",
+      "training_protocol_fingerprint": "4d5ff6de37899aeafddc2aaf7d4098e54bfc4b5f4513ab5c5b58a41d284058c4"
+    },
+    {
+      "phase": "sft",
+      "model": "openllama_7b",
+      "benchmark": "dolly",
+      "generation_fingerprint": "bad1800ef57584ce0c1953f82a94f2440d95a01f93d26fbc8522c432ed8f8c8f",
+      "raw_responses_sha256": "e7c497eceb743009e2ec058bf48a5b33bc123d704aacc7233ea6620648fe2113",
+      "primary_csv_sha256": "4f5ae1435afa166c4673143e664c3294d3923ac8acd220ba5062d1d7106f88de",
+      "training_protocol_fingerprint": "52f6b4e28c285866ef253d92ad59c21a290546f206970e6d6392cf08d9b922aa"
+    },
+    {
+      "phase": "sft",
+      "model": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "generation_fingerprint": "6fc9392a2b2d62073490fbd793652842a8cc7057d0d7a112d0c80b9694058949",
+      "raw_responses_sha256": "b5678726c181cd362b79682c984b33f3a4ba9c9c3f02125e5b3bae2c3c36a3fa",
+      "primary_csv_sha256": "1dfde4e1e1aaaeabc647426acd3b03f2884efa47becb5c4486377ffbba278e1a",
+      "training_protocol_fingerprint": "cb8258f52817252b010bea24d330edb6ab4c9b14e32b067faf3858be846ef2f8"
+    },
+    {
+      "phase": "sft",
+      "model": "gemma2_9b_it",
+      "benchmark": "dolly",
+      "generation_fingerprint": "e19d499a948c4d6f104425f32fdb88db63770a6643214bbada14d97f1d2e717b",
+      "raw_responses_sha256": "c8f0f75f8569cd2b8a8f0fbcd024be32a6da9176a43baf6703c8f7428f11a92b",
+      "primary_csv_sha256": "6d946c8c0d41c13041b37954b541241699146a00cbf21deb7a103a5bcc6afa20",
+      "training_protocol_fingerprint": "f80a5cf50ee1e8c642dfc20704bad05019ba264a324af4c0c531d03c382dac85"
+    }
+  ],
+  "sft_minus_original": [],
+  "teacher_minus_student": [
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 5.447496672322596,
+      "higher": 317,
+      "tie": 31,
+      "lower": 152
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "self_inst",
+      "metric": "rougeL",
+      "n": 242,
+      "difference": 5.291835428174232,
+      "higher": 137,
+      "tie": 31,
+      "lower": 74
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "sni_11",
+      "metric": "rougeL",
+      "n": 1694,
+      "difference": 8.946250138522954,
+      "higher": 1156,
+      "tie": 47,
+      "lower": 491
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "vicuna",
+      "metric": "rougeL",
+      "n": 80,
+      "difference": 2.724915201769812,
+      "higher": 54,
+      "tie": 0,
+      "lower": 26
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 4.439577850426151,
+      "higher": 302,
+      "tie": 38,
+      "lower": 160
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 2.1220536548610855,
+      "higher": 258,
+      "tie": 32,
+      "lower": 210
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 1.2942757998586865,
+      "higher": 242,
+      "tie": 30,
+      "lower": 228
+    }
+  ],
+  "sample_sd_across_generation_seeds": null,
+  "automatic_pair_selection_performed": false
+}

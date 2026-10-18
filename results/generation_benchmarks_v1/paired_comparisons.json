@@ -60,6 +60,16 @@
       "teacher_higher": 258,
       "tie": 32,
       "student_higher": 210
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "n": 500,
+      "mean_rougeL_difference": 1.2942757998586865,
+      "teacher_higher": 242,
+      "tie": 30,
+      "student_higher": 228
     }
   ]
 }

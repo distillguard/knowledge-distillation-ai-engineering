@@ -6,7 +6,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **7/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -194,6 +194,8 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 현재 관측은 단일 생성 seed이며 seed 간 변동이나 통계적 유의성을 추정하지 않는다. GPT-2 XL은 두 LR 모두 epoch 2의 개발 NLL이 가장 낮고 epoch 3에 상승했으므로 epoch 증가가 생성 점수 개선을 보장한다고 해석하지 않는다. 이 3epoch LoRA 비교는 MiniLLM의 전체 10/20epoch SFT baseline 재현이 아니다.
 
 모델별 최신 완료 범위·선택 NLL은 [SFT 진행 기록](SFT_PROGRESS.md), 네 benchmark의 검증된 점수와 동일 문항 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), SST-2·BoolQ는 [보조 진단](../results/dolly_sft_v1/REPORT.md)을 따른다. 미완료 모델·과제의 점수를 보간하지 않는다.
+
+Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1/2/L은 34.10/15.02/25.92, 정규화 exact match는 4.00%, 평균 새 토큰 수는 64.22, 생성 상한 도달률은 2.60%, 빈 응답률은 0%다. 동일한 2B 문항과의 평균 ROUGE-L 차이는 +1.29이며 9B 우위/동률/2B 우위 문항은 242/30/228이다. 이는 reference 겹침 비교이며 사람의 선호 승률이나 증류 효과가 아니다. 두 모델의 정밀도(9B NF4·2B BF16)가 달라 순수한 규모 효과로 해석하지 않는다. 500개 ID·자료와 adapter/평가 fingerprint·CSV hash·원본 응답 전체 재채점·문항별 평균을 확인했다. 이로써 활성 8개 모델의 예비 SFT 선택과 Dolly 생성 평가를 모두 완료했다. 원본/SFT 생성 기준선·보완 채점·후보 후속 평가와 실제 증류 경로 점검을 거쳐 최종 조합을 선정하며, [전후 비교표](../results/model_selection_v1/REPORT.md)의 미완료 항목은 공란으로 둔다.
 
 ## 8. 단계별 설정과 재현 기록
 

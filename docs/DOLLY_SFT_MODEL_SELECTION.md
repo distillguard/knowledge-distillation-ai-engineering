@@ -4,7 +4,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **7/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -24,9 +24,9 @@
 |---|---|---|---|
 | GPT-2 교사 | openai-community/gpt2-xl | BF16, 양자화 없음 | LoRA |
 | GPT-2 학생 | openai-community/gpt2 | BF16, 양자화 없음 | LoRA |
-| OPT 교사 / 학생 | facebook/opt-2.7b / opt-125m | BF16 먼저 실제 점검, 전용 VRAM에 맞지 않으면 NF4 | LoRA |
-| OpenLLaMA 교사 / 학생 | openlm-research/open_llama_7b / open_llama_3b | BF16 먼저 실제 점검, 전용 VRAM에 맞지 않으면 NF4 | LoRA |
-| Gemma 교사 / 학생 | google/gemma-2-9b-it / gemma-2-2b-it | 9B는 BF16 가중치만으로 VRAM 초과해 NF4, 2B는 실제 점검 | LoRA |
+| OPT 교사 / 학생 | facebook/opt-2.7b / opt-125m | 두 모델 모두 BF16, 실제 갱신·저장 점검 통과 | LoRA |
+| OpenLLaMA 교사 / 학생 | openlm-research/open_llama_7b / open_llama_3b | 7B NF4 / 3B BF16, 실제 갱신·저장 점검 통과 | LoRA |
+| Gemma 교사 / 학생 | google/gemma-2-9b-it / gemma-2-2b-it | 9B NF4 / 2B BF16, 실제 갱신·저장 점검 통과 | LoRA |
 
 현재 GPT-2 두 모델은 BF16이다. 제외한 Qwen0.8B·9B의 과거 BF16/NF4 기록은 보존한다. 추가 6개 모델은 BF16 가중치 크기가 물리 VRAM을 넘으면 NF4로 시작하고, 그렇지 않으면 BF16의 실제 적재·갱신·저장 점검부터 한다. CUDA OOM 또는 측정한 전용 VRAM 여유보다 높은 peak allocated가 확인될 때 NF4로 전환한다. 그 밖의 오류를 메모리 부족으로 간주하지 않는다. 실제 정밀도·전환 근거·메모리 수치를 모델별 protocol과 점검 JSON에 남긴다. 정규화와 LoRA는 FP32, 동결 embedding·출력 행렬은 BF16이다. 8개 모델 모두 LoRA 실험이다.
 
