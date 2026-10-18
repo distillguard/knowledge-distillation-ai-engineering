@@ -1,0 +1,21 @@
+{
+  "model": "gpt2_xl",
+  "phase": "sft",
+  "benchmark": "dolly",
+  "source": {
+    "generation_fingerprint": "ed722074bc9c0cbfc6f7844b4972e1c010c4d9ba5cbcdc4249f0a07764ae4249",
+    "raw_responses_sha256": "f2382960586b75ad61030be7cf14b113d0cbca56335c71eadd8eb953ba00b957",
+    "primary_csv_sha256": "d4cb6ab47ecc6b3d545716dc5f0b5d9f147f8981cc8b8e7e2b59beb9cb3e0d01",
+    "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+  },
+  "assets_fingerprint": "6d35ada838b095084ec44c742b3078a9a00d29d7d8ffa7a92679530faea62036",
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "scoring_script_sha256": "63647e584effa5ad6d1e2ecef96a3c086d0447f762b7befd5a1fc39d1851e6bd",
+  "batch_size": 64,
+  "item_chunk_size": 64,
+  "encoder_dtype": "float32",
+  "tf32": false,
+  "rouge_score_version": "0.1.2",
+  "per_item_metric_scale": "METEOR and raw BERTScore P/R/F1 multiplied by 100; corpus Distinct-4 is a ratio",
+  "fingerprint": "2822f417716a5b5adf431a4d39ea5e6e17e82da1ffef82fd892fc92efac97678"
+}

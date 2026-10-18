@@ -29,7 +29,7 @@ def main():
              f"예비 주 평가: Dolly 500문항. 완료 {len(complete)}/{len(MODELS)}모델. 외부 3종과 SST-2·BoolQ의 새 평가는 후보 축소 후 진행한다. [기존 보조 분류 결과](../dolly_sft_v1/REPORT.md)는 보존한다.", "",
              "현재는 4계열·8모델의 예비 비교다. Qwen 두 모델은 2026-10-16 범위 축소로 제외했고 기존 SFT·부분 평가 결과는 보존한다. 원본/SFT 비교·보완 채점 후 후보의 외부 평가·실행 점검으로 한 조합을 선정하며, 원문 기반 SFT 탐색·학생 초기화·본 KD는 선정 이후 별도 설계다. 아래 외부 점수는 이미 완료한 결과이며 미실행 외부 항목은 후속으로 표시한다.", "",
              "모든 모델에 동일 원문 ID·새 토큰 예산 256·생성 seed 10을 적용한다. 원 논문 그대로의 재현은 아니다. 단일 seed이므로 seed 간 SD와 오차막대를 표시하지 않는다. ROUGE는 정답과의 겹침을 측정하며 사실성이나 사람의 선호를 직접 측정하지 않는다.", "",
-             "이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. METEOR·BERTScore·Distinct-4와 원본 대비 SFT 전후의 생성 평가는 추가 실행 승인 상태이며 아직 미실행이다. 최종 조합은 보완 평가·오류 분석·후보 KD 실행 점검 후 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.", "",
+             "이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. 원본/SFT 생성 비교·METEOR·BERTScore·Distinct-4의 완료 범위와 점수는 [전후 비교표](../model_selection_v1/REPORT.md)에서 확인한다. 최종 조합은 후보의 외부 평가·보조 진단·오류 분석과 실제 KD 실행 점검으로 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.", "",
              "| 모델 | Dolly | Self-Instruct | S-NI (11_) | Vicuna | 네 과제 평균 |", "|---|---:|---:|---:|---:|---:|"]
     for name, run in runs.items():
         cells = [f'{run[key]["metrics"]["rougeL"]:.2f}' if key in run else ("대기" if key in REQUIRED_BENCHMARKS else "후속") for key in BENCHMARKS]

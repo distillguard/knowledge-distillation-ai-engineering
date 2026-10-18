@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "7b6269f6e22975ffeeb3b804fbe1dee9b687789b205de3f12e7a80427944e3b3",
+  "model": "gemma2_2b_it",
+  "phase": "sft",
+  "benchmark": "dolly",
+  "n": 500,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 23.611515197624012,
+    "bertscore_precision": 86.66676616668701,
+    "bertscore_recall": 85.97470819950104,
+    "bertscore_f1": 86.27614634037018
+  },
+  "diversity": {
+    "unique_4grams": 24015,
+    "total_4grams": 24171,
+    "distinct4": 0.9935459848578876
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 500,
+    "truncated_reference_count": 11,
+    "items_with_truncated_reference": 11,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 1794,
+    "max_response_full_tokens": 287
+  },
+  "primary_metrics": {
+    "rouge1": 32.96787575082212,
+    "rouge2": 13.128470951292776,
+    "rougeL": 24.62677951056717,
+    "exact_match": 3.2,
+    "generated_tokens": 60.374,
+    "empty": 0,
+    "length_capped": 0.032
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/sft/gemma2_2b_it/dolly/per_item.csv",
+  "per_item_csv_sha256": "69f9c12f815758bba7c672abdc2ae66e8a22a9e120536129cf8a8345cd5d17fe"
+}

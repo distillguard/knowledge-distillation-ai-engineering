@@ -110,7 +110,7 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Gemma-IT는 post-training을 거친 
 
 분류는 같은 지시 내용과 label 후보의 조건부 sequence log probability로 판정한다. 자유 응답을 임의 파싱한 정답률과 구분한다. Brier score는 두 label 후보 사이에서 정규화한 확률임을 명시한다. 자료 revision·제외 행·파일 해시도 평가 명세에 남긴다.
 
-2026-10-18 추가 결정에 따라 현재 8모델의 SFT·Dolly 평가가 끝나면 원본 checkpoint의 동일 조건 Dolly 기준선과 METEOR·BERTScore·Distinct-4를 추가한다. 후보 원본/SFT의 외부 3종 및 SST-2·BoolQ accuracy·macro-F1·ECE·Brier 비교, 실제 증류 경로 점검을 거쳐 추천 조합을 보고한다. 추가 SFT는 하지 않으며, `SFT − 원본`과 이후 본 실험의 `KD 학생 − 동일 SFT 학생`을 구분한다. 원본 8모델의 동일 Dolly 생성 기준선도 완료했다. 전용 채점 코드·고정 자산·CPU 통합 점검은 준비됐으며 실제 보완 점수는 아직 없다. [후속 평가 명세](GENERATION_EVALUATION.md)의 설정 근거와 완료 조건을 따른다.
+2026-10-18 추가 결정에 따라 현재 8모델의 SFT·Dolly 평가가 끝나면 원본 checkpoint의 동일 조건 Dolly 기준선과 METEOR·BERTScore·Distinct-4를 추가한다. 후보 원본/SFT의 외부 3종 및 SST-2·BoolQ accuracy·macro-F1·ECE·Brier 비교, 실제 증류 경로 점검을 거쳐 추천 조합을 보고한다. 추가 SFT는 하지 않으며, `SFT − 원본`과 이후 본 실험의 `KD 학생 − 동일 SFT 학생`을 구분한다. 원본 8모델의 동일 Dolly 생성 기준선도 완료했다. 원본/SFT 16조건의 실제 보완 채점을 완료했고 8,000개 METEOR를 전체 reference에서 다시 계산해 확인했다. [후속 평가 명세](GENERATION_EVALUATION.md)의 설정 근거와 완료 조건을 따른다.
 
 생성은 temperature=1, top-k=0, top-p=1, no-repeat-ngram=6과 생성 seed를 [MiniLLM 평가 코드](https://github.com/microsoft/LMOps/tree/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm)·부록 B.2에서 가져온다. **최대 새 토큰 256과 microbatch 1은 로컬 변경값**이다. 256은 전체 길이 상한 512에서 공통 최대 prompt 256을 뺀 보수적 응답 예산이다. 원본은 512에서 실제 padded prompt 길이를 빼므로 짧은 prompt에 더 긴 응답을 허용한다. 이번 고정 상한은 긴 응답의 점수를 낮출 수 있어 상한 도달률도 함께 보고한다. Batch 변경 때문에 seed가 같아도 원문과 생성 문장의 완전 일치를 요구하지 않는다.
 
@@ -137,3 +137,16 @@ python -B scripts/run_dolly_sft.py
 사전 점검은 실제 가중치 갱신·유한 gradient·EOS/padding 마스크·adapter 저장/재적재 logits 일치·cache 생성·16건 누적 Trainer 갱신·검증·optimizer checkpoint 저장을 확인한다. 일회성 점검 점수를 본 SFT 성능으로 보고하지 않는다. Trainer 일회성 점검에만 warmup=0을 사용해 실제 한 번의 가중치 변화를 확인하며, 본 학습은 위 3% warmup을 유지한다.
 
 공개 요약은 `results/dolly_sft_v1/`, 대형 checkpoint·예측·생성 응답과 로그는 Git에서 제외한 `tmp/dolly_sft_v1/`에 저장한다. 학습은 epoch checkpoint에서 재개하며 완료한 후보는 재학습하지 않는다. 생성은 완료 seed 단위로 재개한다. 제외한 Qwen의 실행은 중지했으며 보존한 checkpoint를 자동 재개하지 않는다. 짧은 점검 통과가 장시간 안정성을 보장하지는 않는다.
+
+## 후속 후보와 검증 범위 (2026-10-19)
+
+| 계열 내 교사−학생 | ROUGE-L 차이 | METEOR 차이 | BERTScore F1 차이 |
+|---|---:|---:|---:|
+| GPT-2 XL → base | +5.45 | +5.08 | +1.47 |
+| OPT-2.7B → 125M | +4.44 | +5.36 | +1.44 |
+| OpenLLaMA-7B → 3B | +2.12 | +2.51 | +0.48 |
+| Gemma-2-9B-IT → 2B-IT | +1.29 | +2.00 | +0.27 |
+
+시각화할 교사·학생 차이를 확보하기 위해 GPT-2와 OPT를 후속 후보로 둔다. 이 두 조합의 관측 격차는 위 세 지표 모두에서 OpenLLaMA·Gemma보다 크지만, 서로는 지표별 절충이 있다. 두 조합 모두 교사·학생 BF16으로 정밀도 변화의 혼입도 줄인다. 임의 가중합이나 최소 격차는 쓰지 않으며 [후보 결정 기록](../results/model_selection_v1/shortlist.json)에 전체 관측과 근거를 남겼다.
+
+이는 결과를 본 뒤 수행한 예비 후보 축소이며 논문의 사전 등록된 선정 알고리즘이나 KD 성공의 보장이 아니다. 절대 SFT 점수는 Gemma-9B가 가장 높고 그 결과도 그대로 보존한다. 한 생성 seed의 관측 차이를 통계적 우월성으로 표시하지 않는다. GPT-2·OPT 원본/SFT에 외부 3종과 분류 보조 진단을 적용하고 정성 오류 검토·실제 증류 경로 점검을 거쳐 한 조합을 추천한다.

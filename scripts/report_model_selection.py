@@ -146,8 +146,9 @@ def main():
                     else:
                         axis.text(.8, y + offset, "pending", va="center", fontsize=8, color=color)
             axis.set(yticks=range(len(names)), yticklabels=labels, title=title, xlim=(0, 100))
-            axis.set_ylim(len(names) - .5, -.5); axis.legend(loc="lower right"); axis.grid(axis="x", alpha=.2)
+            axis.set_ylim(len(names) - .5, -.5); axis.grid(axis="x", alpha=.2)
         figure.suptitle("Dolly 500 · original vs SFT · generation seed 10 · same precision within model")
+        figure.legend(*axes[0].get_legend_handles_labels(), loc="outside lower center", ncol=2)
         figure.savefig(OUT / "dolly_before_after.png", dpi=180); plt.close(figure)
         lines += ["![원본과 SFT 생성 평가](dolly_before_after.png)", ""]
     lines += ["전체 지표: [scores.csv](scores.csv), 대응 차이와 입력 근거: [comparisons.json](comparisons.json). 최종 선정에는 후보의 외부 평가·보조 분류/보정 진단·응답 검토·실제 증류 경로 점검이 남아 있다.", ""]

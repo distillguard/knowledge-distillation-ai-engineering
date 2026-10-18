@@ -12,7 +12,7 @@
 
 [MiniLLM §2.3](https://arxiv.org/html/2306.08543v4)은 학생 초기화에 최저 검증 손실을 사용하지만 §3.1의 생성 관련 설정 탐색에는 검증 ROUGE-L을 사용하고, 최종 응답은 ROUGE-L·GPT-4 feedback·사람 평가로 확인한다. 현재의 로컬 NLL 선택을 원문의 전체 생성 평가와 동일하게 표시하지 않는다.
 
-2026-10-18 사용자 결정에 따라 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 추가하고, 후보의 분류 진단에는 ECE를 포함한다. **2026-10-19에 실행기·전용 환경·평가 자산과 CPU 통합 점검을 준비했으며 실제 모델 응답의 추가 점수는 아직 없다.** [지표 계산 함수](../scripts/supplementary_metrics.py)의 다중 정답·응답 경계·ECE bin 집계와 [실행기](../scripts/run_supplementary_metrics.py)의 환경 분리·공유 잠금을 확인했다. 실제 WordNet corpus의 동의어 경로와 고정 BERTScore 모델의 CPU 합성 문장 추론·빈 응답·다중 reference도 점검했다. 이 점검은 연구 모델의 성능 평가가 아니다. METEOR·BERTScore는 어휘·의미 유사성, Distinct-4는 표현의 다양성을 보완하며 사실성을 직접 판정하지 않는다. 기존 생성 응답과 원본 reference를 재사용하고 추가 SFT나 기존 답변 재생성 없이 별도 채점 명세·결과를 남긴다. 실행 중인 생성 명세와 기존 완료 점수는 변경하지 않는다.
+2026-10-19에 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 원본/SFT 각 8모델의 저장된 Dolly 응답 8,000개에 적용했다. [완료 요약](../results/supplementary_metrics_v1/completion.json)과 [전후 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR 8,000개는 전체 reference로 다시 계산해 확인했다. BERTScore native 512 제한의 reference 영향 문항은 공통 11/500건(2.2%)이며 응답 영향은 0건이다. ROUGE·METEOR에는 전체 reference를 사용한다. 이 지표는 어휘·의미 유사성·표현 다양성을 보완하며 사실성을 직접 판정하지 않는다. 후보 분류의 ECE는 후속 진단이다.
 
 **SFT 전후 기준선도 평가한다.** 2026-10-19에 활성 8개 모델의 원본 checkpoint를 같은 Dolly 500문항·seed 10·prompt·EOS·생성 설정·모델별 정밀도로 모두 평가했다. 원본과 SFT 각각 8모델의 [비교표](../results/model_selection_v1/REPORT.md)에 `SFT 전 / SFT 후 / 변화량`을 반영한다. 개발 NLL과 자유 생성 성능은 구분한다. 새로 필요한 것은 원본 모델의 추론이며 SFT를 다시 하지 않는다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다. 저자 공개 SFT checkpoint를 이 원본 기준선으로 대체하지 않는다.
 
@@ -23,7 +23,7 @@
 | SFT 체크포인트 | 각 모델에서 두 LR·epoch별 개발 NLL 선택 | 두 LR 완료·selected adapter hash. 계열 간 NLL 순위와 구분 |
 | 예비 생성 평가 | Dolly 500문항, 생성 seed 10 한 개 | Dolly JSON·문항별 CSV·같은 ID·fingerprint 검증 |
 | SFT 전후 기준선 | 활성 8개 원본의 동일 Dolly 평가 추가 | 원본과 SFT의 model revision·정밀도·ID·생성 조건 일치, 단계별 별도 fingerprint·응답 경로 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4 실행기와 CPU 점검 완료, 실제 응답 채점 대기 | 고정 자산·명세로 원본/SFT 응답 재사용. BERTScore의 평가 모델 길이 제한과 영향 문항 수 공개 |
+| 보완 지표 | Dolly 원본/SFT 16조건·8,000개 응답 채점·검증 완료 | 고정 자산·명세로 원본/SFT 응답 재사용. BERTScore의 평가 모델 길이 제한과 영향 문항 수 공개 |
 | 후보 후속 평가 | 공통 Dolly 지표·응답 검토로 후보 축소 후 외부 3종 | 후보 원본/SFT를 동일 조건으로 비교, 검증된 기존 결과 재사용 |
 | 보조 진단 | 후보 원본/SFT의 SST-2·BoolQ | accuracy·macro-F1·클래스별 오류·Brier·ECE. 생성 평가의 대체가 아님 |
 | 비교·오류 분석 | 모델×benchmark×지표와 계열 내 차이 | 과제별 일관성, 지시 준수·사실 오류·반복·누락, 사례 선정 근거 |
@@ -39,7 +39,7 @@ Gemma-2-9B-IT의 현재 두 LR·3epoch SFT와 Dolly 평가를 끝낸 다음, **�
 ## 보완 지표의 명세 원칙
 
 - METEOR는 NLTK 3.9.2의 공식 기본값(alpha 0.9, beta 3, gamma 0.5)·Porter stemmer·영어 WordNet 3.0·최고 reference 점수를 사용한다. [공식 corpus의 고정 revision](https://github.com/nltk/nltk_data/commit/96f9b3252457a2b97e52aec64c3dfceeb5c312d5)에서 준비하며 zip hash를 보존한다. 단어 토큰화는 `word_tokenize(preserve_line=True)`를 공통 적용한다.
-- BERTScore는 공식 영어 기본 설정인 RoBERTa-large·17층·IDF 미사용·rescale 미사용을 적용한다. 평가 가중치는 [FacebookAI/roberta-large의 고정 revision](https://huggingface.co/FacebookAI/roberta-large/commit/722cf37b1afa9454edce342e7895e588b6ff1d59)을 사용한다. 분리된 Transformers 4.46.3 환경에서 실제 slow tokenizer와 native 상한 512토큰(BOS/EOS 포함)을 확인했다. 평가 encoder의 17개 층 hidden states를 사용하며 pooler는 점수 계산 경로 밖이다. 원문 reference는 보존하고 native 길이 제한을 적용받는 문항·토큰 수는 별도 공개한다. 기존 ROUGE·METEOR에는 전체 reference를 사용한다.
+- BERTScore는 공식 영어 기본 설정인 RoBERTa-large·17층·IDF 미사용·rescale 미사용을 적용한다. 평가 가중치는 [FacebookAI/roberta-large의 고정 revision](https://huggingface.co/FacebookAI/roberta-large/commit/722cf37b1afa9454edce342e7895e588b6ff1d59)을 사용한다. 분리된 Transformers 4.46.3 환경에서 실제 slow tokenizer와 native 상한 512토큰(BOS/EOS 포함)을 확인했다. 평가 encoder의 17층 출력 hidden states를 사용하며 pooler는 점수 계산 경로 밖이다. 원문 reference는 보존하고 native 길이 제한을 적용받는 문항·토큰 수는 별도 공개한다. 기존 ROUGE·METEOR에는 전체 reference를 사용한다.
 - Distinct-4는 응답별 경계를 넘지 않는 4-gram의 전체 고유 개수/전체 개수를 사용한다. 전 모델에 위 단어 tokenizer를 대소문자 보존 상태로 적용하고 분자·분모도 기록한다. 이는 논문에서 명확히 고정하지 않은 tokenizer를 로컬에서 명시한 변경이다. 4-gram이 전혀 없으면 비율은 `null`이다. 논문의 5개 생성 seed와 현재 예비 1개 seed를 구분한다.
 - ECE는 두 label 후보 사이에서 정규화한 기존 확률로 계산한다. [Guo 외의 공식 구현](https://github.com/gpleiss/temperature_scaling/blob/master/temperature_scaling.py)의 15개 등폭 confidence bin을 고정 근거로 삼고 bin별 표본 수·정답률·평균 confidence를 남긴다. 이는 최적 bin 수를 찾았다는 뜻이나 MiniLLM의 정확한 구현 재현이라는 뜻이 아니다. 확률 보정용 temperature를 새로 학습하지 않는다.
 - LLM judge·사람의 Win/Tie/Loss·ExAccErr는 문헌의 평가 옵션이며 현재 자동 실행에는 포함하지 않는다. 모델의 자동 채점이나 단순 ROUGE 우위 문항 수를 실제 사람의 선호 평가로 표시하지 않는다.
@@ -124,7 +124,7 @@ python -u -B -X utf8 scripts/run_supplementary_metrics.py score --model all --ph
 
 준비 명령은 고정 모델 파일·WordNet을 내려받고 CPU에서 tokenizer·corpus를 확인한다. [평가 자산 명세](../results/supplementary_metrics_v1/assets.json)는 파일별 SHA-256·크기·실제 라이브러리 버전·tokenizer·계산 설정을 기록한다. BERTScore는 배포 버전 0.3.13을 사용한다. 해당 [공식 tag의 모듈 문자열은 0.3.12](https://github.com/Tiiiger/bert_score/blob/v0.3.13/bert_score/__init__.py)이므로 두 값을 구분해 기록했다.
 
-[채점기](../scripts/evaluate_supplementary_metrics.py)는 원본/SFT 경로·선택 adapter·기존 평가 fingerprint·자료 ID·응답/CSV hash를 확인하고 기존 ROUGE·정규화 exact match를 전체 문항에서 재검산한다. BERTScorer의 공식 기본 batch 64를 사용하며, 입력도 64문항씩 나누어 다중 reference의 CPU embedding cache 크기를 제한한다. 실제 GPU 채점의 메모리·시간 점검은 아직 남아 있다. 공유 `worker.lock`으로 학습·생성 평가와의 GPU 동시 실행을 막는다.
+[채점기](../scripts/evaluate_supplementary_metrics.py)는 원본/SFT 경로·선택 adapter·기존 평가 fingerprint·자료 ID·응답/CSV hash를 확인하고 기존 ROUGE·정규화 exact match를 전체 문항에서 재검산한다. BERTScorer의 공식 기본 batch 64를 사용하며, 입력도 64문항씩 나누어 다중 reference의 CPU embedding cache 크기를 제한한다. 실제 Dolly 16조건 채점에서 FP32·batch 64가 동작했고 최대 할당량은 2.44GiB, 최대 예약량은 3.31GiB였다. 공유 `worker.lock`으로 학습·생성 평가와의 GPU 동시 실행을 막는다.
 
 결과는 `results/supplementary_metrics_v1/<original 또는 sft>/<model>/<benchmark>/`의 `protocol.json`, `result.json`, `per_item.csv`에 저장한다. METEOR·raw BERTScore P/R/F1은 ×100, corpus Distinct-4는 고유/전체 4-gram 개수와 비율을 기록한다. 문항별 BERT reference/응답의 전체·유효 토큰 수와 집계 영향 문항 수도 남긴다. 새 응답 생성이나 SFT epoch 증가는 없다. 외부 3종은 후보 축소 후 준비된 응답에만 같은 채점기를 적용한다.
 

@@ -75,7 +75,7 @@ LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/a
 | 생성 파라미터 | `do_sample=True`, `temperature=1`, `top_k=0`, `top_p=1`, `no_repeat_ngram_size=6`, `max_new_tokens=256`, `use_cache=True` |
 | 생성 종료 | 모델별 tokenizer EOS와 공식 generation config의 EOS. 실제 목록 기록 |
 | 현재 생성 지표 | ROUGE-1/2/L F1 ×100, 정규화 exact match, 생성 길이, 상한 도달률, 빈 응답률 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 준비, 실제 모델 응답 채점 대기. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
+| 보완 지표 | Dolly 원본/SFT 각각 8모델의 METEOR·BERTScore·Distinct-4 채점 완료. 저장 응답 재사용, 별도 채점 명세·결과. 후보 분류에는 ECE 추가 |
 | 반복 해석 | 생성 seed 간 표준편차는 `null`. 오차막대·±0 없음 |
 | 최종 선정 후 본 실험 | 생성 seed `10/20/30/40/50` 예정. 학습 seed 5회 반복을 뜻하지 않음 |
 
@@ -244,3 +244,7 @@ for name in ('gemma2_2b_it', 'gemma2_9b_it'):
 모델별 SFT·평가 완료 후 관련 MD와 검증된 결과만 commit/push한다. `git add .` 대신 대상 파일을 지정하며 진행 중 LR JSON·예시 점수·미완료 실행을 완료 성능으로 올리지 않는다.
 
 문항별 CSV의 SHA-256은 줄바꿈을 포함한 실제 파일 바이트를 대상으로 한다. `.gitattributes`는 결과 CSV의 Git 줄바꿈 변환을 끄므로 Windows·Linux에서 같은 byte와 hash를 유지한다. 2026-10-19에 기존 Git blob의 자동 변환을 발견해 평가 당시 CSV 바이트로 바로잡았으며 수치·문항·기록된 SHA는 바꾸지 않았다. `python -B -X utf8 -m unittest discover -s tests -p test_published_artifacts.py`는 공개 결과 JSON의 CSV hash를 Git index와 현재 checkout 모두에서 검증한다.
+
+## 후보 후속 평가의 공통 실행
+
+SFT 후보는 `python -u -B -X utf8 scripts/evaluate_sft_candidates.py --model gpt2_base gpt2_xl opt_125m opt_27b --classification`으로 외부 생성과 보조 분류를 순차 실행한다. 완료한 동일 fingerprint 결과는 재사용한다. `--classification`을 생략하면 생성만 수행한다. 원본은 기존 실행기의 `--model <모델명> --benchmark dolly self_inst sni_11 vicuna --classification`을 후보별로 사용한다. 두 실행기 모두 같은 `worker.lock`을 사용하며 저수준 평가를 동시에 시작하지 않는다. SFT 조건·checkpoint·기존 결과 경로는 바꾸지 않는다.

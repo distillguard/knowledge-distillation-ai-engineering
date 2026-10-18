@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "8f2cbfa4888356a94a9cc0271d0ec07b7c3240a16e68b9ff67265ee3379bd143",
+  "model": "gpt2_base",
+  "phase": "sft",
+  "benchmark": "dolly",
+  "n": 500,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 16.100055281329606,
+    "bertscore_precision": 83.19691704511642,
+    "bertscore_recall": 83.4252268075943,
+    "bertscore_f1": 83.26699310541153
+  },
+  "diversity": {
+    "unique_4grams": 30553,
+    "total_4grams": 30673,
+    "distinct4": 0.996087764483422
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 500,
+    "truncated_reference_count": 11,
+    "items_with_truncated_reference": 11,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 1794,
+    "max_response_full_tokens": 258
+  },
+  "primary_metrics": {
+    "rouge1": 20.777318009328727,
+    "rouge2": 5.802324654641826,
+    "rougeL": 14.68124606669297,
+    "exact_match": 0.8,
+    "generated_tokens": 76.37,
+    "empty": 0,
+    "length_capped": 0.036
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/sft/gpt2_base/dolly/per_item.csv",
+  "per_item_csv_sha256": "04c7e28d22447e2332c506810d3a2f3a679b1b1a17fc57f38720608b781801ec"
+}

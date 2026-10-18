@@ -6,7 +6,7 @@
 
 모든 모델에 동일 원문 ID·새 토큰 예산 256·생성 seed 10을 적용한다. 원 논문 그대로의 재현은 아니다. 단일 seed이므로 seed 간 SD와 오차막대를 표시하지 않는다. ROUGE는 정답과의 겹침을 측정하며 사실성이나 사람의 선호를 직접 측정하지 않는다.
 
-이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. METEOR·BERTScore·Distinct-4와 원본 대비 SFT 전후의 생성 평가는 추가 실행 승인 상태이며 아직 미실행이다. 최종 조합은 보완 평가·오류 분석·후보 KD 실행 점검 후 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.
+이 보고서는 SFT 후 모델 간의 1차 후보 비교다. NLL은 각 모델의 체크포인트 선택이며 최종 조합의 순위가 아니다. 원본/SFT 생성 비교·METEOR·BERTScore·Distinct-4의 완료 범위와 점수는 [전후 비교표](../model_selection_v1/REPORT.md)에서 확인한다. 최종 조합은 후보의 외부 평가·보조 진단·오류 분석과 실제 KD 실행 점검으로 선정한다. [단계별 완료 기준](../../docs/GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. ROUGE-1/2와 exact match 등 현재 계산한 전체 지표는 [scores.csv](scores.csv)에 있다.
 
 | 모델 | Dolly | Self-Instruct | S-NI (11_) | Vicuna | 네 과제 평균 |
 |---|---:|---:|---:|---:|---:|

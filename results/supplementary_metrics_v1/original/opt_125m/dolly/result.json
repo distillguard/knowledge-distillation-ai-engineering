@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "bfe856f49f1f92ecb9b7b859d7d49b1cf83f410b6c274d5ebe3a0c920086ddbe",
+  "model": "opt_125m",
+  "phase": "original",
+  "benchmark": "dolly",
+  "n": 500,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 11.47784449576185,
+    "bertscore_precision": 78.49709519147873,
+    "bertscore_recall": 80.80357213020325,
+    "bertscore_f1": 79.60115712881088
+  },
+  "diversity": {
+    "unique_4grams": 84662,
+    "total_4grams": 87875,
+    "distinct4": 0.9634366998577525
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 500,
+    "truncated_reference_count": 11,
+    "items_with_truncated_reference": 11,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 1794,
+    "max_response_full_tokens": 262
+  },
+  "primary_metrics": {
+    "rouge1": 12.010066322250735,
+    "rouge2": 1.2691366090374196,
+    "rougeL": 7.404797030875748,
+    "exact_match": 0,
+    "generated_tokens": 218.002,
+    "empty": 0,
+    "length_capped": 0.714
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/original/opt_125m/dolly/per_item.csv",
+  "per_item_csv_sha256": "d1a82f0a40bd4aa897cffb158cc492e0183353b97f1cf6feaf570f8196e4ea29"
+}

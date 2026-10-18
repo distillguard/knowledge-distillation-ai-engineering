@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "13d98e3f200201044bb254bfe59ca018a7488b1f27e0fef69b7e8ad9941c4c80",
+  "model": "openllama_3b",
+  "phase": "sft",
+  "benchmark": "dolly",
+  "n": 500,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 21.880232667777722,
+    "bertscore_precision": 85.62409479618073,
+    "bertscore_recall": 85.32347232103348,
+    "bertscore_f1": 85.42417763471603
+  },
+  "diversity": {
+    "unique_4grams": 26723,
+    "total_4grams": 26868,
+    "distinct4": 0.9946032454965014
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 500,
+    "truncated_reference_count": 11,
+    "items_with_truncated_reference": 11,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 1794,
+    "max_response_full_tokens": 254
+  },
+  "primary_metrics": {
+    "rouge1": 29.180011090760818,
+    "rouge2": 11.0898350990701,
+    "rougeL": 21.862759478367312,
+    "exact_match": 2.6,
+    "generated_tokens": 71.704,
+    "empty": 0,
+    "length_capped": 0.034
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/sft/openllama_3b/dolly/per_item.csv",
+  "per_item_csv_sha256": "5847649bcbf544b32b267bad5f39fbcd195f445938f2866ca56ec7d506d1862d"
+}

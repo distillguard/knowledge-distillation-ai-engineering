@@ -1,0 +1,21 @@
+{
+  "model": "gemma2_2b_it",
+  "phase": "sft",
+  "benchmark": "dolly",
+  "source": {
+    "generation_fingerprint": "6fc9392a2b2d62073490fbd793652842a8cc7057d0d7a112d0c80b9694058949",
+    "raw_responses_sha256": "b5678726c181cd362b79682c984b33f3a4ba9c9c3f02125e5b3bae2c3c36a3fa",
+    "primary_csv_sha256": "1dfde4e1e1aaaeabc647426acd3b03f2884efa47becb5c4486377ffbba278e1a",
+    "training_protocol_fingerprint": "cb8258f52817252b010bea24d330edb6ab4c9b14e32b067faf3858be846ef2f8"
+  },
+  "assets_fingerprint": "6d35ada838b095084ec44c742b3078a9a00d29d7d8ffa7a92679530faea62036",
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "scoring_script_sha256": "63647e584effa5ad6d1e2ecef96a3c086d0447f762b7befd5a1fc39d1851e6bd",
+  "batch_size": 64,
+  "item_chunk_size": 64,
+  "encoder_dtype": "float32",
+  "tf32": false,
+  "rouge_score_version": "0.1.2",
+  "per_item_metric_scale": "METEOR and raw BERTScore P/R/F1 multiplied by 100; corpus Distinct-4 is a ratio",
+  "fingerprint": "7b6269f6e22975ffeeb3b804fbe1dee9b687789b205de3f12e7a80427944e3b3"
+}

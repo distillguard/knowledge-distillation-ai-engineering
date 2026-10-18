@@ -212,6 +212,8 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 
 모든 모델에서 이 조건의 ROUGE-L이 증가했다. GPT-2·OPT의 교사−학생 격차는 SFT 후 커졌고 OpenLLaMA·Gemma는 줄었다. 응답 길이·상한 도달률도 달라졌으므로 reference 겹침 증가를 사실성 개선이나 KD 효과로 해석하지 않는다. 단일 생성 seed의 관측이며 seed 간 안정성·통계적 유의성은 판단하지 않는다. 생성 당시의 상한 도달률 집계는 보존하고 문항별 EOS 정보가 없는 값은 새로 추정하지 않는다. 전체 지표·문항별 차이와 입력 근거는 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR·BERTScore·Distinct-4, 후보 외부 평가·보조 진단·실제 증류 경로 검증은 이어서 수행한다.
 
+원본/SFT 16조건의 METEOR·raw BERTScore P/R/F1·corpus Distinct-4도 완료했다. ROUGE-L과 BERTScore F1은 8모델 모두 상승했지만 Gemma-2B의 METEOR는 24.70 → 23.61, Gemma-9B는 26.67 → 25.62로 하락했다. 지표 간 차이를 숨기거나 NLL 감소로 모든 생성 지표가 개선됐다고 결론내리지 않는다. Distinct-4는 응답 길이·전체 4-gram 수의 영향도 받으므로 성능 순위로 쓰지 않는다. BERTScore reference는 공통 11/500건에서 native 512 제한을 적용받았고 응답은 모두 제한 이내였다. 전체 reference는 ROUGE·METEOR에서 유지했다. 선택한 세 생성 지표의 관측 격차를 근거로 GPT-2·OPT를 후속 후보로 두며, [결정 기록](../results/model_selection_v1/shortlist.json)의 사후 선별 범위와 한계를 따른다. 아직 최종 조합이나 KD 효과를 확정하지 않았다.
+
 ## 8. 단계별 설정과 재현 기록
 
 | 항목 | 현재 상태 | 근거 |
@@ -220,8 +222,8 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 | SFT | LoRA r64/alpha16/dropout0.05, LR 1e-4/2e-4, 후보별 3epoch, 유효 batch 16, 학습 seed 0 | [SFT 학습 설정](DOLLY_SFT_MODEL_SELECTION.md), QLoRA·MiniLLM 초기화 단계와의 연결 및 차이 |
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
-| 원본/SFT 비교 | 원본 Dolly 8/8 완료·보완 채점 대기 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
-| 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 완료, 실제 응답 채점 대기 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
+| 원본/SFT 비교 | 원본 Dolly 8/8·원본/SFT 보완 16/16 완료 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
+| 보완 지표 | Dolly 원본/SFT 16조건의 METEOR·BERTScore·Distinct-4 완료 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |
 | 본 실험 생성 반복 | 10/20/30/40/50 예정 | 학습 seed 반복과 구분. 독립 최종 test의 대체가 아님 |
@@ -232,7 +234,7 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 
 ### 9.1. 평가의 역할과 비교표
 
-생성 평가는 정답을 보여주지 않고 직접 생성한 응답을 확인한다. ROUGE-1/2/L은 reference 겹침, exact match는 정규화 문자열 일치이며 사실성·지시 준수를 직접 판정하지 않는다. 2026-10-18에 METEOR·BERTScore·Distinct-4 추가 실행을 승인했으며 아직 실제 채점하지 않았다. 저장 응답을 재사용하므로 추가 epoch나 기존 답변 재생성은 필요 없다. 원본 checkpoint의 동일 조건 생성 기준선은 별도 추론으로 추가한다. 구체적 절차와 지표 설정 근거는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다. 외부 judge·사람 평가는 실행하지 않았다.
+생성 평가는 정답을 보여주지 않고 직접 생성한 응답을 확인한다. ROUGE-1/2/L은 reference 겹침, exact match는 정규화 문자열 일치이며 사실성·지시 준수를 직접 판정하지 않는다. 2026-10-19에 원본/SFT 16조건의 METEOR·BERTScore·Distinct-4 채점과 검증을 완료했다. 저장 응답을 재사용하므로 추가 epoch나 기존 답변 재생성은 필요 없다. 원본 checkpoint 8개의 동일 조건 생성 기준선도 완료했다. 구체적 절차와 지표 설정 근거는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다. 외부 judge·사람 평가는 실행하지 않았다.
 
 보고할 비교표는 **모델×benchmark×지표**이며, 계열 내 같은 문항의 교사−학생 차이와 오류를 함께 제시한다. 서로 다른 지표를 임의 가중합하지 않는다. 최종 조합의 선정 근거는 과제별 일관성·응답 검토·실행 가능성과 연결한다.
 

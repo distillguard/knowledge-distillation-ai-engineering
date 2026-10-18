@@ -212,6 +212,26 @@
       "lower": 95
     },
     {
+      "model": "gpt2_base",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 6.006571866456622,
+      "higher": 288,
+      "tie": 20,
+      "lower": 192
+    },
+    {
+      "model": "gpt2_base",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 4.3324871301651005,
+      "higher": 474,
+      "tie": 0,
+      "lower": 26
+    },
+    {
       "model": "gpt2_xl",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -220,6 +240,26 @@
       "higher": 389,
       "tie": 23,
       "lower": 88
+    },
+    {
+      "model": "gpt2_xl",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 10.357666951425447,
+      "higher": 336,
+      "tie": 19,
+      "lower": 145
+    },
+    {
+      "model": "gpt2_xl",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 5.154675793647766,
+      "higher": 468,
+      "tie": 0,
+      "lower": 32
     },
     {
       "model": "opt_125m",
@@ -232,6 +272,26 @@
       "lower": 140
     },
     {
+      "model": "opt_125m",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 5.576836303244908,
+      "higher": 251,
+      "tie": 22,
+      "lower": 227
+    },
+    {
+      "model": "opt_125m",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 4.242316889762878,
+      "higher": 459,
+      "tie": 0,
+      "lower": 41
+    },
+    {
       "model": "opt_27b",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -240,6 +300,26 @@
       "higher": 365,
       "tie": 24,
       "lower": 111
+    },
+    {
+      "model": "opt_27b",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 8.46822653784256,
+      "higher": 291,
+      "tie": 19,
+      "lower": 190
+    },
+    {
+      "model": "opt_27b",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 4.647525763511657,
+      "higher": 455,
+      "tie": 0,
+      "lower": 45
     },
     {
       "model": "openllama_3b",
@@ -252,6 +332,26 @@
       "lower": 118
     },
     {
+      "model": "openllama_3b",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 9.326043238351055,
+      "higher": 312,
+      "tie": 19,
+      "lower": 169
+    },
+    {
+      "model": "openllama_3b",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 5.657612276077271,
+      "higher": 452,
+      "tie": 0,
+      "lower": 48
+    },
+    {
       "model": "openllama_7b",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -260,6 +360,26 @@
       "higher": 344,
       "tie": 17,
       "lower": 139
+    },
+    {
+      "model": "openllama_7b",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 9.612025396620721,
+      "higher": 312,
+      "tie": 14,
+      "lower": 174
+    },
+    {
+      "model": "openllama_7b",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 4.501950991153717,
+      "higher": 428,
+      "tie": 0,
+      "lower": 72
     },
     {
       "model": "gemma2_2b_it",
@@ -272,6 +392,26 @@
       "lower": 217
     },
     {
+      "model": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": -1.0858126859765944,
+      "higher": 189,
+      "tie": 6,
+      "lower": 305
+    },
+    {
+      "model": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 2.645172667503357,
+      "higher": 383,
+      "tie": 0,
+      "lower": 117
+    },
+    {
       "model": "gemma2_9b_it",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -280,6 +420,26 @@
       "higher": 252,
       "tie": 4,
       "lower": 244
+    },
+    {
+      "model": "gemma2_9b_it",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": -1.0589633930013227,
+      "higher": 168,
+      "tie": 1,
+      "lower": 331
+    },
+    {
+      "model": "gemma2_9b_it",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 2.480574631690979,
+      "higher": 357,
+      "tie": 0,
+      "lower": 143
     }
   ],
   "teacher_minus_student": [
@@ -298,6 +458,30 @@
     {
       "teacher": "gpt2_xl",
       "student": "gpt2_base",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 0.7330918937965483,
+      "higher": 245,
+      "tie": 28,
+      "lower": 227
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 0.6448025345802307,
+      "higher": 304,
+      "tie": 0,
+      "lower": 196
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
       "phase": "sft",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -306,6 +490,30 @@
       "higher": 317,
       "tie": 31,
       "lower": 152
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 5.0841869787653735,
+      "higher": 311,
+      "tie": 24,
+      "lower": 165
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 1.4669911980628967,
+      "higher": 345,
+      "tie": 2,
+      "lower": 153
     },
     {
       "teacher": "gpt2_xl",
@@ -358,6 +566,30 @@
     {
       "teacher": "opt_27b",
       "student": "opt_125m",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 2.4667285864653477,
+      "higher": 309,
+      "tie": 20,
+      "lower": 171
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 1.0319205403327942,
+      "higher": 347,
+      "tie": 0,
+      "lower": 153
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
       "phase": "sft",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -366,6 +598,30 @@
       "higher": 302,
       "tie": 38,
       "lower": 160
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 5.358118821062999,
+      "higher": 314,
+      "tie": 30,
+      "lower": 156
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 1.4371294140815736,
+      "higher": 335,
+      "tie": 6,
+      "lower": 159
     },
     {
       "teacher": "openllama_7b",
@@ -382,6 +638,30 @@
     {
       "teacher": "openllama_7b",
       "student": "openllama_3b",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 2.2198442374214764,
+      "higher": 274,
+      "tie": 22,
+      "lower": 204
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 1.6326610803604127,
+      "higher": 338,
+      "tie": 0,
+      "lower": 162
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
       "phase": "sft",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -390,6 +670,30 @@
       "higher": 258,
       "tie": 32,
       "lower": 210
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 2.505826395691143,
+      "higher": 265,
+      "tie": 26,
+      "lower": 209
+    },
+    {
+      "teacher": "openllama_7b",
+      "student": "openllama_3b",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 0.4769997954368591,
+      "higher": 259,
+      "tie": 10,
+      "lower": 231
     },
     {
       "teacher": "gemma2_9b_it",
@@ -406,6 +710,30 @@
     {
       "teacher": "gemma2_9b_it",
       "student": "gemma2_2b_it",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 1.9775857922218327,
+      "higher": 289,
+      "tie": 6,
+      "lower": 205
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 0.43064814805984497,
+      "higher": 318,
+      "tie": 2,
+      "lower": 180
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
       "phase": "sft",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -414,6 +742,30 @@
       "higher": 242,
       "tie": 30,
       "lower": 228
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "meteor",
+      "n": 500,
+      "difference": 2.0044350851971044,
+      "higher": 249,
+      "tie": 23,
+      "lower": 228
+    },
+    {
+      "teacher": "gemma2_9b_it",
+      "student": "gemma2_2b_it",
+      "phase": "sft",
+      "benchmark": "dolly",
+      "metric": "bertscore_f1",
+      "n": 500,
+      "difference": 0.26605011224746705,
+      "higher": 245,
+      "tie": 13,
+      "lower": 242
     }
   ],
   "sample_sd_across_generation_seeds": null,
