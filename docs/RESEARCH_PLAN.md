@@ -2,13 +2,13 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **3/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
-계획 갱신일: 2026-10-16, Asia/Seoul.
+계획 갱신일: 2026-10-19, Asia/Seoul.
 
-**SFT 절차 검토:** 아래 실행 중인 v1은 두 LR·3 epoch·개발 NLL 선택의 예비 비교다. MiniLLM의 SFT 기준 모델 탐색과 증류 전 학생 초기화를 분리하는 원문 절차를 검토 중이며, 적용 모델 범위와 새 실행 protocol은 아직 확정하지 않았다. [원문 설정·600 model-epoch 산출·적용 한계](DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 확인하고 기존 결과와 구분한다.
+**SFT 절차 검토:** 완료한 예비 v1은 두 LR·3 epoch·개발 NLL 선택의 비교다. MiniLLM의 SFT 기준 모델 탐색과 증류 전 학생 초기화를 분리하는 원문 절차를 검토 중이며, 선정 조합의 새 실행 protocol은 아직 확정하지 않았다. [원문 설정·600 model-epoch 산출·적용 한계](DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 확인하고 기존 결과와 구분한다.
 
 현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 예비 생성 평가는 Dolly 500문항으로 수행하고 외부 3종은 후보 축소 후 적용한다. 2026-10-19에 4계열·8모델의 독립적인 예비 LoRA SFT와 Dolly 생성 평가를 완료했다. 원본/SFT 비교와 후보 검증으로 이어가며 KD 학습은 미실행이다.
 

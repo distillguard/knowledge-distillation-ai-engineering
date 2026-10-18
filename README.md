@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **2/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **3/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](docs/SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -100,6 +100,7 @@ tmp/                      로컬 모델·자료·checkpoint·응답·로그, Git
 - [연구계획](docs/RESEARCH_PLAN.md) · [연구보고서 초안](docs/RESEARCH_REPORT.md)
 - [현재 Dolly 모델 SFT 비교 계획](docs/DOLLY_SFT_MODEL_SELECTION.md) · [모델별 진행](docs/SFT_PROGRESS.md) · [실행 명세와 점검 결과](results/dolly_sft_v1)
 - [원본/SFT 생성 비교표·전후 그림](results/model_selection_v1/REPORT.md) · [생성 평가 명세](docs/GENERATION_EVALUATION.md)
+- [후보 분류·calibration 진단](results/candidate_diagnostics_v1/REPORT.md) · [원문 근거와 생성 오류 사례](docs/QUALITATIVE_REVIEW.md)
 - [데이터 선정 조사](docs/DATA_SELECTION.md) · [이전 데이터 후보별 SFT 비교 설계](docs/DATASET_SFT_COMPARISON.md)
 - [공개 SFT 모델 평가 결과](docs/SFT_BASELINE_EVALUATION.md) · [Dolly 구성](docs/DOLLY_DATA_OVERVIEW.md)
 - 논문 해설: [Hinton](papers/01_hinton_2015_ko.md) · [MiniLLM](papers/02_minillm_2024_ko.md) · [CaRE-KD](papers/03_care_kd_2026_ko.md)

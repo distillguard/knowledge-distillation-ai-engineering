@@ -29,7 +29,8 @@
   ],
   "completed_extended_models": [
     "gpt2_base",
-    "gpt2_xl"
+    "gpt2_xl",
+    "opt_125m"
   ],
   "completed_benchmarks": {
     "gpt2_base": [
@@ -45,7 +46,10 @@
       "vicuna"
     ],
     "opt_125m": [
-      "dolly"
+      "dolly",
+      "self_inst",
+      "sni_11",
+      "vicuna"
     ],
     "opt_27b": [
       "dolly"

@@ -248,3 +248,11 @@ for name in ('gemma2_2b_it', 'gemma2_9b_it'):
 ## 후보 후속 평가의 공통 실행
 
 SFT 후보는 `python -u -B -X utf8 scripts/evaluate_sft_candidates.py --model gpt2_base gpt2_xl opt_125m opt_27b --classification`으로 외부 생성과 보조 분류를 순차 실행한다. 완료한 동일 fingerprint 결과는 재사용한다. `--classification`을 생략하면 생성만 수행한다. 원본은 기존 실행기의 `--model <모델명> --benchmark dolly self_inst sni_11 vicuna --classification`을 후보별로 사용한다. 두 실행기 모두 같은 `worker.lock`을 사용하며 저수준 평가를 동시에 시작하지 않는다. SFT 조건·checkpoint·기존 결과 경로는 바꾸지 않는다.
+
+분류 진단의 `python -B -X utf8 scripts/report_candidate_diagnostics.py`는 고정 source row·label·parquet와 예측 파일 hash를 확인하고 Acc·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·Brier·ECE15를 재계산한다. 완료 결과만 `results/candidate_diagnostics_v1/`에 반영한다. 두 조건부 label 확률의 ECE와 전체 어휘 entropy confidence를 구분한다. 현재 기존 GPT-2 SFT 예측으로 계산한 진단이 있으며 후보 원본과 OPT의 완료 범위는 해당 보고서를 따른다.
+
+## 증류 실행 점검의 준비와 범위
+
+[점검 코드](../scripts/probe_kd_pair.py)는 CPU 수식·mask·dropout 복구·잠금 검사를 준비한 상태이며 실제 공동 GPU 점검은 아직 실행하지 않았다. 후보 평가의 GPU 잠금이 해제된 뒤 `python -u -B -X utf8 scripts/probe_kd_pair.py --pair gpt2` 또는 `--pair opt`를 사용한다. 같은 SFT adapter·BF16을 동시 적재하고, 동일 11,117개 준비 입력과 어휘 ID·logits 좌표를 확인한다. 최장 학습 reference와 최장 학습 prompt의 학생 생성에서 각각 한 번의 임시 LoRA 갱신을 확인하고 원본 adapter 파일 hash를 보존한다. 학습된 checkpoint는 저장하지 않는다.
+
+생성의 최소·최대 새 토큰을 기존 상한 256으로 맞추는 것은 cache 한계 점검용 강제 조건이다. benchmark 답변이나 본 실험의 decoding 변경으로 취급하지 않는다. T=1·margin=0은 분포를 변환하지 않고 gate에 offset을 주지 않는 정의상 대조값이며 최적값 선정이 아니다. MC는 [CaRE §8.1–8.2](https://arxiv.org/html/2609.36734v1#S8.SS2)의 3회·attention dropout 0.1을 사용하고 다른 기존 dropout 비율은 유지한다. 모든 training flag·attention dropout을 복구하고, 확률의 실제 변화와 BALD를 확인한다. 이 단계의 응답 위치 pooling·단일 생성 prefix를 논문의 500문항 비퇴화 검증으로 표시하지 않는다. 전체 어휘 streaming 집계·실제 학생 backward/optimizer·생성 cache·MC의 최대 메모리와 실패 단계를 기록한다. 본 KD·온도 탐색·Revival의 quantile/거절 규칙·장기 안정성은 이 점검의 완료 범위가 아니다.

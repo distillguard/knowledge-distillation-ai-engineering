@@ -1,0 +1,80 @@
+{
+  "status": "completed",
+  "fingerprint": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d167da45188f5b684430a203946844a921b13850dac9c494448d91893c2434934392485cc1e35d14f47d60f1a2a44b14ee8c3be80fed05e0570139dba9b15e4b10b",
+  "classification": {
+    "sst2": {
+      "n": 872,
+      "accuracy": 0.573394495412844,
+      "macro_f1": 0.48456478215273147,
+      "balanced_accuracy": 0.5659678369958744,
+      "class_recalls": [
+        0.16121495327102803,
+        0.9707207207207207
+      ],
+      "weighted_f1": 0.48849095732444914,
+      "mcc": 0.22597226448157168,
+      "positive_class_conditional_label_brier": 0.25937170490599465,
+      "majority_class_accuracy": 0.5091743119266054,
+      "confusion_matrix_true_rows_predicted_columns": [
+        [
+          69,
+          359
+        ],
+        [
+          13,
+          431
+        ]
+      ]
+    },
+    "boolq": {
+      "n": 3269,
+      "accuracy": 0.6191495870296727,
+      "macro_f1": 0.4166587237714252,
+      "balanced_accuracy": 0.5057803916638552,
+      "class_recalls": [
+        0.039611964430072755,
+        0.9719488188976378
+      ],
+      "weighted_f1": 0.5002414009730382,
+      "mcc": 0.03165420675785003,
+      "positive_class_conditional_label_brier": 0.25298113975085923,
+      "majority_class_accuracy": 0.6215968185989599,
+      "confusion_matrix_true_rows_predicted_columns": [
+        [
+          49,
+          1188
+        ],
+        [
+          57,
+          1975
+        ]
+      ]
+    }
+  },
+  "dolly_generation": {
+    "rouge1": {
+      "mean": 22.64370738026404,
+      "sample_sd_across_generation_seeds": null
+    },
+    "rouge2": {
+      "mean": 7.948462884936668,
+      "sample_sd_across_generation_seeds": null
+    },
+    "rougeL": {
+      "mean": 17.079946269059715,
+      "sample_sd_across_generation_seeds": null
+    },
+    "length_cap_rate": {
+      "mean": 0.04,
+      "sample_sd_across_generation_seeds": null
+    },
+    "empty_rate": {
+      "mean": 0.0,
+      "sample_sd_across_generation_seeds": null
+    },
+    "mean_generated_tokens": {
+      "mean": 64.426,
+      "sample_sd_across_generation_seeds": null
+    }
+  }
+}
