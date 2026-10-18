@@ -29,6 +29,15 @@
       "training_protocol_fingerprint": "7da45188f5b684430a203946844a921b13850dac9c494448d91893c243493439"
     },
     {
+      "phase": "original",
+      "model": "opt_27b",
+      "benchmark": "dolly",
+      "generation_fingerprint": "ae68cf4f512542baca523b1957099fe45febb310388f1ab3ab949ad535569b80",
+      "raw_responses_sha256": "beb670465d2342a50ad9f722584267db860e4951a104a3fc24ab26ac06da95d0",
+      "primary_csv_sha256": "b028a2647a4bce428fd774439a77eb152cb22bcda46d96555e8ec0b0acbe9f97",
+      "training_protocol_fingerprint": "27d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da677"
+    },
+    {
       "phase": "sft",
       "model": "gpt2_base",
       "benchmark": "dolly",
@@ -185,6 +194,16 @@
       "higher": 326,
       "tie": 34,
       "lower": 140
+    },
+    {
+      "model": "opt_27b",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 12.855790367755391,
+      "higher": 365,
+      "tie": 24,
+      "lower": 111
     }
   ],
   "teacher_minus_student": [
@@ -247,6 +266,18 @@
       "higher": 54,
       "tie": 0,
       "lower": 26
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 1.258936720854733,
+      "higher": 283,
+      "tie": 34,
+      "lower": 183
     },
     {
       "teacher": "opt_27b",
