@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "6fc9392a2b2d62073490fbd793652842a8cc7057d0d7a112d0c80b9694058949",
+  "n": 500,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 32.96787575082212,
+    "rouge2": 13.128470951292776,
+    "rougeL": 24.62677951056717,
+    "exact_match": 3.2,
+    "generated_tokens": 60.374,
+    "empty": 0,
+    "length_capped": 0.032
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/gemma2_2b_it/dolly_per_item.csv",
+  "per_item_csv_sha256": "1dfde4e1e1aaaeabc647426acd3b03f2884efa47becb5c4486377ffbba278e1a"
+}

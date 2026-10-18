@@ -1,0 +1,11 @@
+{
+  "fingerprint": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16cb8258f52817252b010bea24d330edb6ab4c9b14e32b067faf3858be846ef2f86fa20d8bfab4f8666e914f8174f1dd13ca365057ace849213f6561d1bfe3922b",
+  "seed": 10,
+  "n": 500,
+  "rouge1": 32.967875750822095,
+  "rouge2": 13.12847095129277,
+  "rougeL": 24.62677951056717,
+  "length_cap_rate": 0.032,
+  "empty_rate": 0.0,
+  "mean_generated_tokens": 60.374
+}
