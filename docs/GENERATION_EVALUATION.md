@@ -101,6 +101,16 @@ python -B -X utf8 scripts/prepare_generation_benchmarks.py prepare
 
 모델별 실행은 기존처럼 `python -u -B -X utf8 scripts/run_dolly_sft.py --model gpt2_base`를 사용한다. 전체는 `--model all`이다. 이미 완료된 SFT와 평가를 검증해 재사용한다. 새 평가 코드만 GPU worker와 따로 동시에 실행하지 않는다.
 
+원본 기준선 실행기는 [evaluate_original_models.py](../scripts/evaluate_original_models.py)다. 현재 Gemma-9B 실행 종료 이후 다음 명령으로 활성 8모델의 Dolly 기준선을 수행한다.
+
+```powershell
+python -u -B -X utf8 scripts/evaluate_original_models.py --model all
+```
+
+선정 후보의 외부 평가에는 `--model <모델명> --benchmark dolly self_inst sni_11 vicuna --classification`을 사용한다. 원본 고정 가중치를 기존 정밀도로 적재하고 학습 adapter를 읽지 않으며, loader가 생성하는 초기 LoRA도 비활성화한다. 공유 `worker.lock`으로 SFT·다른 모델 평가와 동시 실행을 차단한다. 결과는 `results/original_model_evaluation_v1/`, 비공개 응답·분류 예측·중간 상태는 `tmp/original_model_evaluation_v1/`에 저장한다. 원본 결과를 SFT 경로에 덮어쓰지 않는다. 완료 결과 재사용 시 fingerprint·문항 ID·CSV와 원본 응답 hash를 확인한다.
+
+실행기에는 CPU 검증을 적용했다. 실제 adapter가 비활성화된 출력의 원본 일치, 원본/SFT 경로 분리, 중단 후 최종 결과의 원자적 기록, 캐시 ID·hash 불일치 거부, 완료 결과의 모델 미적재, 공유 잠금을 확인한다. **실제 8모델의 원본 GPU 평가는 아직 실행 전이며 이 검증을 성능 결과로 해석하지 않는다.**
+
 ## 산출물과 완료 기준
 
 [생성 주 평가 보고서](../results/generation_benchmarks_v1/REPORT.md)에 표·그림과 동일 문항 차이를 모은다. `protocol.json`은 최초 10모델의 자료 revision·원문/준비 파일 hash·길이 감사·제외 ID를 보존한다. 활성 실행 범위는 `dolly_scope.py`와 `completion.json`에 기록한다. 모델별 `<benchmark>.json`의 완료 상태·평가 fingerprint·문항 수와 `<benchmark>_per_item.csv`의 hash·ID를 검증한다. 현재 예비 완료는 Dolly 기준이며 외부까지 네 자료를 마친 결과는 별도 구분한다.
