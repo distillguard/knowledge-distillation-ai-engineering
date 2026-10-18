@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "fingerprint": "b69f08dc9db80ab67426475956a70ce357519ae540354544b91f6606a192bb9f",
+  "n": 500,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 12.010066322250735,
+    "rouge2": 1.2691366090374196,
+    "rougeL": 7.404797030875748,
+    "exact_match": 0,
+    "generated_tokens": 218.002,
+    "empty": 0,
+    "length_capped": 0.714
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/original_model_evaluation_v1/opt_125m/dolly_per_item.csv",
+  "per_item_csv_sha256": "07c7cb611a0b61d9ab5542133e238e8b2723625f5575930253c578a2d8465641",
+  "phase": "before_our_dolly_sft",
+  "raw_responses": "tmp/original_model_evaluation_v1/opt_125m/evaluation/opt_125m_seed10_responses.json",
+  "raw_responses_sha256": "dd88665d8689d0fa2ab80730446202824675ba392682b4d1c93f0f80ae6d1199"
+}
