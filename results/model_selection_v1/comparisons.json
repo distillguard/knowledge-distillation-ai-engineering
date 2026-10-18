@@ -11,6 +11,15 @@
       "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
     },
     {
+      "phase": "original",
+      "model": "gpt2_xl",
+      "benchmark": "dolly",
+      "generation_fingerprint": "84ccac91b9c9ea03cc00007c8aa7689f712c82f697e67635205f523d08593420",
+      "raw_responses_sha256": "218e84ee9d2168b0b4363bf2dc6656306d991caeadacf4e40c964f1aeae8cc86",
+      "primary_csv_sha256": "a358f238e6c5ed3c631bddf75f319ec757a2b7aaa25e8a64ad01f1bc39344e65",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
       "phase": "sft",
       "model": "gpt2_base",
       "benchmark": "dolly",
@@ -147,9 +156,31 @@
       "higher": 374,
       "tie": 31,
       "lower": 95
+    },
+    {
+      "model": "gpt2_xl",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 12.631529331248451,
+      "higher": 389,
+      "tie": 23,
+      "lower": 88
     }
   ],
   "teacher_minus_student": [
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "original",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 1.3369867882852482,
+      "higher": 293,
+      "tie": 38,
+      "lower": 169
+    },
     {
       "teacher": "gpt2_xl",
       "student": "gpt2_base",

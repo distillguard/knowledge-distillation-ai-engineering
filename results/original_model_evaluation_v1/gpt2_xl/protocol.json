@@ -1,0 +1,37 @@
+{
+  "phase": "before_our_dolly_sft",
+  "model": {
+    "id": "openai-community/gpt2-xl",
+    "revision": "15ea56dee5df4983c59b2538573817e1667135e2"
+  },
+  "precision": {
+    "base_weights": "BF16, no weight quantization",
+    "compute": "BF16 autocast",
+    "normalization": "FP32",
+    "trainable_lora": "FP32"
+  },
+  "adapters_disabled": true,
+  "matched_training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "source_script_sha256": "e880d73e7fa97f1dd49cd92223ddf4cdc4f0c50ad06843663eeb07d1d32df819",
+  "generation_script_sha256": "3f784bd20bd34869499ec56ea4f2bc61c8c39b31b896cb2a1ac3b47fe15edfc6",
+  "dolly_generation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
+  "versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "seed": 10,
+    "max_new_tokens": 256,
+    "temperature": 1,
+    "top_k": 0,
+    "top_p": 1,
+    "no_repeat_ngram_size": 6,
+    "microbatch": 1,
+    "sample_sd_across_generation_seeds": null
+  },
+  "fingerprint": "84ccac91b9c9ea03cc00007c8aa7689f712c82f697e67635205f523d08593420"
+}
