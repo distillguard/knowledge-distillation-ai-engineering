@@ -1,12 +1,14 @@
 # 원본과 Dolly SFT의 생성 평가 비교
 
+완료: 원본 Dolly 1/8, SFT Dolly 8/8, 보완 채점 원본 0/8·SFT 0/8. 최종 조합은 후보 후속 검증 후 선정한다.
+
 동일 원문 ID·prompt·모델별 정밀도·생성 seed 10·새 토큰 상한 256의 결과다. 원본은 우리 Dolly SFT 전 checkpoint이며 Gemma-IT는 이미 instruction tuning을 거친 모델이다. 미완료 점수는 공란으로 두고 완료한 응답·CSV·명세 hash와 지표를 재검산한다.
 
 ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/전체 4-gram 비율이며 클수록 사실성이나 성능이 좋다는 뜻이 아니다. 단일 seed이므로 seed 간 SD·오차막대는 없다. 아래 결과만으로 최종 조합을 자동 선정하지 않는다.
 
 | 모델 | 단계 | Dolly ROUGE-L | METEOR | BERTScore F1 | Distinct-4 |
 |---|---|---:|---:|---:|---:|
-| GPT-2 base | original | — | — | — | — |
+| GPT-2 base | original | 6.16 | — | — | — |
 | GPT-2 base | sft | 14.68 | — | — | — |
 | GPT-2 XL | original | — | — | — | — |
 | GPT-2 XL | sft | 20.13 | — | — | — |
@@ -27,6 +29,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 
 | 모델·조합 | 단계 | 자료 | 지표 | 평균 차이 | 증가 / 동률 / 감소 문항 |
 |---|---|---|---|---:|---|
+| GPT-2 base | sft−original | dolly | ROUGE-L | +8.52 | 374 / 31 / 95 |
 
 ## 교사 − 학생
 

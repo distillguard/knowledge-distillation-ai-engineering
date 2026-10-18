@@ -100,7 +100,12 @@ def main():
                                    for (phase, name, key), run in runs.items()],
                        "sft_minus_original": changes, "teacher_minus_student": gaps,
                        "sample_sd_across_generation_seeds": None, "automatic_pair_selection_performed": False})
+    coverage = {phase: {"generation": sum((phase, name, "dolly") in runs for name in names),
+                        "supplementary": sum(bool(runs.get((phase, name, "dolly"), {}).get("supplementary")) for name in names)}
+                for phase in ("original", "sft")}
+    assert all(0 <= v["supplementary"] <= v["generation"] <= len(names) for v in coverage.values())
     lines = ["# 원본과 Dolly SFT의 생성 평가 비교", "",
+             f'완료: 원본 Dolly {coverage["original"]["generation"]}/{len(names)}, SFT Dolly {coverage["sft"]["generation"]}/{len(names)}, 보완 채점 원본 {coverage["original"]["supplementary"]}/{len(names)}·SFT {coverage["sft"]["supplementary"]}/{len(names)}. 최종 조합은 후보 후속 검증 후 선정한다.', "",
              "동일 원문 ID·prompt·모델별 정밀도·생성 seed 10·새 토큰 상한 256의 결과다. 원본은 우리 Dolly SFT 전 checkpoint이며 Gemma-IT는 이미 instruction tuning을 거친 모델이다. 미완료 점수는 공란으로 두고 완료한 응답·CSV·명세 hash와 지표를 재검산한다.", "",
              "ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/전체 4-gram 비율이며 클수록 사실성이나 성능이 좋다는 뜻이 아니다. 단일 seed이므로 seed 간 SD·오차막대는 없다. 아래 결과만으로 최종 조합을 자동 선정하지 않는다.", "",
              "| 모델 | 단계 | Dolly ROUGE-L | METEOR | BERTScore F1 | Distinct-4 |",

@@ -197,6 +197,8 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 
 Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1/2/L은 34.10/15.02/25.92, 정규화 exact match는 4.00%, 평균 새 토큰 수는 64.22, 생성 상한 도달률은 2.60%, 빈 응답률은 0%다. 동일한 2B 문항과의 평균 ROUGE-L 차이는 +1.29이며 9B 우위/동률/2B 우위 문항은 242/30/228이다. 이는 reference 겹침 비교이며 사람의 선호 승률이나 증류 효과가 아니다. 두 모델의 정밀도(9B NF4·2B BF16)가 달라 순수한 규모 효과로 해석하지 않는다. 500개 ID·자료와 adapter/평가 fingerprint·CSV hash·원본 응답 전체 재채점·문항별 평균을 확인했다. 이로써 활성 8개 모델의 예비 SFT 선택과 Dolly 생성 평가를 모두 완료했다. 원본/SFT 생성 기준선·보완 채점·후보 후속 평가와 실제 증류 경로 점검을 거쳐 최종 조합을 선정하며, [전후 비교표](../results/model_selection_v1/REPORT.md)의 미완료 항목은 공란으로 둔다.
 
+원본 8모델의 Dolly 생성 기준선은 예비 SFT worker의 정상 종료 후 순차 평가한다. 첫 번째 GPT-2 base의 동일 500문항·seed 10·BF16 평가에서 ROUGE-L은 원본 6.16 → SFT 14.68로 +8.52점이었다. 같은 문항에서 점수 증가/동률/감소는 374/31/95건이다. 평균 새 토큰 수는 220.29 → 76.37, 기존 생성 요약의 상한 도달률은 73.60% → 3.60%였다. 같은 생성 예산에서 기준 응답과의 겹침 증가 및 길이 변화가 관측됐으며 사실성·의미상 정답률이나 KD 효과로 해석하지 않는다. 원본 checkpoint·adapter 비활성화·정밀도·생성 명세·500개 ID와 응답/CSV hash를 확인하고 ROUGE·정규화 exact match·길이를 전부 재검산했다. 문항별 EOS 정보가 없는 상한 도달률은 생성 당시의 검증된 집계값을 보존한다. 다른 원본 모델과 실제 보완 지표는 아직 미완료다.
+
 ## 8. 단계별 설정과 재현 기록
 
 | 항목 | 현재 상태 | 근거 |
@@ -205,7 +207,7 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 | SFT | LoRA r64/alpha16/dropout0.05, LR 1e-4/2e-4, 후보별 3epoch, 유효 batch 16, 학습 seed 0 | [SFT 학습 설정](DOLLY_SFT_MODEL_SELECTION.md), QLoRA·MiniLLM 초기화 단계와의 연결 및 차이 |
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
-| 원본/SFT 비교 | 활성 8개 원본의 Dolly 기준선 추가 승인, 미실행 | 같은 ID·prompt·정밀도·생성 조건으로 원본/SFT/변화량 비교 |
+| 원본/SFT 비교 | 활성 8개 원본의 Dolly 기준선 순차 평가 중 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
 | 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 완료, 실제 응답 채점 대기 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |

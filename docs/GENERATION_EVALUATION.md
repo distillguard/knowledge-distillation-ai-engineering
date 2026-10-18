@@ -14,7 +14,7 @@
 
 2026-10-18 사용자 결정에 따라 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 추가하고, 후보의 분류 진단에는 ECE를 포함한다. **2026-10-19에 실행기·전용 환경·평가 자산과 CPU 통합 점검을 준비했으며 실제 모델 응답의 추가 점수는 아직 없다.** [지표 계산 함수](../scripts/supplementary_metrics.py)의 다중 정답·응답 경계·ECE bin 집계와 [실행기](../scripts/run_supplementary_metrics.py)의 환경 분리·공유 잠금을 확인했다. 실제 WordNet corpus의 동의어 경로와 고정 BERTScore 모델의 CPU 합성 문장 추론·빈 응답·다중 reference도 점검했다. 이 점검은 연구 모델의 성능 평가가 아니다. METEOR·BERTScore는 어휘·의미 유사성, Distinct-4는 표현의 다양성을 보완하며 사실성을 직접 판정하지 않는다. 기존 생성 응답과 원본 reference를 재사용하고 추가 SFT나 기존 답변 재생성 없이 별도 채점 명세·결과를 남긴다. 실행 중인 생성 명세와 기존 완료 점수는 변경하지 않는다.
 
-**SFT 전후 기준선도 추가 실행한다.** 현재 보유한 SFT 전 값은 개발 NLL이며, 동일 문항의 원본 생성 기준선은 아직 없다. 활성 8개 모델의 원본 checkpoint를 같은 Dolly 500문항·seed 10·prompt·EOS·생성 설정·모델별 정밀도로 평가해 `SFT 전 / SFT 후 / 변화량`을 작성한다. 새로 필요한 것은 원본 모델의 추론이며 SFT를 다시 하지 않는다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다. 저자 공개 SFT checkpoint를 이 원본 기준선으로 대체하지 않는다.
+**SFT 전후 기준선도 평가한다.** 2026-10-19부터 활성 8개 모델의 원본 checkpoint를 같은 Dolly 500문항·seed 10·prompt·EOS·생성 설정·모델별 정밀도로 순차 평가한다. 완료한 모델부터 [비교표](../results/model_selection_v1/REPORT.md)에 `SFT 전 / SFT 후 / 변화량`을 반영한다. 개발 NLL과 자유 생성 성능은 구분한다. 새로 필요한 것은 원본 모델의 추론이며 SFT를 다시 하지 않는다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다. 저자 공개 SFT checkpoint를 이 원본 기준선으로 대체하지 않는다.
 
 ## 조합 선정까지의 단계와 완료 기준
 
@@ -101,7 +101,7 @@ python -B -X utf8 scripts/prepare_generation_benchmarks.py prepare
 
 모델별 실행은 기존처럼 `python -u -B -X utf8 scripts/run_dolly_sft.py --model gpt2_base`를 사용한다. 전체는 `--model all`이다. 이미 완료된 SFT와 평가를 검증해 재사용한다. 새 평가 코드만 GPU worker와 따로 동시에 실행하지 않는다.
 
-원본 기준선 실행기는 [evaluate_original_models.py](../scripts/evaluate_original_models.py)다. 현재 Gemma-9B 실행 종료 이후 다음 명령으로 활성 8모델의 Dolly 기준선을 수행한다.
+원본 기준선 실행기는 [evaluate_original_models.py](../scripts/evaluate_original_models.py)다. Gemma-9B를 포함한 SFT 예비 worker의 정상 종료를 확인한 뒤 다음 명령으로 활성 8모델의 Dolly 기준선을 시작했다.
 
 ```powershell
 python -u -B -X utf8 scripts/evaluate_original_models.py --model all
@@ -109,7 +109,7 @@ python -u -B -X utf8 scripts/evaluate_original_models.py --model all
 
 선정 후보의 외부 평가에는 `--model <모델명> --benchmark dolly self_inst sni_11 vicuna --classification`을 사용한다. 원본 고정 가중치를 기존 정밀도로 적재하고 학습 adapter를 읽지 않으며, loader가 생성하는 초기 LoRA도 비활성화한다. 공유 `worker.lock`으로 SFT·다른 모델 평가와 동시 실행을 차단한다. 결과는 `results/original_model_evaluation_v1/`, 비공개 응답·분류 예측·중간 상태는 `tmp/original_model_evaluation_v1/`에 저장한다. 원본 결과를 SFT 경로에 덮어쓰지 않는다. 완료 결과 재사용 시 fingerprint·문항 ID·CSV와 원본 응답 hash를 확인한다.
 
-실행기에는 CPU 검증을 적용했다. 실제 adapter가 비활성화된 출력의 원본 일치, 원본/SFT 경로 분리, 중단 후 최종 결과의 원자적 기록, 캐시 ID·hash 불일치 거부, 완료 결과의 모델 미적재, 공유 잠금, 모델 전환 전 adapter layer 참조 해제를 확인한다. **실제 8모델의 원본 GPU 평가는 아직 실행 전이며 이 검증을 성능 결과로 해석하지 않는다.**
+실행기에는 CPU 검증을 적용했다. 실제 adapter가 비활성화된 출력의 원본 일치, 원본/SFT 경로 분리, 중단 후 최종 결과의 원자적 기록, 캐시 ID·hash 불일치 거부, 완료 결과의 모델 미적재, 공유 잠금, 모델 전환 전 adapter layer 참조 해제를 확인한다. 실제 원본 GPU 평가는 진행 중이며 완료한 원본 응답과 CSV의 hash·ID·ROUGE/정규화 exact match도 전체 문항에서 재검산한다. CPU 검증 자체를 모델의 성능 결과로 해석하지 않는다.
 
 ### 보완 채점의 전용 환경과 산출물
 

@@ -65,6 +65,10 @@ def source(name, phase, key, data, rows):
                         else ROOT / "tmp/original_model_evaluation_v1/evaluation" / name / f"{key}_seed10.json")
         assert raw_path.resolve() == expected_raw.resolve()
         assert sha(raw_path) == result["raw_responses_sha256"]
+        if key == "dolly":
+            legacy = read(ROOT / "tmp/original_model_evaluation_v1" / name / "legacy" / f"{name}_generation_seed10.json")
+            assert legacy["fingerprint"] == protocol["fingerprint"] and legacy["seed"] == 10 and legacy["n"] == len(rows)
+            assert 0 <= legacy["length_cap_rate"] <= 1 and legacy["length_cap_rate"] == result["metrics"]["length_capped"]
     else:
         assert phase == "sft" and protocol["training_protocol_fingerprint"] == training["fingerprint"]
         chosen = read(training_dir / f"{name}_selected.json")
