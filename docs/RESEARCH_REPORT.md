@@ -201,7 +201,8 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 | SFT | LoRA r64/alpha16/dropout0.05, LR 1e-4/2e-4, 후보별 3epoch, 유효 batch 16, 학습 seed 0 | [SFT 학습 설정](DOLLY_SFT_MODEL_SELECTION.md), QLoRA·MiniLLM 초기화 단계와의 연결 및 차이 |
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
-| 보완 지표 | METEOR·BERTScore 검토, 미구현·미채점 | 평가 모델·길이 처리·다중 정답·집계 명세 필요 |
+| 원본/SFT 비교 | 활성 8개 원본의 Dolly 기준선 추가 승인, 미실행 | 같은 ID·prompt·정밀도·생성 조건으로 원본/SFT/변화량 비교 |
+| 보완 지표 | METEOR·BERTScore·Distinct-4 추가 승인, 미구현·미채점 | 평가 모델·길이 처리·다중 정답·집계 명세 필요. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |
 | 본 실험 생성 반복 | 10/20/30/40/50 예정 | 학습 seed 반복과 구분. 독립 최종 test의 대체가 아님 |
@@ -212,11 +213,11 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 
 ### 9.1. 평가의 역할과 비교표
 
-생성 평가는 정답을 보여주지 않고 직접 생성한 응답을 확인한다. ROUGE-1/2/L은 reference 겹침, exact match는 정규화 문자열 일치이며 사실성·지시 준수를 직접 판정하지 않는다. METEOR·BERTScore는 보완 후보로 아직 구현하지 않았다. 채택 시 저장 응답을 재사용하며 추가 epoch나 답변 재생성은 필요 없다. 외부 judge는 실행하지 않았다.
+생성 평가는 정답을 보여주지 않고 직접 생성한 응답을 확인한다. ROUGE-1/2/L은 reference 겹침, exact match는 정규화 문자열 일치이며 사실성·지시 준수를 직접 판정하지 않는다. 2026-10-18에 METEOR·BERTScore·Distinct-4 추가 실행을 승인했으며 아직 구현·채점하지 않았다. 저장 응답을 재사용하므로 추가 epoch나 기존 답변 재생성은 필요 없다. 원본 checkpoint의 동일 조건 생성 기준선은 별도 추론으로 추가한다. 구체적 절차와 지표 설정 근거는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다. 외부 judge·사람 평가는 실행하지 않았다.
 
 보고할 비교표는 **모델×benchmark×지표**이며, 계열 내 같은 문항의 교사−학생 차이와 오류를 함께 제시한다. 서로 다른 지표를 임의 가중합하지 않는다. 최종 조합의 선정 근거는 과제별 일관성·응답 검토·실행 가능성과 연결한다.
 
-SST-2·BoolQ의 accuracy·macro-F1·클래스별 오류·Brier는 보조 진단이며 현재 Brier를 MiniLLM ECE의 재현으로 표시하지 않는다. entropy·KL·gate·BALD·수용률은 본 KD 동작 진단으로, 생성 수행의 대체 지표가 아니다.
+SST-2·BoolQ의 accuracy·macro-F1·클래스별 오류·Brier는 보조 진단이며 후보 원본/SFT의 후속 평가에 ECE도 추가한다. 현재 Brier를 MiniLLM ECE의 재현으로 표시하지 않는다. entropy·KL·gate·BALD·수용률은 본 KD 동작 진단으로, 생성 수행의 대체 지표가 아니다.
 
 본 KD의 개선은 **같은 학생의 SFT 기준선 대비** 측정한다. 현재 SFT 후 모델 간 격차와 원본 대비 SFT 향상, 이후 KD 향상을 구분한다. 이미 조합 선정에 사용한 평가 자료를 독립적인 최종 test로 취급하지 않는다.
 

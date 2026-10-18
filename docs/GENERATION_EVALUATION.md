@@ -1,6 +1,6 @@
 # 생성 벤치마크의 교사·학생 선정
 
-기준일: 2026-10-16. 생성 성능의 차이를 모델 선정의 주 근거로 삼는다. SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류는 편향과 확률 품질의 보조 진단이다. 현재 Brier score를 MiniLLM의 ECE 재현으로 표시하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않고 과제별 차이와 동일 문항의 오류를 확인한다.
+기준일: 2026-10-18. 생성 성능의 차이를 모델 선정의 주 근거로 삼는다. SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류는 편향과 확률 품질의 보조 진단이다. ECE도 후보의 후속 평가에 추가하되, 기존 Brier를 ECE로 바꾸어 표시하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않고 과제별 차이와 동일 문항의 오류를 확인한다.
 
 2026-10-16 최신 범위 결정: **Qwen 제외 8모델의 예비 평가는 Dolly 500문항부터 수행하고 외부 세 benchmark는 후보 축소 후 적용**한다. 이미 완료한 외부 평가 결과는 보존한다. 학습은 Dolly만 유지한다. 외부까지 적용한 모델당 2,516개는 학습 표본 수가 아니라 네 자료의 평가 문항 합계다.
 
@@ -12,9 +12,9 @@
 
 [MiniLLM §2.3](https://arxiv.org/html/2306.08543v4)은 학생 초기화에 최저 검증 손실을 사용하지만 §3.1의 생성 관련 설정 탐색에는 검증 ROUGE-L을 사용하고, 최종 응답은 ROUGE-L·GPT-4 feedback·사람 평가로 확인한다. 현재의 로컬 NLL 선택을 원문의 전체 생성 평가와 동일하게 표시하지 않는다.
 
-추가 지표로 [METEOR](https://aclanthology.org/W05-0909/)와 [BERTScore](https://arxiv.org/abs/1904.09675)를 검토했다. **아직 구현·채점하지 않았으며 최종 선정 규칙도 확정하지 않았다.** METEOR는 어휘 일치 계열의 보완이고 BERTScore는 문맥 임베딩의 유사성 평가다. 둘 모두 사실성의 직접 판정은 아니다. 채택 시 기존 생성 응답과 전체 reference를 재사용하고 추가 SFT나 답변 재생성 없이 별도 버전의 채점 명세·결과를 남긴다. 평가 모델·revision·길이 처리·다중 정답·집계 기준을 먼저 고정하며, 실행 중인 생성 명세와 기존 완료 점수는 변경하지 않는다. 채점 소요 시간은 평가 모델과 자원을 고정한 뒤 실측해야 한다.
+2026-10-18 사용자 결정에 따라 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 추가하고, 후보의 분류 진단에는 ECE를 포함한다. **현재는 실행 승인 및 설계 단계이며 추가 지표를 아직 구현·채점하지 않았다.** METEOR·BERTScore는 어휘·의미 유사성, Distinct-4는 표현의 다양성을 보완하며 사실성을 직접 판정하지 않는다. 기존 생성 응답과 원본 reference를 재사용하고 추가 SFT나 기존 답변 재생성 없이 별도 채점 명세·결과를 남긴다. 평가 모델·revision·길이 처리·다중 정답·집계를 먼저 고정하며, 실행 중인 생성 명세와 기존 완료 점수는 변경하지 않는다.
 
-현재 원본 대비 SFT 전후 비교는 개발 NLL에만 있으며, 동일 문항의 원본 생성 기준선은 아직 평가하지 않았다. 저자 공개 SFT checkpoint를 미학습 원본으로 표시하지 않는다.
+**SFT 전후 기준선도 추가 실행한다.** 현재 보유한 SFT 전 값은 개발 NLL이며, 동일 문항의 원본 생성 기준선은 아직 없다. 활성 8개 모델의 원본 checkpoint를 같은 Dolly 500문항·seed 10·prompt·EOS·생성 설정·모델별 정밀도로 평가해 `SFT 전 / SFT 후 / 변화량`을 작성한다. 새로 필요한 것은 원본 모델의 추론이며 SFT를 다시 하지 않는다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다. 저자 공개 SFT checkpoint를 이 원본 기준선으로 대체하지 않는다.
 
 ## 조합 선정까지의 단계와 완료 기준
 
@@ -22,9 +22,10 @@
 |---|---|---|
 | SFT 체크포인트 | 각 모델에서 두 LR·epoch별 개발 NLL 선택 | 두 LR 완료·selected adapter hash. 계열 간 NLL 순위와 구분 |
 | 예비 생성 평가 | Dolly 500문항, 생성 seed 10 한 개 | Dolly JSON·문항별 CSV·같은 ID·fingerprint 검증 |
-| 후보 후속 평가 | 후보 축소 후 외부 3종 추가 | 원문 기반 SFT 탐색·외부 생성 평가·오류 분석, 기존 결과 재사용 |
-| 보완 지표 | METEOR·BERTScore 미구현·미채점 | 채택 지표·평가 모델·revision·길이 처리·다중 정답·집계 명세 후 저장 응답 채점 |
-| 보조 진단 | SST-2·BoolQ | accuracy·macro-F1·클래스별 오류·Brier. 생성 평가의 대체가 아님 |
+| SFT 전후 기준선 | 활성 8개 원본의 동일 Dolly 평가 추가 | 원본과 SFT의 model revision·정밀도·ID·생성 조건 일치, 단계별 별도 fingerprint·응답 경로 |
+| 보완 지표 | METEOR·BERTScore·Distinct-4, 미구현·미채점 | 고정 채점 명세 후 원본/SFT 응답 재사용. BERTScore의 평가 모델 길이 제한과 영향 문항 수 공개 |
+| 후보 후속 평가 | 공통 Dolly 지표·응답 검토로 후보 축소 후 외부 3종 | 후보 원본/SFT를 동일 조건으로 비교, 검증된 기존 결과 재사용 |
+| 보조 진단 | 후보 원본/SFT의 SST-2·BoolQ | accuracy·macro-F1·클래스별 오류·Brier·ECE. 생성 평가의 대체가 아님 |
 | 비교·오류 분석 | 모델×benchmark×지표와 계열 내 차이 | 과제별 일관성, 지시 준수·사실 오류·반복·누락, 사례 선정 근거 |
 | 증류 실행 점검 | 후보 조합의 logits·어휘·prefix·학생 갱신·메모리 | 실제 KD 연산·필요한 생성·MC 경로의 통과 기록 |
 | 최종 조합 | 미정 | model ID·revision·SFT adapter·정밀도·선정 자료·이유와 한계 동결 |
@@ -32,6 +33,22 @@
 현재 `completion.json`과 자동 보고서의 완료 수는 활성 8모델의 Dolly 예비 평가 완료다. `completed_extended_models`는 네 benchmark를 모두 완료한 보존 결과를 별도 기록한다. 보완 지표·오류 검토·증류 실행 점검·사람의 선정 판단까지 자동으로 완료됐다는 뜻이 아니다. 실제 점수가 있는 지표만 비교표에 채우고 미실행 항목은 미실행으로 표시한다.
 
 보완 지표 채택과 오류 검토 기준은 전체 결과를 보고 유리한 기준으로 바꾸지 않도록 먼저 확정한다. 의미 유사성·reference 겹침·정답률의 역할을 구분하며, 응답 검토의 사실 판정은 별도 근거가 필요하다.
+
+Gemma-2-9B-IT의 현재 두 LR·3epoch SFT와 Dolly 평가를 끝낸 다음, **원본/SFT Dolly 비교 → 보완 채점 → 후보 축소 → 후보의 외부 3종·분류 진단 → 실제 증류 경로 점검 → 추천 조합 보고** 순서로 수행한다. 이번 후속 평가에 새로운 SFT 탐색이나 본 KD 학습은 포함하지 않는다. MiniLLM 원문의 SFT 탐색·학생 초기화 절차는 선정 이후 별도 본 실험 설계로 남긴다. 단순한 SFT worker 종료로 이 후속 작업까지 완료됐다고 보고하지 않는다.
+
+## 보완 지표의 명세 원칙
+
+- METEOR는 NLTK 3.9.2의 공식 기본값(alpha 0.9, beta 3, gamma 0.5)·Porter stemmer·영어 WordNet·최고 reference 점수를 사용한다. 공통 단어 토큰화와 corpus 버전/hash를 기록한다.
+- BERTScore는 공식 영어 기본 설정인 RoBERTa-large·17층·IDF 미사용을 기준으로 평가 모델 revision과 tokenizer를 고정한다. 원문 reference는 보존하되 encoder의 native 길이 제한이 적용되는 문항·토큰 수와 처리를 별도로 공개한다. 아직 평가 모델 파일이나 길이 처리 점검을 완료한 상태는 아니다.
+- Distinct-4는 응답별 경계를 넘지 않는 4-gram의 전체 고유 개수/전체 개수를 사용한다. 전 모델에 같은 단어 tokenizer를 적용하고 분자·분모도 기록한다. 논문의 5개 생성 seed와 현재 예비 1개 seed를 구분한다.
+- ECE는 두 label 후보 사이에서 정규화한 기존 확률로 계산한다. [Guo 외의 공식 구현](https://github.com/gpleiss/temperature_scaling/blob/master/temperature_scaling.py)의 15개 등폭 confidence bin을 고정 근거로 삼고 bin별 표본 수·정답률·평균 confidence를 남긴다. 이는 최적 bin 수를 찾았다는 뜻이나 MiniLLM의 정확한 구현 재현이라는 뜻이 아니다. 확률 보정용 temperature를 새로 학습하지 않는다.
+- LLM judge·사람의 Win/Tie/Loss·ExAccErr는 문헌의 평가 옵션이며 현재 자동 실행에는 포함하지 않는다. 모델의 자동 채점이나 단순 ROUGE 우위 문항 수를 실제 사람의 선호 평가로 표시하지 않는다.
+
+## 개선량의 비교 기준
+
+`원본 → Dolly SFT → 본 KD`를 구분한다. 현재 선정 단계는 `SFT − 원본`, 이후 본 증류는 `KD 학생 − 동일한 SFT 학생`을 비교한다. 교사−학생 격차는 별도 표로 보고한다. 지표별 증가/감소의 유리한 방향을 명시하고 개선·정체·악화를 모두 남긴다. 본 KD의 공통 초기화·학습 예산·반복 조건은 선정 후 동결하며 현재 예비 결과로 증류 효과를 주장하지 않는다.
+
+[MiniLLM §3.1·부록 B.1](https://arxiv.org/html/2306.08543v4#A2.SS1)은 과제 SFT를 거친 교사와, 사전 탐색한 설정으로 3epoch SFT하고 최저 검증 loss를 선택한 학생에서 증류한다. [DistiLLM 부록 D.2·표 6](https://arxiv.org/html/2402.03898v2#A4.SS2)은 SFT 학생 초기화를 사용하는 주 비교와 SFT 없는 학생의 one-stage 증류를 구분한다. 따라서 원본 학생에서 직접 KD하는 조건을 현재 SFT 출발 조건과 섞지 않는다. CaRE-KD §10.3의 MiniLLM 설정 인용만으로 모든 초기화 세부가 같다고 단정하지 않는다. 원본 성능 측정은 고정 원본 checkpoint를 따로 적재하므로 현재 SFT 종료 이후에도 수행할 수 있다.
 
 ## 문헌과 자료
 
@@ -44,7 +61,7 @@
 | S-NI | [MiniLLM/sinst](https://huggingface.co/datasets/MiniLLM/sinst/tree/84b8356a5b631002f92ad73adebd5ac9db5612cd), `11_/valid.jsonl` | 1,694 |
 | Vicuna | [MiniLLM/Vicuna](https://huggingface.co/datasets/MiniLLM/Vicuna/tree/05a18702266a6c51547034268d6d58bce214bd77), `valid.jsonl` | 80 |
 
-예비 평가는 Dolly 500문항 × 활성 8모델 = 4,000개 답변이다. 후보 축소 후 외부 3종까지 적용한 모델은 총 2,516문항이다. 여러 지표로 같은 답변을 채점해도 새 답변을 생성하지 않는다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
+8모델의 SFT 후 Dolly 예비 평가는 500문항 × 8 = 4,000개 답변이다. 원본 기준선도 동일하게 4,000개를 추가하므로 두 단계가 모두 끝나면 총 8,000개다. 후보 축소 후 외부 3종까지 적용한 모델은 checkpoint 단계마다 총 2,516문항이다. 여러 지표로 같은 답변을 채점해도 새 답변을 생성하지 않는다. 논문의 설명상 표본 수와 실제 배포 파일의 행 수를 섞지 않는다. Self-Instruct의 배포 파일은 242행이며 논문에 기술한 252문항을 임의로 복원하지 않았다. S-NI는 배포된 `11_` 구간 자체를 사용하며 새로운 길이 임계값을 만들지 않았다. 다중 정답은 [공식 ROUGE 평가 코드](https://github.com/microsoft/LMOps/blob/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm/rouge_metric.py)처럼 reference별 점수의 최댓값을 사용한다.
 
 ## 전처리와 누수 점검
 
