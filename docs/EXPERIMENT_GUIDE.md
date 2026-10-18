@@ -81,7 +81,7 @@ LoRA와 학습률 후보는 [QLoRA 공식 13B 스크립트](https://github.com/a
 
 생성의 temperature는 sampling 조건이며 KD 분포의 온도 T와 다르다. KD의 T·gate·MC dropout 횟수·Revival 기준은 이 SFT 단계의 설정값이 아니다. 이후 문헌 근거와 검증 절차로 별도 명세한다. 현재 관찰한 선정 평가 자료를 독립적인 최종 test로 부르지 않는다.
 
-검증 NLL은 각 모델의 체크포인트 선택이고 동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 후보를 추린다. 해당 후보의 외부 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT 탐색은 시작하지 않는다. MiniLLM의 전체 SFT 탐색·학생 초기화는 선정한 한 조합의 본 실험 설계로 남긴다. [선정 단계별 완료 기준과 원본 평가 명령](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. 원본의 Dolly 기준선을 순차 평가 중이며 완료한 모델의 SFT 전후 변화는 [비교표](../results/model_selection_v1/REPORT.md)에 반영한다. 공개 SFT checkpoint로 원본을 대체하지 않는다.
+검증 NLL은 각 모델의 체크포인트 선택이고 동일 Dolly의 원본/SFT 비교·보완 채점 후 유망 후보를 추린다. 해당 후보의 외부 평가·보조 진단·오류 분석·KD 실행 점검으로 최종 조합을 선정한다. 선정 전 추가 SFT 탐색은 시작하지 않는다. MiniLLM의 전체 SFT 탐색·학생 초기화는 선정한 한 조합의 본 실험 설계로 남긴다. [선정 단계별 완료 기준과 원본 평가 명령](GENERATION_EVALUATION.md#조합-선정까지의-단계와-완료-기준)을 따른다. 원본 8모델의 Dolly 기준선을 완료했으며 SFT 전후 변화는 [비교표](../results/model_selection_v1/REPORT.md)에 반영한다. 공개 SFT checkpoint로 원본을 대체하지 않는다.
 
 보완 채점은 `run_supplementary_metrics.py prepare`로 자산을 준비하고, 원본/SFT 응답을 모두 확보한 뒤 `run_supplementary_metrics.py score`로 실행한다. [전용 환경과 산출물](GENERATION_EVALUATION.md#보완-채점의-전용-환경과-산출물)의 설치·모델별 명령을 따른다. 별도 자식 프로세스의 Transformers 4.46.3·BERTScore slow tokenizer를 사용하며 기존 SFT 환경은 유지한다. 보완 채점도 공통 GPU 잠금을 사용한다.
 

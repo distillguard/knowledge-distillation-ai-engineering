@@ -1,6 +1,6 @@
 # 원본과 Dolly SFT의 생성 평가 비교
 
-완료: 원본 Dolly 7/8, SFT Dolly 8/8, 보완 채점 원본 0/8·SFT 0/8. 최종 조합은 후보 후속 검증 후 선정한다.
+완료: 원본 Dolly 8/8, SFT Dolly 8/8, 보완 채점 원본 0/8·SFT 0/8. 최종 조합은 후보 후속 검증 후 선정한다.
 
 동일 원문 ID·prompt·모델별 정밀도·생성 seed 10·새 토큰 상한 256의 결과다. 원본은 우리 Dolly SFT 전 checkpoint이며 Gemma-IT는 이미 instruction tuning을 거친 모델이다. 미완료 점수는 공란으로 두고 완료한 응답·CSV·명세 hash와 지표를 재검산한다.
 
@@ -22,7 +22,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | OpenLLaMA-7B | sft | 23.98 | — | — | — |
 | Gemma-2-2B-IT | original | 19.10 | — | — | — |
 | Gemma-2-2B-IT | sft | 24.63 | — | — | — |
-| Gemma-2-9B-IT | original | — | — | — | — |
+| Gemma-2-9B-IT | original | 21.13 | — | — | — |
 | Gemma-2-9B-IT | sft | 25.92 | — | — | — |
 
 ## SFT − 원본
@@ -36,6 +36,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | OpenLLaMA-3B | sft−original | dolly | ROUGE-L | +12.17 | 361 / 21 / 118 |
 | OpenLLaMA-7B | sft−original | dolly | ROUGE-L | +11.68 | 344 / 17 / 139 |
 | Gemma-2-2B-IT | sft−original | dolly | ROUGE-L | +5.52 | 275 / 8 / 217 |
+| Gemma-2-9B-IT | sft−original | dolly | ROUGE-L | +4.79 | 252 / 4 / 244 |
 
 ## 교사 − 학생
 
@@ -50,6 +51,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | OPT-2.7B → OPT-125M | sft | dolly | ROUGE-L | +4.44 | 302 / 38 / 160 |
 | OpenLLaMA-7B → OpenLLaMA-3B | original | dolly | ROUGE-L | +2.61 | 292 / 27 / 181 |
 | OpenLLaMA-7B → OpenLLaMA-3B | sft | dolly | ROUGE-L | +2.12 | 258 / 32 / 210 |
+| Gemma-2-9B-IT → Gemma-2-2B-IT | original | dolly | ROUGE-L | +2.03 | 300 / 16 / 184 |
 | Gemma-2-9B-IT → Gemma-2-2B-IT | sft | dolly | ROUGE-L | +1.29 | 242 / 30 / 228 |
 
 문항 수는 해당 자동 지표의 대응 차이이며 사람의 선호 승률이 아니다. 교사−학생 차이와 SFT−원본 차이, 이후 본 KD 학생−동일 SFT 학생의 개선을 구분한다.

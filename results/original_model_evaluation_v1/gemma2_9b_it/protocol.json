@@ -1,0 +1,40 @@
+{
+  "phase": "before_our_dolly_sft",
+  "model": {
+    "id": "google/gemma-2-9b-it",
+    "revision": "11c9b309abf73637e4b6f9a3fa1e92e615547819"
+  },
+  "precision": {
+    "base_weights": "NF4 with double quantization",
+    "compute": "BF16 autocast",
+    "normalization": "FP32",
+    "trainable_lora": "FP32",
+    "reason": "BF16 base weights exceed dedicated VRAM or BF16 load/update probe does not fit the measured dedicated-memory budget"
+  },
+  "adapters_disabled": true,
+  "matched_training_protocol_fingerprint": "f80a5cf50ee1e8c642dfc20704bad05019ba264a324af4c0c531d03c382dac85",
+  "data_protocol_fingerprint": "7f52403ee901cebbd2465131a1a0791d6a7ef0342009c72deaaa667999d749e0",
+  "source_script_sha256": "e880d73e7fa97f1dd49cd92223ddf4cdc4f0c50ad06843663eeb07d1d32df819",
+  "generation_script_sha256": "3f784bd20bd34869499ec56ea4f2bc61c8c39b31b896cb2a1ac3b47fe15edfc6",
+  "dolly_generation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
+  "versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0",
+    "sentencepiece": "0.2.2",
+    "protobuf": "7.36.2"
+  },
+  "generation": {
+    "seed": 10,
+    "max_new_tokens": 256,
+    "temperature": 1,
+    "top_k": 0,
+    "top_p": 1,
+    "no_repeat_ngram_size": 6,
+    "microbatch": 1,
+    "sample_sd_across_generation_seeds": null
+  },
+  "fingerprint": "06ee4041a053b3e9740b704cc0e618357b2f8f25d5ecff5e3a92cf50166a36da"
+}

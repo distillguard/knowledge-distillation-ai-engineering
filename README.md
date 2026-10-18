@@ -57,7 +57,7 @@ Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입�
 
 예비 생성 평가는 모델당 Dolly 500문항이며 외부 3종까지 적용한 후보는 총 2,516문항이다. 기존 Dolly 응답은 검증해 재사용한다. 자료 revision·다중 정답·전처리·실행·완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md)을 따른다. 단일 생성 seed에서는 seed 간 표준편차와 오차막대를 제시하지 않는다. 최종 선정 모델 본 실험의 생성 seed는 10/20/30/40/50이며 학습 seed 반복과 구분한다.
 
-검증 NLL은 각 모델의 SFT 체크포인트를 고르는 기준이며 다른 계열의 순위표가 아니다. 현재 ROUGE-L은 1차 후보 비교이고 최종 조합은 미정이다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 아직 채점하지 않았다. 원본 Dolly 평가는 진행 중이며 완료한 모델부터 [원본/SFT 비교표](results/model_selection_v1/REPORT.md)에 전후 점수와 변화량을 반영한다.
+검증 NLL은 각 모델의 SFT 체크포인트를 고르는 기준이며 다른 계열의 순위표가 아니다. 현재 ROUGE-L은 1차 후보 비교이고 최종 조합은 미정이다. METEOR·BERTScore·Distinct-4와 후보 분류의 ECE는 아직 채점하지 않았다. 원본 8모델의 Dolly 평가를 모두 완료했으며 [원본/SFT 비교표](results/model_selection_v1/REPORT.md)에 전후 점수와 변화량을 반영한다.
 
 ## 핵심 개념
 

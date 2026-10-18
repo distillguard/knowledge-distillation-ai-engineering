@@ -159,7 +159,7 @@ SeqKD는 교사가 생성한 문장을 학습 대상으로 사용하는 방식�
 
 ### 7.4. 과거 공개 SFT 기준선
 
-저자가 공개한 Dolly-SFT XL/base의 평가는 [공개 SFT 기준선](SFT_BASELINE_EVALUATION.md)에 별도로 기록했다. 그 점수·5개 생성 seed 결과를 이번 직접 SFT의 점수나 미학습 원본으로 취급하지 않는다. 원본 대비 SFT의 생성 향상 폭을 주장하려면 별도의 동일 조건 원본 평가가 필요하며 아직 수행하지 않았다.
+저자가 공개한 Dolly-SFT XL/base의 평가는 [공개 SFT 기준선](SFT_BASELINE_EVALUATION.md)에 별도로 기록했다. 그 점수·5개 생성 seed 결과를 이번 직접 SFT의 점수나 미학습 원본으로 취급하지 않는다. 원본 대비 SFT의 변화는 §7.5의 동일 조건 8모델 원본 평가로 확인하며 공개 SFT checkpoint 점수로 대체하지 않는다.
 
 ### 7.5. 직접 SFT와 생성 평가의 초기 관측
 
@@ -197,9 +197,20 @@ OpenLLaMA-7B도 두 LR 후보의 3epoch SFT를 완료했다. BF16 갱신·저장
 
 Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1/2/L은 34.10/15.02/25.92, 정규화 exact match는 4.00%, 평균 새 토큰 수는 64.22, 생성 상한 도달률은 2.60%, 빈 응답률은 0%다. 동일한 2B 문항과의 평균 ROUGE-L 차이는 +1.29이며 9B 우위/동률/2B 우위 문항은 242/30/228이다. 이는 reference 겹침 비교이며 사람의 선호 승률이나 증류 효과가 아니다. 두 모델의 정밀도(9B NF4·2B BF16)가 달라 순수한 규모 효과로 해석하지 않는다. 500개 ID·자료와 adapter/평가 fingerprint·CSV hash·원본 응답 전체 재채점·문항별 평균을 확인했다. 이로써 활성 8개 모델의 예비 SFT 선택과 Dolly 생성 평가를 모두 완료했다. 원본/SFT 생성 기준선·보완 채점·후보 후속 평가와 실제 증류 경로 점검을 거쳐 최종 조합을 선정하며, [전후 비교표](../results/model_selection_v1/REPORT.md)의 미완료 항목은 공란으로 둔다.
 
-원본 8모델의 Dolly 생성 기준선은 예비 SFT worker의 정상 종료 후 순차 평가한다. 첫 번째 GPT-2 base의 동일 500문항·seed 10·BF16 평가에서 ROUGE-L은 원본 6.16 → SFT 14.68로 +8.52점이었다. 같은 문항에서 점수 증가/동률/감소는 374/31/95건이다. 평균 새 토큰 수는 220.29 → 76.37, 기존 생성 요약의 상한 도달률은 73.60% → 3.60%였다. 같은 생성 예산에서 기준 응답과의 겹침 증가 및 길이 변화가 관측됐으며 사실성·의미상 정답률이나 KD 효과로 해석하지 않는다. 원본 checkpoint·adapter 비활성화·정밀도·생성 명세·500개 ID와 응답/CSV hash를 확인하고 ROUGE·정규화 exact match·길이를 전부 재검산했다. 문항별 EOS 정보가 없는 상한 도달률은 생성 당시의 검증된 집계값을 보존한다. 다른 원본 모델과 실제 보완 지표는 아직 미완료다.
+2026-10-19에 8모델의 동일 조건 원본 평가까지 모두 완료했다. 원본/SFT 각각 4,000개, 총 8,000개의 Dolly 응답을 확보했다. 같은 500개 ID·생성 seed 10·prompt·EOS·모델별 정밀도로 비교했고 각 응답의 ROUGE·정규화 exact match·길이와 hash를 재검산했다. 원본 adapter는 비활성화했고 학습된 adapter를 읽지 않았다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다.
 
-GPT-2 XL의 원본 평가도 동일 500문항·seed 10·BF16에서 완료했다. ROUGE-L은 원본 7.50 → SFT 20.13으로 +12.63점이었다. GPT-2 계열 내 XL−base 차이는 원본 +1.34점에서 SFT 후 +5.45점으로 변했다. 이 조건에서는 두 모델 모두 Dolly 적응 후 reference 겹침이 증가했고 XL의 변화량이 더 컸다. 단일 생성 seed의 관측이며 학습 seed 간 안정성·통계적 유의성·증류의 개선을 의미하지 않는다. 원본 응답 500개의 ID·hash·명세·문항별 ROUGE/정규화 exact match·생성 길이와 상한 도달률의 생성 당시 집계 근거를 검증했다. 남은 6개 원본 평가는 계속 진행한다.
+| 모델 | 정밀도 | 원본 ROUGE-L | SFT ROUGE-L | SFT−원본 |
+|---|---|---:|---:|---:|
+| GPT-2 base | BF16 | 6.16 | 14.68 | +8.52 |
+| GPT-2 XL | BF16 | 7.50 | 20.13 | +12.63 |
+| OPT-125M | BF16 | 7.40 | 17.08 | +9.68 |
+| OPT-2.7B | BF16 | 8.66 | 21.52 | +12.86 |
+| OpenLLaMA-3B | BF16 | 9.69 | 21.86 | +12.17 |
+| OpenLLaMA-7B | NF4 | 12.30 | 23.98 | +11.68 |
+| Gemma-2-2B-IT | BF16 | 19.10 | 24.63 | +5.52 |
+| Gemma-2-9B-IT | NF4 | 21.13 | 25.92 | +4.79 |
+
+모든 모델에서 이 조건의 ROUGE-L이 증가했다. GPT-2·OPT의 교사−학생 격차는 SFT 후 커졌고 OpenLLaMA·Gemma는 줄었다. 응답 길이·상한 도달률도 달라졌으므로 reference 겹침 증가를 사실성 개선이나 KD 효과로 해석하지 않는다. 단일 생성 seed의 관측이며 seed 간 안정성·통계적 유의성은 판단하지 않는다. 생성 당시의 상한 도달률 집계는 보존하고 문항별 EOS 정보가 없는 값은 새로 추정하지 않는다. 전체 지표·문항별 차이와 입력 근거는 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR·BERTScore·Distinct-4, 후보 외부 평가·보조 진단·실제 증류 경로 검증은 이어서 수행한다.
 
 ## 8. 단계별 설정과 재현 기록
 
@@ -209,7 +220,7 @@ GPT-2 XL의 원본 평가도 동일 500문항·seed 10·BF16에서 완료했다.
 | SFT | LoRA r64/alpha16/dropout0.05, LR 1e-4/2e-4, 후보별 3epoch, 유효 batch 16, 학습 seed 0 | [SFT 학습 설정](DOLLY_SFT_MODEL_SELECTION.md), QLoRA·MiniLLM 초기화 단계와의 연결 및 차이 |
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
-| 원본/SFT 비교 | 원본 Dolly 7/8 완료·Gemma-9B 평가 중 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
+| 원본/SFT 비교 | 원본 Dolly 8/8 완료·보완 채점 대기 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
 | 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 완료, 실제 응답 채점 대기 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |

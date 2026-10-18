@@ -110,7 +110,7 @@ GPT-2·OPT·OpenLLaMA는 pretrained 모델, Gemma-IT는 post-training을 거친 
 
 분류는 같은 지시 내용과 label 후보의 조건부 sequence log probability로 판정한다. 자유 응답을 임의 파싱한 정답률과 구분한다. Brier score는 두 label 후보 사이에서 정규화한 확률임을 명시한다. 자료 revision·제외 행·파일 해시도 평가 명세에 남긴다.
 
-2026-10-18 추가 결정에 따라 현재 8모델의 SFT·Dolly 평가가 끝나면 원본 checkpoint의 동일 조건 Dolly 기준선과 METEOR·BERTScore·Distinct-4를 추가한다. 후보 원본/SFT의 외부 3종 및 SST-2·BoolQ accuracy·macro-F1·ECE·Brier 비교, 실제 증류 경로 점검을 거쳐 추천 조합을 보고한다. 추가 SFT는 하지 않으며, `SFT − 원본`과 이후 본 실험의 `KD 학생 − 동일 SFT 학생`을 구분한다. 전용 채점 코드·고정 자산·CPU 통합 점검은 준비됐으며 실제 보완 점수는 아직 없다. [후속 평가 명세](GENERATION_EVALUATION.md)의 설정 근거와 완료 조건을 따른다.
+2026-10-18 추가 결정에 따라 현재 8모델의 SFT·Dolly 평가가 끝나면 원본 checkpoint의 동일 조건 Dolly 기준선과 METEOR·BERTScore·Distinct-4를 추가한다. 후보 원본/SFT의 외부 3종 및 SST-2·BoolQ accuracy·macro-F1·ECE·Brier 비교, 실제 증류 경로 점검을 거쳐 추천 조합을 보고한다. 추가 SFT는 하지 않으며, `SFT − 원본`과 이후 본 실험의 `KD 학생 − 동일 SFT 학생`을 구분한다. 원본 8모델의 동일 Dolly 생성 기준선도 완료했다. 전용 채점 코드·고정 자산·CPU 통합 점검은 준비됐으며 실제 보완 점수는 아직 없다. [후속 평가 명세](GENERATION_EVALUATION.md)의 설정 근거와 완료 조건을 따른다.
 
 생성은 temperature=1, top-k=0, top-p=1, no-repeat-ngram=6과 생성 seed를 [MiniLLM 평가 코드](https://github.com/microsoft/LMOps/tree/48fca1acc61ffa20ebb7c31c74a1d8e33499b476/minillm)·부록 B.2에서 가져온다. **최대 새 토큰 256과 microbatch 1은 로컬 변경값**이다. 256은 전체 길이 상한 512에서 공통 최대 prompt 256을 뺀 보수적 응답 예산이다. 원본은 512에서 실제 padded prompt 길이를 빼므로 짧은 prompt에 더 긴 응답을 허용한다. 이번 고정 상한은 긴 응답의 점수를 낮출 수 있어 상한 도달률도 함께 보고한다. Batch 변경 때문에 seed가 같아도 원문과 생성 문장의 완전 일치를 요구하지 않는다.
 

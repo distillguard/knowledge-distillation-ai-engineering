@@ -12,7 +12,7 @@
 
 현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 예비 생성 평가는 Dolly 500문항으로 수행하고 외부 3종은 후보 축소 후 적용한다. 2026-10-19에 4계열·8모델의 독립적인 예비 LoRA SFT와 Dolly 생성 평가를 완료했다. 원본/SFT 비교와 후보 검증으로 이어가며 KD 학습은 미실행이다.
 
-검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. 2026-10-18 사용자 결정에 따라 원본/SFT 전후 기준선, METEOR·BERTScore·Distinct-4, 후보의 ECE·기존 분류 지표를 추가 실행한다. 추가 지표의 코드·고정 자산·CPU 점검은 완료했고 실제 보완 채점은 대기 중이다. 원본의 Dolly 생성 기준선을 순차 평가하며 완료한 모델부터 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)에 반영한다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
+검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. 2026-10-18 사용자 결정에 따라 원본/SFT 전후 기준선, METEOR·BERTScore·Distinct-4, 후보의 ECE·기존 분류 지표를 추가 실행한다. 추가 지표의 코드·고정 자산·CPU 점검은 완료했고 실제 보완 채점은 대기 중이다. 원본 8모델의 Dolly 생성 기준선을 완료했고 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)에 반영한다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
 
 ## 1. 목적과 원칙
 
