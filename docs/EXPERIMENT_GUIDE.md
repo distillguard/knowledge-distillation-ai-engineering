@@ -242,3 +242,5 @@ for name in ('gemma2_2b_it', 'gemma2_9b_it'):
 | 토큰·인증 파일 | 로컬 인증 | 제외. 명령 인자나 문서에 토큰 입력 금지 |
 
 모델별 SFT·평가 완료 후 관련 MD와 검증된 결과만 commit/push한다. `git add .` 대신 대상 파일을 지정하며 진행 중 LR JSON·예시 점수·미완료 실행을 완료 성능으로 올리지 않는다.
+
+문항별 CSV의 SHA-256은 줄바꿈을 포함한 실제 파일 바이트를 대상으로 한다. `.gitattributes`는 결과 CSV의 Git 줄바꿈 변환을 끄므로 Windows·Linux에서 같은 byte와 hash를 유지한다. 2026-10-19에 기존 Git blob의 자동 변환을 발견해 평가 당시 CSV 바이트로 바로잡았으며 수치·문항·기록된 SHA는 바꾸지 않았다. `python -B -X utf8 -m unittest discover -s tests -p test_published_artifacts.py`는 공개 결과 JSON의 CSV hash를 Git index와 현재 checkout 모두에서 검증한다.

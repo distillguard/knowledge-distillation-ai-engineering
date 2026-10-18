@@ -209,7 +209,7 @@ GPT-2 XL의 원본 평가도 동일 500문항·seed 10·BF16에서 완료했다.
 | SFT | LoRA r64/alpha16/dropout0.05, LR 1e-4/2e-4, 후보별 3epoch, 유효 batch 16, 학습 seed 0 | [SFT 학습 설정](DOLLY_SFT_MODEL_SELECTION.md), QLoRA·MiniLLM 초기화 단계와의 연결 및 차이 |
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
-| 원본/SFT 비교 | 원본 Dolly 4/8 완료·나머지 순차 평가 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
+| 원본/SFT 비교 | 원본 Dolly 5/8 완료·나머지 순차 평가 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
 | 보완 지표 | METEOR·BERTScore·Distinct-4의 코드·고정 자산·CPU 점검 완료, 실제 응답 채점 대기 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |

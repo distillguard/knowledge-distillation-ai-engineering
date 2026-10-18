@@ -1,3 +1,5 @@
 # Experiment protocols fingerprint the exact source bytes.
 scripts/*.py text eol=lf
 tests/*.py text eol=lf
+# Published CSV hashes cover exact bytes, including csv.writer's CRLF terminators.
+results/**/*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
