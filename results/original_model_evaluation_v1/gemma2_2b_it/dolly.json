@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "fingerprint": "ad42dd80169bbb2254a6c621297218320ee561954dd6a705e06708d3c2e2501c",
+  "n": 500,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 28.040501662198608,
+    "rouge2": 9.868629188059364,
+    "rougeL": 19.10217754106824,
+    "exact_match": 0,
+    "generated_tokens": 183.104,
+    "empty": 0,
+    "length_capped": 0.504
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/original_model_evaluation_v1/gemma2_2b_it/dolly_per_item.csv",
+  "per_item_csv_sha256": "34ad9906903228b521bc12b5343b21342ea7bb53515c1b98d3a547d7f0dbe640",
+  "phase": "before_our_dolly_sft",
+  "raw_responses": "tmp/original_model_evaluation_v1/gemma2_2b_it/evaluation/gemma2_2b_it_seed10_responses.json",
+  "raw_responses_sha256": "f305f608c8df405576e8a03eb0a1cbbfe2790cc1567cf902d4039d9eddb712b5"
+}

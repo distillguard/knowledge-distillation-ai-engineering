@@ -56,6 +56,15 @@
       "training_protocol_fingerprint": "52f6b4e28c285866ef253d92ad59c21a290546f206970e6d6392cf08d9b922aa"
     },
     {
+      "phase": "original",
+      "model": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "generation_fingerprint": "ad42dd80169bbb2254a6c621297218320ee561954dd6a705e06708d3c2e2501c",
+      "raw_responses_sha256": "f305f608c8df405576e8a03eb0a1cbbfe2790cc1567cf902d4039d9eddb712b5",
+      "primary_csv_sha256": "34ad9906903228b521bc12b5343b21342ea7bb53515c1b98d3a547d7f0dbe640",
+      "training_protocol_fingerprint": "cb8258f52817252b010bea24d330edb6ab4c9b14e32b067faf3858be846ef2f8"
+    },
+    {
       "phase": "sft",
       "model": "gpt2_base",
       "benchmark": "dolly",
@@ -242,6 +251,16 @@
       "higher": 344,
       "tie": 17,
       "lower": 139
+    },
+    {
+      "model": "gemma2_2b_it",
+      "benchmark": "dolly",
+      "metric": "rougeL",
+      "n": 500,
+      "difference": 5.5246019694989315,
+      "higher": 275,
+      "tie": 8,
+      "lower": 217
     }
   ],
   "teacher_minus_student": [
