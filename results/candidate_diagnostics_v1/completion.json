@@ -8,6 +8,11 @@
   "completed": [
     {
       "model": "gpt2_base",
+      "phase": "original",
+      "fingerprint": "fc854f839c509b1d15bf67bfab0271073858b4128d421f07bb5599632c513281"
+    },
+    {
+      "model": "gpt2_base",
       "phase": "sft",
       "fingerprint": "ef4ec3f777edf0af67e16aa83bca09168e24e0e6b6d0679a931051fecfd57660"
     },

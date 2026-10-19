@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "fingerprint": "cdb2331c49e4985885b8a8e757882e1a7f95d6bfac5079058685a989850ed336",
+  "n": 242,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 7.949905358824894,
+    "rouge2": 0.45500607516122615,
+    "rougeL": 4.963364329336802,
+    "exact_match": 0,
+    "generated_tokens": 214.1611570247934,
+    "empty": 0,
+    "length_capped": 0.6818181818181818
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/original_model_evaluation_v1/gpt2_base/self_inst_per_item.csv",
+  "per_item_csv_sha256": "69503fa0bd97facd36aa5b844c33586062c56fc4304b07eff24bfeb9aef9682d",
+  "phase": "before_our_dolly_sft",
+  "raw_responses": "tmp/original_model_evaluation_v1/evaluation/gpt2_base/self_inst_seed10.json",
+  "raw_responses_sha256": "746d2dfece16743d2d73cbbed7694b2f9342fca3e8ccda415076356391a9df18"
+}

@@ -31,6 +31,9 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 
 | 모델 | 단계 | 자료 | n | ROUGE-L | METEOR | BERTScore F1 | Distinct-4 |
 |---|---|---|---:|---:|---:|---:|---:|
+| GPT-2 base | original | self_inst | 242 | 4.96 | — | — | — |
+| GPT-2 base | original | sni_11 | 1694 | 4.53 | — | — | — |
+| GPT-2 base | original | vicuna | 80 | 10.58 | — | — | — |
 | GPT-2 base | sft | self_inst | 242 | 7.60 | 7.72 | 80.24 | 0.9963 |
 | GPT-2 base | sft | sni_11 | 1694 | 12.00 | 12.97 | 81.97 | 0.9815 |
 | GPT-2 base | sft | vicuna | 80 | 11.56 | 11.20 | 81.07 | 0.9981 |
@@ -54,6 +57,9 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | GPT-2 base | sft−original | dolly | ROUGE-L | +8.52 | 374 / 31 / 95 |
 | GPT-2 base | sft−original | dolly | METEOR | +6.01 | 288 / 20 / 192 |
 | GPT-2 base | sft−original | dolly | BERTScore F1 | +4.33 | 474 / 0 / 26 |
+| GPT-2 base | sft−original | self_inst | ROUGE-L | +2.63 | 121 / 31 / 90 |
+| GPT-2 base | sft−original | sni_11 | ROUGE-L | +7.47 | 1231 / 31 / 432 |
+| GPT-2 base | sft−original | vicuna | ROUGE-L | +0.98 | 48 / 0 / 32 |
 | GPT-2 XL | sft−original | dolly | ROUGE-L | +12.63 | 389 / 23 / 88 |
 | GPT-2 XL | sft−original | dolly | METEOR | +10.36 | 336 / 19 / 145 |
 | GPT-2 XL | sft−original | dolly | BERTScore F1 | +5.15 | 468 / 0 / 32 |

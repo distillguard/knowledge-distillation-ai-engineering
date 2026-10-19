@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "fingerprint": "cdb2331c49e4985885b8a8e757882e1a7f95d6bfac5079058685a989850ed336",
+  "n": 80,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 20.0847759695466,
+    "rouge2": 1.3859642169238913,
+    "rougeL": 10.5774811688477,
+    "exact_match": 0,
+    "generated_tokens": 227.05,
+    "empty": 0,
+    "length_capped": 0.75
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/original_model_evaluation_v1/gpt2_base/vicuna_per_item.csv",
+  "per_item_csv_sha256": "08de7a26bb1d11541a924326d3d44cdc154671ed9fdf0f367eac64283c3cec2f",
+  "phase": "before_our_dolly_sft",
+  "raw_responses": "tmp/original_model_evaluation_v1/evaluation/gpt2_base/vicuna_seed10.json",
+  "raw_responses_sha256": "e242d3f77bc1f7fc6d6e9603f61d0cd13266334ca0f8a3c51224b91e18da70c4"
+}

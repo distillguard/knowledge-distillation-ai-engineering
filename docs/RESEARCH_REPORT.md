@@ -214,6 +214,8 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 
 원본/SFT 16조건의 METEOR·raw BERTScore P/R/F1·corpus Distinct-4도 완료했다. ROUGE-L과 BERTScore F1은 8모델 모두 상승했지만 Gemma-2B의 METEOR는 24.70 → 23.61, Gemma-9B는 26.67 → 25.62로 하락했다. 지표 간 차이를 숨기거나 NLL 감소로 모든 생성 지표가 개선됐다고 결론내리지 않는다. Distinct-4는 응답 길이·전체 4-gram 수의 영향도 받으므로 성능 순위로 쓰지 않는다. BERTScore reference는 공통 11/500건에서 native 512 제한을 적용받았고 응답은 모두 제한 이내였다. 전체 reference는 ROUGE·METEOR에서 유지했다. 선택한 세 생성 지표의 관측 격차를 근거로 GPT-2·OPT를 후속 후보로 두며, [결정 기록](../results/model_selection_v1/shortlist.json)의 사후 선별 범위와 한계를 따른다. 아직 최종 조합이나 KD 효과를 확정하지 않았다.
 
+GPT-2 base의 원본/SFT 보조 비교에서는 SST-2 accuracy가 48.74 → 65.94%, balanced accuracy가 49.04 → 65.53%로 상승했다. BoolQ accuracy도 37.78 → 50.35%로 상승했지만 balanced accuracy는 49.62 → 49.97%이며 다수 클래스 기준 62.16%에도 미치지 못한다. label 예측 분포의 이동으로 accuracy가 달라질 수 있으므로 이를 곧바로 QA 능력의 개선으로 해석하지 않는다. [분류·calibration 진단](../results/candidate_diagnostics_v1/REPORT.md)의 클래스별 recall·예측 비율·ECE와 생성 평가를 함께 확인한다.
+
 ## 8. 단계별 설정과 재현 기록
 
 | 항목 | 현재 상태 | 근거 |
