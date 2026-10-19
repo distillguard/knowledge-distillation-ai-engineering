@@ -52,6 +52,36 @@
       "student_higher": 160
     },
     {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "benchmark": "self_inst",
+      "n": 242,
+      "mean_rougeL_difference": 5.258443361581469,
+      "teacher_higher": 145,
+      "tie": 37,
+      "student_higher": 60
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "benchmark": "sni_11",
+      "n": 1694,
+      "mean_rougeL_difference": 5.360915585895996,
+      "teacher_higher": 1053,
+      "tie": 41,
+      "student_higher": 600
+    },
+    {
+      "teacher": "opt_27b",
+      "student": "opt_125m",
+      "benchmark": "vicuna",
+      "n": 80,
+      "mean_rougeL_difference": 3.17138612236722,
+      "teacher_higher": 57,
+      "tie": 1,
+      "student_higher": 22
+    },
+    {
       "teacher": "openllama_7b",
       "student": "openllama_3b",
       "benchmark": "dolly",

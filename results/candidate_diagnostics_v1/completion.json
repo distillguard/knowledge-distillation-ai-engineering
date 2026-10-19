@@ -20,6 +20,11 @@
       "model": "opt_125m",
       "phase": "sft",
       "fingerprint": "cd65c258f3fdd14b279564aa49187ee616326c5ac08f21c2a8f6ddfa5c15b1e6"
+    },
+    {
+      "model": "opt_27b",
+      "phase": "sft",
+      "fingerprint": "27f77b4874aff6b84f9fda387571507ff259b281d5dc7c3a30b02428c7f3d1de"
     }
   ],
   "classifier_source_manifest": {

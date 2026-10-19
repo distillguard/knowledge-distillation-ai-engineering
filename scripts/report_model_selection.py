@@ -65,6 +65,12 @@ def values(run):
     return result
 
 
+def external_grid(runs, ordered, metric):
+    return np.array([[values(runs[phase, name, key]).get(metric, np.nan)
+                      if (phase, name, key) in runs else np.nan
+                      for key in scoring.BENCHMARKS[1:]] for phase, name in ordered], dtype=float)
+
+
 def main():
     data = scoring.prepared_data()
     names = scoring.read(ROOT / "results/generation_benchmarks_v1/completion.json")["study_models"]
@@ -118,6 +124,39 @@ def main():
             distinct = scores_for_run.get("distinct4")
             lines.append(f'| {LABELS[name]} | {phase} | {" | ".join(cells)} | {distinct:.4f} |' if distinct is not None
                          else f'| {LABELS[name]} | {phase} | {" | ".join(cells)} | — |')
+    external_names = [name for name in names if any((phase, name, key) in runs
+                      for phase in ("original", "sft") for key in scoring.BENCHMARKS[1:])]
+    if external_names:
+        lines += ["", "## 후보의 외부 생성 평가", "",
+                  "완료된 조건만 표에 수록한다. 대시와 그림의 pending은 생성 또는 해당 보완 채점이 미완료라는 뜻이다. 전체 reference의 ROUGE·METEOR와 BERTScore의 길이 제한을 구분하며 benchmark 간 단순 평균으로 순위를 만들지 않는다.", "",
+                  "| 모델 | 단계 | 자료 | n | ROUGE-L | METEOR | BERTScore F1 | Distinct-4 |",
+                  "|---|---|---|---:|---:|---:|---:|---:|"]
+        for name in external_names:
+            for phase in ("original", "sft"):
+                for key in scoring.BENCHMARKS[1:]:
+                    run = runs.get((phase, name, key))
+                    if run is None:
+                        continue
+                    observed = values(run)
+                    cells = [f"{observed[m]:.2f}" if observed.get(m) is not None else "—" for m in DISPLAY]
+                    distinct = observed.get("distinct4")
+                    tail = f"{distinct:.4f}" if distinct is not None else "—"
+                    lines.append(f'| {LABELS[name]} | {phase} | {key} | {run["primary"]["n"]} | {" | ".join(cells)} | {tail} |')
+        ordered = [(phase, name) for name in external_names for phase in ("original", "sft")]
+        figure, axes = plt.subplots(1, 3, figsize=(16, max(4, .48 * len(ordered) + 1.4)), layout="constrained")
+        for index, (axis, (metric, title)) in enumerate(zip(axes, DISPLAY.items())):
+            grid = external_grid(runs, ordered, metric)
+            plotted = axis.imshow(np.ma.masked_invalid(grid), vmin=0, vmax=100, cmap="Blues", aspect="auto")
+            axis.set(xticks=range(3), xticklabels=scoring.BENCHMARKS[1:], yticks=range(len(ordered)),
+                     yticklabels=[LABELS[name] + " / " + phase for phase, name in ordered] if index == 0 else [], title=title)
+            for y, x in np.ndindex(grid.shape):
+                value = grid[y, x]
+                axis.text(x, y, f"{value:.2f}" if np.isfinite(value) else "pending", ha="center", va="center",
+                          color="white" if np.isfinite(value) and value > 60 else "black", fontsize=9)
+        figure.colorbar(plotted, ax=axes, label="Metric × 100")
+        figure.suptitle("Candidate external generation · original / SFT · seed 10 · no cross-benchmark averaging")
+        figure.savefig(OUT / "external_comparison.png", dpi=180); plt.close(figure)
+        lines += ["", "![후보 외부 생성 평가](external_comparison.png)", ""]
     for title, records in (("SFT − 원본", changes), ("교사 − 학생", gaps)):
         lines += ["", f"## {title}", "", "| 모델·조합 | 단계 | 자료 | 지표 | 평균 차이 | 증가 / 동률 / 감소 문항 |",
                   "|---|---|---|---|---:|---|"]

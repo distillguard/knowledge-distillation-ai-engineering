@@ -1,6 +1,6 @@
 # 생성 벤치마크의 교사·학생 선정
 
-기준일: 2026-10-18. 생성 성능의 차이를 모델 선정의 주 근거로 삼는다. SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류는 편향과 확률 품질의 보조 진단이다. ECE도 후보의 후속 평가에 추가하되, 기존 Brier를 ECE로 바꾸어 표시하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않고 과제별 차이와 동일 문항의 오류를 확인한다.
+기준일: 2026-10-19. 생성 성능의 차이를 모델 선정의 주 근거로 삼는다. SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류는 편향과 확률 품질의 보조 진단이다. ECE도 후보의 후속 평가에 추가하되, 기존 Brier를 ECE로 바꾸어 표시하지 않는다. 교사의 자격에 임의의 최소 점수 차이를 두지 않고 과제별 차이와 동일 문항의 오류를 확인한다.
 
 2026-10-16 최신 범위 결정: **Qwen 제외 8모델의 예비 평가는 Dolly 500문항부터 수행하고 외부 세 benchmark는 후보 축소 후 적용**한다. 이미 완료한 외부 평가 결과는 보존한다. 학습은 Dolly만 유지한다. 외부까지 적용한 모델당 2,516개는 학습 표본 수가 아니라 네 자료의 평가 문항 합계다.
 
@@ -12,7 +12,7 @@
 
 [MiniLLM §2.3](https://arxiv.org/html/2306.08543v4)은 학생 초기화에 최저 검증 손실을 사용하지만 §3.1의 생성 관련 설정 탐색에는 검증 ROUGE-L을 사용하고, 최종 응답은 ROUGE-L·GPT-4 feedback·사람 평가로 확인한다. 현재의 로컬 NLL 선택을 원문의 전체 생성 평가와 동일하게 표시하지 않는다.
 
-2026-10-19에 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 원본/SFT 각 8모델의 저장된 Dolly 응답 8,000개에 적용했다. [완료 요약](../results/supplementary_metrics_v1/completion.json)과 [전후 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR 8,000개는 전체 reference로 다시 계산해 확인했다. BERTScore native 512 제한의 reference 영향 문항은 공통 11/500건(2.2%)이며 응답 영향은 0건이다. ROUGE·METEOR에는 전체 reference를 사용한다. 이 지표는 어휘·의미 유사성·표현 다양성을 보완하며 사실성을 직접 판정하지 않는다. 후보 분류의 ECE는 후속 진단이다.
+2026-10-19에 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 원본/SFT 각 8모델의 저장된 Dolly 응답 8,000개에 적용했다. [완료 요약](../results/supplementary_metrics_v1/completion.json)과 [전후 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR 8,000개는 전체 reference로 다시 계산해 확인했다. BERTScore native 512 제한의 reference 영향 문항은 공통 11/500건(2.2%)이며 응답 영향은 0건이다. ROUGE·METEOR에는 전체 reference를 사용한다. 이 지표는 어휘·의미 유사성·표현 다양성을 보완하며 사실성을 직접 판정하지 않는다. GPT-2·OPT 후보 SFT 4모델의 조건부 label ECE15는 [분류 진단](../results/candidate_diagnostics_v1/REPORT.md)에 반영했다. 전체 어휘 entropy의 calibration이나 논문의 ECE 전체 재현을 뜻하지 않는다.
 
 **SFT 전후 기준선도 평가한다.** 2026-10-19에 활성 8개 모델의 원본 checkpoint를 같은 Dolly 500문항·seed 10·prompt·EOS·생성 설정·모델별 정밀도로 모두 평가했다. 원본과 SFT 각각 8모델의 [비교표](../results/model_selection_v1/REPORT.md)에 `SFT 전 / SFT 후 / 변화량`을 반영한다. 개발 NLL과 자유 생성 성능은 구분한다. 새로 필요한 것은 원본 모델의 추론이며 SFT를 다시 하지 않는다. Gemma-IT의 원본은 기존 instruction tuning 이후이자 우리 Dolly SFT 이전이다. 저자 공개 SFT checkpoint를 이 원본 기준선으로 대체하지 않는다.
 
@@ -135,3 +135,7 @@ python -u -B -X utf8 scripts/run_supplementary_metrics.py score --model all --ph
 [생성 주 평가 보고서](../results/generation_benchmarks_v1/REPORT.md)에 표·그림과 동일 문항 차이를 모은다. `protocol.json`은 최초 10모델의 자료 revision·원문/준비 파일 hash·길이 감사·제외 ID를 보존한다. 활성 실행 범위는 `dolly_scope.py`와 `completion.json`에 기록한다. 모델별 `<benchmark>.json`의 완료 상태·평가 fingerprint·문항 수와 `<benchmark>_per_item.csv`의 hash·ID를 검증한다. 현재 예비 완료는 Dolly 기준이며 외부까지 네 자료를 마친 결과는 별도 구분한다.
 
 Git에는 검증한 점수·ID·category·집계·그림과 문서만 올린다. 원문·응답·RNG checkpoint·가중치·캐시·로그는 `tmp/`에 둔다. 기존 `results/dolly_sft_v1/`는 원래 Dolly·분류 평가의 이력을 유지한다. 추가 생성 주 평가가 끝나기 전에 그 이력의 완료를 전체 모델 선정 완료로 해석하지 않는다.
+
+## 후보 SFT 외부 채점 완료 (2026-10-19)
+
+GPT-2 base/XL·OPT-125M/2.7B의 외부 3종 12조건·8,064개 응답에 동일한 보완 채점기를 적용했다. 전체 reference의 METEOR를 다시 계산하고 source·adapter·CSV·명세 지문을 확인했다. BERTScore의 reference 제한 영향은 각 모델에서 Self-Instruct 2/242·SNI 0/1,694·Vicuna 3/80문항이며 응답 제한 영향은 0건이다. ROUGE·METEOR는 reference를 자르지 않았다. 현재 원본 후보의 외부 생성·분류를 진행하며 원본 외부 보완 채점과 실제 공동 증류 점검은 남아 있다. [외부 비교표와 그림](../results/model_selection_v1/REPORT.md)을 따른다.

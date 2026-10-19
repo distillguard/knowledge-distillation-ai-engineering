@@ -249,7 +249,9 @@ for name in ('gemma2_2b_it', 'gemma2_9b_it'):
 
 SFT 후보는 `python -u -B -X utf8 scripts/evaluate_sft_candidates.py --model gpt2_base gpt2_xl opt_125m opt_27b --classification`으로 외부 생성과 보조 분류를 순차 실행한다. 완료한 동일 fingerprint 결과는 재사용한다. `--classification`을 생략하면 생성만 수행한다. 원본은 기존 실행기의 `--model <모델명> --benchmark dolly self_inst sni_11 vicuna --classification`을 후보별로 사용한다. 두 실행기 모두 같은 `worker.lock`을 사용하며 저수준 평가를 동시에 시작하지 않는다. SFT 조건·checkpoint·기존 결과 경로는 바꾸지 않는다.
 
-분류 진단의 `python -B -X utf8 scripts/report_candidate_diagnostics.py`는 고정 source row·label·parquet와 예측 파일 hash를 확인하고 Acc·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·Brier·ECE15를 재계산한다. 완료 결과만 `results/candidate_diagnostics_v1/`에 반영한다. 두 조건부 label 확률의 ECE와 전체 어휘 entropy confidence를 구분한다. 현재 기존 GPT-2 SFT 예측으로 계산한 진단이 있으며 후보 원본과 OPT의 완료 범위는 해당 보고서를 따른다.
+분류 진단의 `python -B -X utf8 scripts/report_candidate_diagnostics.py`는 고정 source row·label·parquet와 예측 파일 hash를 확인하고 Acc·macro-F1·balanced accuracy·weighted-F1·MCC·클래스별 recall·Brier·ECE15를 재계산한다. 완료 결과만 `results/candidate_diagnostics_v1/`에 반영한다. 두 조건부 label 확률의 ECE와 전체 어휘 entropy confidence를 구분한다. 현재 GPT-2·OPT SFT 4모델의 진단을 완료했고 원본의 완료 범위는 해당 보고서를 따른다.
+
+후보 SFT 외부 보완 채점은 네 모델에 각각 `python -u -B -X utf8 scripts/run_supplementary_metrics.py score --model <모델명> --phase sft --benchmark self_inst sni_11 vicuna`를 순차 실행해 완료했다. 원본 생성 후에는 `--phase original`로 같은 채점기를 사용한다. 동일한 고정 자산·batch 64·FP32·전체 reference를 유지하며 추가 SFT나 응답 재생성은 하지 않는다. 원본/SFT 외부 비교표와 `external_comparison.png`는 `scripts/report_model_selection.py`에서 갱신한다.
 
 ## 증류 실행 점검의 준비와 범위
 

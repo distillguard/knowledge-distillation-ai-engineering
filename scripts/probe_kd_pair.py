@@ -179,6 +179,7 @@ def run(pair):
                    "pooling": "response positions; streaming full-vocabulary sums; engineering scope",
                    "source": "https://arxiv.org/html/2609.36734v1#S8.SS2"},
             "microbatch": 1, "compute": "BF16 autocast; FP32 KL and trainable adapters", "tf32": False,
+            "memory_budget_basis": "peak CUDA reserved bytes must fit CUDA free bytes before loading; no CPU offload; two engineering cases only",
             "optimizer": protocols[student_name]["optimizer"], "learning_rate": selected[student_name]["learning_rate"],
             "warmup_steps": 0, "optimizer_updates": 2, "formal_kd_experiment": False, "checkpoint_saved": False,
             "limitations": "two engineering cases only; no full-data nondegeneracy claim, rejection quantiles, Revival filtering or long-run convergence test"}
@@ -243,7 +244,7 @@ def run(pair):
         raise
     finally:
         result.update(peak_allocated_bytes=torch.cuda.max_memory_allocated(), peak_reserved_bytes=torch.cuda.max_memory_reserved(),
-                      seconds=perf_counter() - started, fits_measured_dedicated_budget=torch.cuda.max_memory_allocated() <= available)
+                      seconds=perf_counter() - started, fits_measured_dedicated_budget=torch.cuda.max_memory_reserved() <= available)
         result["source_adapters_unchanged"] = all(sha(path) == hashes[name] for name, path in adapters.items())
         if not result["source_adapters_unchanged"]:
             result["status"] = "failed_source_adapter_changed"

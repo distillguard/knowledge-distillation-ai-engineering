@@ -1,0 +1,52 @@
+{
+  "training_protocol_fingerprint": "27d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da677",
+  "evaluation_script_sha256": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d16",
+  "classification": {
+    "sst2": {
+      "repo": "stanfordnlp/sst2",
+      "revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+      "sha256": "fb00fe008f6828f86ba2beda8415a4cf5da0c884f21c5f238c87131b5aa19529",
+      "included_rows": 872,
+      "excluded_source_rows": [],
+      "context_limit_basis": "fixed original four-tokenizer audit: SST-2 872 and BoolQ 3269; added models keep the same rows and full input within their native context",
+      "decision": "conditional label-sequence log probability; not generation answer parsing"
+    },
+    "boolq": {
+      "repo": "super_glue",
+      "revision": "3de24cf8022e94f4ee4b9d55a6f539891524d646",
+      "sha256": "f46438b8cce048184552a2bfcdb8252eadb3a2602f0c22334caccd9b6ea547d6",
+      "included_rows": 3269,
+      "excluded_source_rows": [
+        3154
+      ],
+      "context_limit_basis": "fixed original four-tokenizer audit: SST-2 872 and BoolQ 3269; added models keep the same rows and full input within their native context",
+      "decision": "conditional label-sequence log probability; not generation answer parsing"
+    }
+  },
+  "generation": {
+    "seeds": [
+      10
+    ],
+    "max_new_tokens": 256,
+    "phase": "model_selection",
+    "seed_basis": "User decision: one common seed, 10 (first MiniLLM seed); five seeds reserved for the selected-model main experiment",
+    "eos_token_ids": [
+      2
+    ],
+    "temperature": 1,
+    "top_k": 0,
+    "top_p": 1,
+    "no_repeat_ngram_size": 6,
+    "microbatch": 1,
+    "basis": "MiniLLM sampling settings and seeds; local changes: microbatch 1 and fixed new-token cap 256, originally 512 minus the first four tokenizers' common prompt cap 256. Added tokenizers keep complete identical text, so their prompts may exceed 256. This is not the original variable 512-minus-padded-prompt response budget",
+    "evaluation_is_independent_final_test": false
+  },
+  "selected_adapter": {
+    "status": "selected",
+    "protocol_fingerprint": "27d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da677",
+    "learning_rate": 0.0001,
+    "adapter": "tmp/dolly_sft_additional_v1/opt_27b/runs/opt_27b_lr1e-04/best_adapter",
+    "development_nll": 1.6361541748046875
+  },
+  "fingerprint": "13ab9c3c8ccb9e1f1823ce9ab5a110e80194cdd44145a9080230c7df80b65d1627d9b606f954a0e22e557225a493bf12bbaa65e69c33e946497ae3d26a9da67719986a3ada76000976b28ac775d9b2b1ba6bd1cac15f5fe6131c9c15cd22082a"
+}

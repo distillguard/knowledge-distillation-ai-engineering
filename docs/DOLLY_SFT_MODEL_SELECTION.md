@@ -4,7 +4,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **3/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **4/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -150,3 +150,5 @@ python -B scripts/run_dolly_sft.py
 시각화할 교사·학생 차이를 확보하기 위해 GPT-2와 OPT를 후속 후보로 둔다. 이 두 조합의 관측 격차는 위 세 지표 모두에서 OpenLLaMA·Gemma보다 크지만, 서로는 지표별 절충이 있다. 두 조합 모두 교사·학생 BF16으로 정밀도 변화의 혼입도 줄인다. 임의 가중합이나 최소 격차는 쓰지 않으며 [후보 결정 기록](../results/model_selection_v1/shortlist.json)에 전체 관측과 근거를 남겼다.
 
 이는 결과를 본 뒤 수행한 예비 후보 축소이며 논문의 사전 등록된 선정 알고리즘이나 KD 성공의 보장이 아니다. 절대 SFT 점수는 Gemma-9B가 가장 높고 그 결과도 그대로 보존한다. 한 생성 seed의 관측 차이를 통계적 우월성으로 표시하지 않는다. GPT-2·OPT 원본/SFT에 외부 3종과 분류 보조 진단을 적용하고 정성 오류 검토·실제 증류 경로 점검을 거쳐 한 조합을 추천한다.
+
+**후속 실행 상태 (2026-10-19):** GPT-2·OPT SFT 4모델의 외부 3종 생성·METEOR·BERTScore·Distinct-4와 SST-2·BoolQ·ECE15 진단을 완료했다. 현재 네 원본 checkpoint의 동일 평가를 진행한다. [외부 비교표](../results/model_selection_v1/REPORT.md)·[분류 진단](../results/candidate_diagnostics_v1/REPORT.md)·[근거와 오류 사례](QUALITATIVE_REVIEW.md)를 함께 검토한다. 최종 조합은 실제 공동 GPU 점검까지 확인한 뒤 정하며 추가 SFT나 본 KD는 시작하지 않았다.

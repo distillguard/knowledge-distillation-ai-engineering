@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "cfbcd2d427fa1efc3534cfdc5e194ee9d68a06545fcc5b9dba870f0999910abf",
+  "model": "opt_27b",
+  "phase": "sft",
+  "benchmark": "vicuna",
+  "n": 80,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 14.372165979668212,
+    "bertscore_precision": 83.77347931265831,
+    "bertscore_recall": 82.30072997510433,
+    "bertscore_f1": 82.99664571881294
+  },
+  "diversity": {
+    "unique_4grams": 10108,
+    "total_4grams": 10161,
+    "distinct4": 0.9947839779549257
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 80,
+    "truncated_reference_count": 3,
+    "items_with_truncated_reference": 3,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 724,
+    "max_response_full_tokens": 258
+  },
+  "primary_metrics": {
+    "rouge1": 26.961257711287857,
+    "rouge2": 5.099224410883208,
+    "rougeL": 14.239249074212571,
+    "exact_match": 0,
+    "generated_tokens": 148.4875,
+    "empty": 0,
+    "length_capped": 0.1625
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/sft/opt_27b/vicuna/per_item.csv",
+  "per_item_csv_sha256": "79730dcd5ca5c15e5ac7e38af6db586b67b9f8711558bd72a3742914cba47880"
+}

@@ -2,7 +2,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **3/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **4/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -10,7 +10,7 @@
 
 **SFT 절차 검토:** 완료한 예비 v1은 두 LR·3 epoch·개발 NLL 선택의 비교다. MiniLLM의 SFT 기준 모델 탐색과 증류 전 학생 초기화를 분리하는 원문 절차를 검토 중이며, 선정 조합의 새 실행 protocol은 아직 확정하지 않았다. [원문 설정·600 model-epoch 산출·적용 한계](DOLLY_SFT_MODEL_SELECTION.md#minillm-원문-절차와-적용-범위-검토)를 확인하고 기존 결과와 구분한다.
 
-현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 예비 생성 평가는 Dolly 500문항으로 수행하고 외부 3종은 후보 축소 후 적용한다. 2026-10-19에 4계열·8모델의 독립적인 예비 LoRA SFT와 Dolly 생성 평가를 완료했다. 원본/SFT 비교와 후보 검증으로 이어가며 KD 학습은 미실행이다.
+현재 흐름은 **Dolly SFT → 모델별 체크포인트 선택 → 생성·보조 평가 → 결과와 오류 비교 → 교사·학생 조합 선정 → 증류 방식 비교**다. 학습은 Dolly만 사용하고, 예비 생성 평가는 Dolly 500문항으로 수행하고 외부 3종은 후보 축소 후 적용한다. 2026-10-19에 4계열·8모델의 독립적인 예비 LoRA SFT와 Dolly 생성 평가를 완료했다. 후속 GPT-2·OPT 4모델의 SFT 외부 생성·보완 채점·분류 진단도 완료했다. 현재 후보 원본의 동일 평가를 진행하며 본 KD와 실제 공동 GPU 점검은 미실행이다. [원문 근거와 오류 사례](QUALITATIVE_REVIEW.md)에서 지시 따르기·사실 오류·과잉 추출을 구분한다.
 
 검증 NLL은 각 모델의 학습률·체크포인트 선택 기준이다. ROUGE-L은 논문과 비교하는 1차 생성 지표이며 이것만으로 최종 조합을 확정하지 않는다. 2026-10-18 사용자 결정에 따라 원본/SFT 전후 기준선, METEOR·BERTScore·Distinct-4, 후보의 ECE·기존 분류 지표를 추가 실행한다. Dolly 원본/SFT 16조건·8,000개 응답의 보완 채점과 검증을 완료했다. 원본 8모델의 Dolly 생성 기준선을 완료했고 [원본/SFT 비교표](../results/model_selection_v1/REPORT.md)에 반영한다. 실행 명세는 [Dolly SFT 비교 계획](DOLLY_SFT_MODEL_SELECTION.md), 선정 절차는 [생성 평가 계획](GENERATION_EVALUATION.md)을 따른다.
 
@@ -257,7 +257,7 @@ CaRE 식 (3)의 기준 정의는 c(P)=1−H(P)/log|V|, Δc=c(P)−c(Q), g_hard=1
 | 2. 예비 생성 평가 | 활성 8모델의 Dolly 500문항에 직접 응답 | 같은 ID·생성 seed 10·명세, Dolly 점수와 문항별 기록 |
 | 2.1. 원본 기준선 | 활성 8개 원본의 같은 Dolly 500문항 추론 평가 | 같은 model revision·정밀도·prompt·seed·ID, 원본/SFT/변화량 표. 기존 SFT·응답 재사용 |
 | 3. 보완 지표 | 원본/SFT의 METEOR·BERTScore·Distinct-4 채점 | 원본/SFT 16조건·8,000개 응답의 실제 채점·검증 완료. 길이·다중 정답·집계 고정, 추가 SFT 불필요 |
-| 4. 후보 후속 평가 | 후보 축소 후 원본/SFT의 외부 3종·SST-2·BoolQ | 생성 지표와 accuracy·macro-F1·클래스별 오류·Brier·ECE. 기존 완료 결과 재사용 |
+| 4. 후보 후속 평가 | 후보 축소 후 원본/SFT의 외부 3종·SST-2·BoolQ | GPT-2·OPT SFT 4모델 완료, 원본 진행 중. 생성 지표와 accuracy·macro-F1·클래스별 오류·Brier·ECE. 기존 완료 결과 재사용 |
 | 5. 비교·오류 분석 | 모델×benchmark×지표 표, 계열 내 교사−학생 차이, 실제 응답 오류 확인 | 과제별 우위의 일관성, 지시 준수·사실 오류·반복·누락과 사례 선정 근거 |
 | 6. 증류 실행 점검 | 후보 조합의 같은 어휘 좌표·prefix·학생 갱신과 필요한 생성 경로 확인 | 실제 forward/backward·메모리·step 시간. 적재 성공만으로 판정하지 않음 |
 | 7. 조합 선정 | 성능·오류 특성·연구 목적·실행 가능성의 근거 종합 | 모델 ID·revision·SFT adapter hash·정밀도·선정 자료·이유와 한계의 동결 |

@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "fingerprint": "2e0091cf0eed115b81374010b008c85c91a88764a2c640282009040e9f07aa97",
+  "model": "opt_125m",
+  "phase": "sft",
+  "benchmark": "self_inst",
+  "n": 242,
+  "seed": 10,
+  "sample_sd_across_generation_seeds": null,
+  "metrics": {
+    "meteor": 8.542516761781224,
+    "bertscore_precision": 81.28730447824336,
+    "bertscore_recall": 80.79275341073344,
+    "bertscore_f1": 80.9714253037429
+  },
+  "diversity": {
+    "unique_4grams": 12835,
+    "total_4grams": 13002,
+    "distinct4": 0.9871558221812029
+  },
+  "bert_length_audit": {
+    "native_max_tokens_including_special_tokens": 512,
+    "reference_count": 242,
+    "truncated_reference_count": 2,
+    "items_with_truncated_reference": 2,
+    "items_with_truncated_response": 0,
+    "max_reference_full_tokens": 782,
+    "max_response_full_tokens": 260
+  },
+  "primary_metrics": {
+    "rouge1": 10.281842053927278,
+    "rouge2": 1.872211901596336,
+    "rougeL": 7.727916930773362,
+    "exact_match": 0,
+    "generated_tokens": 71.35123966942149,
+    "empty": 0,
+    "length_capped": 0.06198347107438017
+  },
+  "per_item_csv": "results/supplementary_metrics_v1/sft/opt_125m/self_inst/per_item.csv",
+  "per_item_csv_sha256": "2b23e4302a2ffd894104d20773f72c93c98c8121f9ec78c533e768bfc04a7433"
+}

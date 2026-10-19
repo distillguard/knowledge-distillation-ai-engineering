@@ -25,6 +25,28 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | Gemma-2-9B-IT | original | 21.13 | 26.67 | 84.06 | 0.8781 |
 | Gemma-2-9B-IT | sft | 25.92 | 25.62 | 86.54 | 0.9918 |
 
+## 후보의 외부 생성 평가
+
+완료된 조건만 표에 수록한다. 대시와 그림의 pending은 생성 또는 해당 보완 채점이 미완료라는 뜻이다. 전체 reference의 ROUGE·METEOR와 BERTScore의 길이 제한을 구분하며 benchmark 간 단순 평균으로 순위를 만들지 않는다.
+
+| 모델 | 단계 | 자료 | n | ROUGE-L | METEOR | BERTScore F1 | Distinct-4 |
+|---|---|---|---:|---:|---:|---:|---:|
+| GPT-2 base | sft | self_inst | 242 | 7.60 | 7.72 | 80.24 | 0.9963 |
+| GPT-2 base | sft | sni_11 | 1694 | 12.00 | 12.97 | 81.97 | 0.9815 |
+| GPT-2 base | sft | vicuna | 80 | 11.56 | 11.20 | 81.07 | 0.9981 |
+| GPT-2 XL | sft | self_inst | 242 | 12.89 | 13.15 | 82.30 | 0.9860 |
+| GPT-2 XL | sft | sni_11 | 1694 | 20.95 | 20.70 | 84.01 | 0.9625 |
+| GPT-2 XL | sft | vicuna | 80 | 14.28 | 13.66 | 82.72 | 0.9953 |
+| OPT-125M | sft | self_inst | 242 | 7.73 | 8.54 | 80.97 | 0.9872 |
+| OPT-125M | sft | sni_11 | 1694 | 14.71 | 15.82 | 82.74 | 0.9711 |
+| OPT-125M | sft | vicuna | 80 | 11.07 | 10.10 | 81.62 | 0.9957 |
+| OPT-2.7B | sft | self_inst | 242 | 12.99 | 13.04 | 82.53 | 0.9880 |
+| OPT-2.7B | sft | sni_11 | 1694 | 20.07 | 21.28 | 84.01 | 0.9726 |
+| OPT-2.7B | sft | vicuna | 80 | 14.24 | 14.37 | 83.00 | 0.9948 |
+
+![후보 외부 생성 평가](external_comparison.png)
+
+
 ## SFT − 원본
 
 | 모델·조합 | 단계 | 자료 | 지표 | 평균 차이 | 증가 / 동률 / 감소 문항 |
@@ -65,14 +87,29 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | GPT-2 XL → GPT-2 base | sft | dolly | METEOR | +5.08 | 311 / 24 / 165 |
 | GPT-2 XL → GPT-2 base | sft | dolly | BERTScore F1 | +1.47 | 345 / 2 / 153 |
 | GPT-2 XL → GPT-2 base | sft | self_inst | ROUGE-L | +5.29 | 137 / 31 / 74 |
+| GPT-2 XL → GPT-2 base | sft | self_inst | METEOR | +5.42 | 140 / 31 / 71 |
+| GPT-2 XL → GPT-2 base | sft | self_inst | BERTScore F1 | +2.06 | 178 / 0 / 64 |
 | GPT-2 XL → GPT-2 base | sft | sni_11 | ROUGE-L | +8.95 | 1156 / 47 / 491 |
+| GPT-2 XL → GPT-2 base | sft | sni_11 | METEOR | +7.73 | 1084 / 44 / 566 |
+| GPT-2 XL → GPT-2 base | sft | sni_11 | BERTScore F1 | +2.04 | 1180 / 0 / 514 |
 | GPT-2 XL → GPT-2 base | sft | vicuna | ROUGE-L | +2.72 | 54 / 0 / 26 |
+| GPT-2 XL → GPT-2 base | sft | vicuna | METEOR | +2.46 | 52 / 0 / 28 |
+| GPT-2 XL → GPT-2 base | sft | vicuna | BERTScore F1 | +1.65 | 68 / 0 / 12 |
 | OPT-2.7B → OPT-125M | original | dolly | ROUGE-L | +1.26 | 283 / 34 / 183 |
 | OPT-2.7B → OPT-125M | original | dolly | METEOR | +2.47 | 309 / 20 / 171 |
 | OPT-2.7B → OPT-125M | original | dolly | BERTScore F1 | +1.03 | 347 / 0 / 153 |
 | OPT-2.7B → OPT-125M | sft | dolly | ROUGE-L | +4.44 | 302 / 38 / 160 |
 | OPT-2.7B → OPT-125M | sft | dolly | METEOR | +5.36 | 314 / 30 / 156 |
 | OPT-2.7B → OPT-125M | sft | dolly | BERTScore F1 | +1.44 | 335 / 6 / 159 |
+| OPT-2.7B → OPT-125M | sft | self_inst | ROUGE-L | +5.26 | 145 / 37 / 60 |
+| OPT-2.7B → OPT-125M | sft | self_inst | METEOR | +4.50 | 149 / 27 / 66 |
+| OPT-2.7B → OPT-125M | sft | self_inst | BERTScore F1 | +1.56 | 168 / 0 / 74 |
+| OPT-2.7B → OPT-125M | sft | sni_11 | ROUGE-L | +5.36 | 1053 / 41 / 600 |
+| OPT-2.7B → OPT-125M | sft | sni_11 | METEOR | +5.47 | 1033 / 32 / 629 |
+| OPT-2.7B → OPT-125M | sft | sni_11 | BERTScore F1 | +1.27 | 1094 / 0 / 600 |
+| OPT-2.7B → OPT-125M | sft | vicuna | ROUGE-L | +3.17 | 57 / 1 / 22 |
+| OPT-2.7B → OPT-125M | sft | vicuna | METEOR | +4.28 | 57 / 0 / 23 |
+| OPT-2.7B → OPT-125M | sft | vicuna | BERTScore F1 | +1.38 | 65 / 0 / 15 |
 | OpenLLaMA-7B → OpenLLaMA-3B | original | dolly | ROUGE-L | +2.61 | 292 / 27 / 181 |
 | OpenLLaMA-7B → OpenLLaMA-3B | original | dolly | METEOR | +2.22 | 274 / 22 / 204 |
 | OpenLLaMA-7B → OpenLLaMA-3B | original | dolly | BERTScore F1 | +1.63 | 338 / 0 / 162 |
@@ -101,9 +138,21 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | Gemma-2-2B-IT | original | dolly | 11 | 0 | 500 |
 | Gemma-2-9B-IT | original | dolly | 11 | 0 | 500 |
 | GPT-2 base | sft | dolly | 11 | 0 | 500 |
+| GPT-2 base | sft | self_inst | 2 | 0 | 242 |
+| GPT-2 base | sft | sni_11 | 0 | 0 | 2562 |
+| GPT-2 base | sft | vicuna | 3 | 0 | 80 |
 | GPT-2 XL | sft | dolly | 11 | 0 | 500 |
+| GPT-2 XL | sft | self_inst | 2 | 0 | 242 |
+| GPT-2 XL | sft | sni_11 | 0 | 0 | 2562 |
+| GPT-2 XL | sft | vicuna | 3 | 0 | 80 |
 | OPT-125M | sft | dolly | 11 | 0 | 500 |
+| OPT-125M | sft | self_inst | 2 | 0 | 242 |
+| OPT-125M | sft | sni_11 | 0 | 0 | 2562 |
+| OPT-125M | sft | vicuna | 3 | 0 | 80 |
 | OPT-2.7B | sft | dolly | 11 | 0 | 500 |
+| OPT-2.7B | sft | self_inst | 2 | 0 | 242 |
+| OPT-2.7B | sft | sni_11 | 0 | 0 | 2562 |
+| OPT-2.7B | sft | vicuna | 3 | 0 | 80 |
 | OpenLLaMA-3B | sft | dolly | 11 | 0 | 500 |
 | OpenLLaMA-7B | sft | dolly | 11 | 0 | 500 |
 | Gemma-2-2B-IT | sft | dolly | 11 | 0 | 500 |

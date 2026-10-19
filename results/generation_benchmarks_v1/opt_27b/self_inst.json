@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "fingerprint": "feef577974bd4d07052bd8e75fcf58ad49a7adbbd5135501bd3415e1c1db8e66",
+  "n": 242,
+  "seed": 10,
+  "metrics": {
+    "rouge1": 17.068498601608155,
+    "rouge2": 3.6835056172486302,
+    "rougeL": 12.986360292354831,
+    "exact_match": 1.2396694214876034,
+    "generated_tokens": 75.52892561983471,
+    "empty": 0,
+    "length_capped": 0.05785123966942149
+  },
+  "sample_sd_across_generation_seeds": null,
+  "per_item_csv": "results/generation_benchmarks_v1/opt_27b/self_inst_per_item.csv",
+  "per_item_csv_sha256": "64c855b9bf34826d3a0834dfa8292d2c831063e57d744584c123b3d18dad8d1c"
+}

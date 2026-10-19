@@ -6,7 +6,7 @@
 
 <!-- SFT_PROGRESS:START -->
 
-현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **3/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
+현재 예비 비교 범위는 **4개 계열·8개 모델**이며, SFT 선택 완료 **8/8**, Dolly 예비 생성 완료 **8/8**, 기존 Dolly·분류 보조 평가 완료 **4/8**이다. 외부 3종·새 보조 분류 평가는 후보 축소 후 수행한다. 생성 평가는 공통 seed 10 한 개를 사용한다. 모델별 상태·선택 LR·검증 NLL·실제 정밀도는 [SFT 진행 기록](SFT_PROGRESS.md), 교사·학생의 생성 성능 차이는 [생성 주 평가](../results/generation_benchmarks_v1/REPORT.md), 분류 편향 등은 [기존 Dolly·분류 보조 평가](../results/dolly_sft_v1/REPORT.md)를 따른다. 최종 조합은 아직 확정하지 않았다.
 
 <!-- SFT_PROGRESS:END -->
 
@@ -223,7 +223,7 @@ Gemma-2-9B-IT의 Dolly 500문항·seed 10 생성 평가도 완료했다. ROUGE-1
 | 체크포인트 선택 | 각 모델의 최저 개발 NLL | 두 LR 완료 JSON·선택 adapter hash |
 | 생성 평가 | 예비 Dolly 500문항, 외부 3종은 후보 축소 후, seed 10·새 토큰 상한 256 | [생성 명세](GENERATION_EVALUATION.md) |
 | 원본/SFT 비교 | 원본 Dolly 8/8·원본/SFT 보완 16/16 완료 | 같은 ID·prompt·정밀도·생성 조건의 완료 결과부터 [전후 비교표](../results/model_selection_v1/REPORT.md)에 반영 |
-| 보완 지표 | Dolly 원본/SFT 16조건의 METEOR·BERTScore·Distinct-4 완료 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 분류에는 ECE 추가 |
+| 보완 지표 | Dolly 원본/SFT 16조건과 후보 SFT 외부 12조건 완료 | WordNet 3.0·RoBERTa-large 17층/slow tokenizer·native 512·다중 정답과 집계 명세. 후보 SFT 4모델의 조건부 label ECE15도 완료 |
 | 최종 조합 | 미정 | 생성·오류·증류 실행 점검 후 선정 근거 기록 |
 | 본 KD 설정 | prefix·온도·gate·MC·Revival·학습 예산 미정 | [계획서 §7–10](RESEARCH_PLAN.md)의 원문·구현·검증 절차 |
 | 본 실험 생성 반복 | 10/20/30/40/50 예정 | 학습 seed 반복과 구분. 독립 최종 test의 대체가 아님 |
@@ -283,7 +283,7 @@ SST-2·BoolQ의 accuracy·macro-F1·클래스별 오류·Brier는 보조 진단�
 
 ## 12. 결론과 후속 연구 — 결과에 따라 작성
 
-현재는 Dolly 공통 학습·개발 분할에서 8개 모델의 예비 SFT와 Dolly 500문항 생성 평가를 진행한다. 외부 3종·새 보조 진단은 후보 축소 후 진행한다. 최신 완료 범위는 상단 진행 기록을 따른다. 보완 평가·오류 분석·실행 점검 후 조합을 선정하고, 본 KD에서 KL 방향·손실 적응·갱신 거절·결합의 차이를 관측한다. 아직 특정 KD 방법의 우수성이나 새로운 효과에 관한 결론은 없다.
+현재 Dolly 공통 학습·개발 분할에서 8개 모델의 예비 SFT와 Dolly 500문항 생성 평가를 완료했다. 후속 GPT-2·OPT SFT 4모델의 외부 3종·보완 채점·분류 진단도 완료했고 원본의 동일 평가를 진행한다. [비교표](../results/model_selection_v1/REPORT.md)와 [오류 사례](QUALITATIVE_REVIEW.md)를 함께 검토하며, 실제 증류 실행 점검 후 조합을 선정한다. 본 KD에서는 KL 방향·손실 적응·갱신 거절·결합의 차이를 관측한다. 아직 특정 KD 방법의 우수성이나 새로운 효과에 관한 결론은 없다.
 
 한국어 적용, 다른 모델·과제, 교사 응답 증강 등은 관측 결과와 자원에 근거해 후속 후보로 검토한다. 결론을 먼저 정해 실험 결과를 맞추지 않는다.
 
