@@ -1,0 +1,13 @@
+{
+  "fingerprint": "39caed9df2d102a2416bf4b4c3122ac4d217a64b6e745335ac7a0da8995728b3",
+  "validation": {
+    "response_token_nll": 3.026674362933528,
+    "response_token_ppl": 20.628515433011522,
+    "target_tokens": 75795
+  },
+  "evaluation": {
+    "response_token_nll": 3.1013972871385085,
+    "response_token_ppl": 22.228989873130903,
+    "target_tokens": 42990
+  }
+}

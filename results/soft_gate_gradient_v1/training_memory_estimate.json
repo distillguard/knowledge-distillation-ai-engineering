@@ -1,0 +1,17 @@
+{
+  "scope": "theoretical full-parameter Adam memory floor; no GPU probe",
+  "bytes_per_parameter": 16,
+  "components": "FP16 weights+FP16 gradients+FP32 master weights+two FP32 Adam moments",
+  "models": {
+    "gpt2_base": {
+      "parameters": 124439808,
+      "mixed_precision_adam_floor_gib": 1.8542976379394531,
+      "excludes": "activations, CUDA workspace and allocator overhead"
+    },
+    "gpt2_xl": {
+      "parameters": 1557611200,
+      "mixed_precision_adam_floor_gib": 23.21021556854248,
+      "excludes": "activations, CUDA workspace and allocator overhead"
+    }
+  }
+}

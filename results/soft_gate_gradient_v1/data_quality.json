@@ -1,0 +1,21 @@
+{
+  "definition": "lowercase and whitespace-normalized instruction overlap with training or validation",
+  "excluded_evaluation_ids": [
+    "valid:18",
+    "valid:78",
+    "valid:80",
+    "valid:151",
+    "valid:183",
+    "valid:241",
+    "valid:246",
+    "valid:299",
+    "valid:315",
+    "valid:330",
+    "valid:343",
+    "valid:461",
+    "valid:497"
+  ],
+  "full_n": 500,
+  "instruction_disjoint_n": 487,
+  "scope": "exact instruction groups only; not a semantic audit or a previously unseen test set"
+}

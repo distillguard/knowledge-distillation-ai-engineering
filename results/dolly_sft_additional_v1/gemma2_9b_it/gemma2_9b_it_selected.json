@@ -1,7 +1,0 @@
-{
-  "status": "selected",
-  "protocol_fingerprint": "f80a5cf50ee1e8c642dfc20704bad05019ba264a324af4c0c531d03c382dac85",
-  "learning_rate": 0.0001,
-  "adapter": "tmp/dolly_sft_additional_v1/gemma2_9b_it/runs/gemma2_9b_it_lr1e-04/best_adapter",
-  "development_nll": 1.321387529373169
-}

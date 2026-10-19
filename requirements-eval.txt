@@ -1,7 +1,0 @@
-# Core PyTorch/Transformers environment is recorded in results/model_preflight.json.
-rouge-score==0.1.2
-nltk==3.9.2
-absl-py==2.5.1
-pyarrow==26.0.0
-scikit-learn==1.8.0
-matplotlib==3.10.8

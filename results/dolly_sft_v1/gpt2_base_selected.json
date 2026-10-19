@@ -1,7 +1,0 @@
-{
-  "status": "selected",
-  "protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
-  "learning_rate": 0.0002,
-  "adapter": "tmp/dolly_sft_v1/runs/gpt2_base_lr2e-04/best_adapter",
-  "development_nll": 2.26702880859375
-}

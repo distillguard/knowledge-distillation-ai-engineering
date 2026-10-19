@@ -1,7 +1,0 @@
-{
-  "status": "selected",
-  "protocol_fingerprint": "4d5ff6de37899aeafddc2aaf7d4098e54bfc4b5f4513ab5c5b58a41d284058c4",
-  "learning_rate": 0.0002,
-  "adapter": "tmp/dolly_sft_additional_v1/openllama_3b/runs/openllama_3b_lr2e-04/best_adapter",
-  "development_nll": 1.4169648885726929
-}

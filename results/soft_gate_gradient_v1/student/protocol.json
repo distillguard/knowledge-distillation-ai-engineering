@@ -1,0 +1,97 @@
+{
+  "parent_preparation_fingerprint": "39caed9df2d102a2416bf4b4c3122ac4d217a64b6e745335ac7a0da8995728b3",
+  "teacher_fingerprint": "5bf127b0a3af8082d6301582f1ca62503c9bb4fce918ef83267765959d92b1d0",
+  "producer_sha256": "bac4e9ccf18a2f28a49f6afa3eec99b36a6e0818140f17aa127c87e94d372cb4",
+  "model": {
+    "id": "openai-community/gpt2",
+    "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+  },
+  "method": "full-parameter SFT, no LoRA and no weight quantization",
+  "training_seed": 10,
+  "epoch_sampler_seed": "epoch number, as PyTorch DistributedSampler default seed=0 + epoch",
+  "sft_search": {
+    "learning_rates": [
+      0.0005,
+      0.0001,
+      5e-05
+    ],
+    "effective_batches": [
+      32,
+      64
+    ],
+    "epochs": 20,
+    "selection": "highest mean validation ROUGE-L F1; ties use lower batch-mean validation NLL, then fixed candidate order"
+  },
+  "initialization": {
+    "epochs": 3,
+    "restart_from_original": true,
+    "learning_rate_and_batch": "selected SFT search condition",
+    "selection": "lowest batch-mean validation response NLL"
+  },
+  "optimizer": {
+    "name": "torch.optim.AdamW",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "no_decay_name_fragments": [
+      "bias",
+      "ln_f.weight",
+      "ln_1.weight",
+      "ln_2.weight",
+      "ln_cross_attn"
+    ]
+  },
+  "scheduler": {
+    "name": "CosineAnnealingLR",
+    "eta_min": 1e-07,
+    "warmup": 0,
+    "horizon": "ceil(train_rows / effective_batch) * epochs; stepped on applied updates"
+  },
+  "gradient_clip": 1.0,
+  "microbatch": "effective_batch / 16, preserving official per-device batch scale",
+  "loss_reduction": "sum response-token CE over the effective batch divided by all its unmasked targets",
+  "precision": {
+    "parameters_and_adam_state": "float32",
+    "autocast_compute": "float16",
+    "gradient_scaler": "PyTorch GradScaler init_scale=2048, growth_interval=2000",
+    "tf32": false
+  },
+  "validation": {
+    "batch": 8,
+    "generation_seed": 10,
+    "every": "complete epoch",
+    "preserve_training_rng": true,
+    "generation": {
+      "seeds": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "left_padded_prompt_length": 256,
+      "max_length": 512,
+      "temperature": 1.0,
+      "top_k": 0,
+      "top_p": 1.0,
+      "no_repeat_ngram_size": 6,
+      "batch_size": 8,
+      "batch_basis": "official run_eval.sh passes eval-batch-size 8",
+      "eos": 50256
+    },
+    "response_nll": "both global-token mean and mean of batch response-token means"
+  },
+  "porting_differences": [
+    "single GPU and stable raw order replace original 16-rank unordered processed-data execution",
+    "all records retained per epoch, including final partial effective batch; no distributed shard drop/floor-step early stop",
+    "global-token loss accumulation replaces the original average of rank-local token means",
+    "FP32 master parameters with FP16 autocast and PyTorch loss scaling replace DeepSpeed FP16/ZeRO-1; loss-scale hysteresis differs",
+    "validation uses fixed seed 10 and restores training RNG; original sampling may consume the shared RNG stream",
+    "current installed library versions are the parent protocol versions; not the original patched Transformers stack"
+  ],
+  "checkpoints": "separate best and epoch-boundary resume checkpoint for each condition; interruption replays unfinished epoch",
+  "fingerprint": "fd3f3fb7193301ef09c7c8a586dbdc2d0ff4a1fd190b0e25164d6fc17b1b0cf1"
+}
