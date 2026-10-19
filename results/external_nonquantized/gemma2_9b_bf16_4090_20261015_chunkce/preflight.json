@@ -1,0 +1,23 @@
+{
+  "protocol_fingerprint": "69d62b288478c268486314d8a36e98bd0a5b1460718e89f2263881508a64e056",
+  "probe_script_sha256": "11bb1f10c0389d1e3ffa275214285ca64d856c72a7f4803a1b97139f439716a1",
+  "models": {
+    "gemma2_9b_it": {
+      "status": "passed",
+      "training_performed": "one disposable update, not a completed SFT baseline",
+      "trainable_parameters": 216072192,
+      "sequence_tokens": 496,
+      "loss": 1.1908621788024902,
+      "reload_logits_equal": true,
+      "independent_base_and_adapter_reload": true,
+      "quantized_linear_layers": 0,
+      "eos_preserved_and_padding_masked": true,
+      "cached_generation_probe_tokens": 8,
+      "available_before_probe_bytes": 24029036544,
+      "peak_allocated_mib": 20959.86,
+      "peak_reserved_mib": 21158.0,
+      "seconds_including_load_and_checks": 13.329
+    }
+  },
+  "hardware_fingerprint": "0cda625228e404ccd05b438323bf928b65485ce8cc15c550dbdd7907b44d3232"
+}

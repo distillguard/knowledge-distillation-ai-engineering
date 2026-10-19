@@ -1,0 +1,34 @@
+{
+  "status": "prepared",
+  "model": "gemma2_9b_it",
+  "revision": "11c9b309abf73637e4b6f9a3fa1e92e615547819",
+  "parent_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898",
+  "protocol_fingerprint": "69d62b288478c268486314d8a36e98bd0a5b1460718e89f2263881508a64e056",
+  "same_original_records": true,
+  "tokenization_matches_reference": true,
+  "lengths": {
+    "train": {
+      "n": 11117,
+      "max_total_tokens": 496,
+      "max_prompt_tokens": 253
+    },
+    "development": {
+      "n": 975,
+      "max_total_tokens": 481,
+      "max_prompt_tokens": 254
+    },
+    "selection_evaluation": {
+      "n": 500,
+      "max_total_tokens": 1961,
+      "max_prompt_tokens": 250
+    }
+  },
+  "prepared_files_sha256": {
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/source/train.jsonl": "077eb04813a86ebb0c74794e21e1530098d94c0cc9ce38a21c974d9ee531ef07",
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/gemma2_9b_it/train.jsonl": "6a74e8ac829a6146a83725a49bfd6c9a2c4117065c75fdc22934f6dea14c2877",
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/source/development.jsonl": "0747660d8729c44af8a76e2246a1af96bd51fa389f2a7d180128c5d9e21561cc",
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/gemma2_9b_it/development.jsonl": "7625cbc6896b92107df6f29d1bbaa42bbcc2373dbb9b203f1439723bd2f7fc2f",
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/source/selection_evaluation.jsonl": "5875f24707ee13761ed33ebacdfde5830add0599b98c3814e17aa436d89b89a1",
+    "tmp/external_nonquantized/gemma2_9b_bf16_4090_20261015_chunkce/gemma2_9b_it/selection_evaluation.jsonl": "0e2174dc7a727db2025ec5553d8364a2e71f8945a84f248fc8dade7d55f1e842"
+  }
+}
