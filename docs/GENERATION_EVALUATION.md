@@ -10,6 +10,8 @@
 
 네 생성 benchmark의 ROUGE-L은 논문과 비교하는 1차 후보 평가다. 이 점수 하나로 최종 교사·학생 조합을 확정하지 않는다. 과제별 우위의 일관성, 같은 문항의 응답 오류, 의미 유사성의 보완 평가와 기존 분류 진단을 함께 검토한다. 지표를 임의 가중합하거나 최소 격차를 새로 정하지 않는다. 증류 전 단일 모델의 성능은 이후 증류 효과를 보장하지 않는다.
 
+2026-10-19 사용자 지적을 반영해 교사·학생 격차만으로 조합을 제외하지 않는다. 전체 선정 대상은 4계열·8모델이며, 교사의 절대 수행과 응답 품질·학생 적합성·공동 증류 실행 가능성을 함께 확인한다. 현재 GPT-2·OPT의 외부 후속 평가 네 모델은 평가 진행 범위다. 외부 점수가 아직 없는 OpenLLaMA·Gemma도 선정 대상에 유지하며 미평가를 열위로 해석하지 않는다. [선정 기준 보완](DOLLY_SFT_MODEL_SELECTION.md#후속-후보와-검증-범위-2026-10-19)을 따른다.
+
 [MiniLLM §2.3](https://arxiv.org/html/2306.08543v4)은 학생 초기화에 최저 검증 손실을 사용하지만 §3.1의 생성 관련 설정 탐색에는 검증 ROUGE-L을 사용하고, 최종 응답은 ROUGE-L·GPT-4 feedback·사람 평가로 확인한다. 현재의 로컬 NLL 선택을 원문의 전체 생성 평가와 동일하게 표시하지 않는다.
 
 2026-10-19에 [METEOR](https://www.nltk.org/api/nltk.translate.meteor_score.html)·[BERTScore](https://github.com/Tiiiger/bert_score)·[Distinct-4](https://arxiv.org/html/2306.08543v4#A2.SS4)를 원본/SFT 각 8모델의 저장된 Dolly 응답 8,000개에 적용했다. [완료 요약](../results/supplementary_metrics_v1/completion.json)과 [전후 비교표](../results/model_selection_v1/REPORT.md)를 따른다. METEOR 8,000개는 전체 reference로 다시 계산해 확인했다. BERTScore native 512 제한의 reference 영향 문항은 공통 11/500건(2.2%)이며 응답 영향은 0건이다. ROUGE·METEOR에는 전체 reference를 사용한다. 이 지표는 어휘·의미 유사성·표현 다양성을 보완하며 사실성을 직접 판정하지 않는다. GPT-2·OPT 후보 SFT 4모델의 조건부 label ECE15는 [분류 진단](../results/candidate_diagnostics_v1/REPORT.md)에 반영했다. 전체 어휘 entropy의 calibration이나 논문의 ECE 전체 재현을 뜻하지 않는다.

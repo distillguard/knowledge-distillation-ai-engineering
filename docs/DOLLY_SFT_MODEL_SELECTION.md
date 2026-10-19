@@ -147,8 +147,10 @@ python -B scripts/run_dolly_sft.py
 | OpenLLaMA-7B → 3B | +2.12 | +2.51 | +0.48 |
 | Gemma-2-9B-IT → 2B-IT | +1.29 | +2.00 | +0.27 |
 
-시각화할 교사·학생 차이를 확보하기 위해 GPT-2와 OPT를 후속 후보로 둔다. 이 두 조합의 관측 격차는 위 세 지표 모두에서 OpenLLaMA·Gemma보다 크지만, 서로는 지표별 절충이 있다. 두 조합 모두 교사·학생 BF16으로 정밀도 변화의 혼입도 줄인다. 임의 가중합이나 최소 격차는 쓰지 않으며 [후보 결정 기록](../results/model_selection_v1/shortlist.json)에 전체 관측과 근거를 남겼다.
+GPT-2·OPT는 위 격차 관측을 보고 먼저 외부 후속 평가를 진행한 두 조합이다. **2026-10-19 사용자 지적을 반영해, 격차만으로 OpenLLaMA·Gemma를 제외하는 판단을 철회한다. 최종 선정 대상은 4계열·8모델을 유지한다.** 현재 외부 평가의 네 모델과 최종 선정 대상을 구분하며 [후보 결정 기록](../results/model_selection_v1/shortlist.json)의 `followup_pairs`는 진행 중인 평가 범위, `candidate_pairs`는 전체 선정 대상이다. BF16 공통 조건과 큰 격차는 해석상의 특성일 뿐 좋은 교사의 충분조건이 아니다.
 
-이는 결과를 본 뒤 수행한 예비 후보 축소이며 논문의 사전 등록된 선정 알고리즘이나 KD 성공의 보장이 아니다. 절대 SFT 점수는 Gemma-9B가 가장 높고 그 결과도 그대로 보존한다. 한 생성 seed의 관측 차이를 통계적 우월성으로 표시하지 않는다. GPT-2·OPT 원본/SFT에 외부 3종과 분류 보조 진단을 적용하고 정성 오류 검토·실제 증류 경로 점검을 거쳐 한 조합을 추천한다.
+교사의 절대 생성 성능과 지시 준수·정확성, 학생이 배울 수 있는 신호와 어휘 대응, 실제 공동 증류 경로의 실행 가능성을 함께 검토한다. 격차의 필수 하한이나 지표 가중합을 만들지 않는다. 현재 SFT Dolly에서 Gemma-9B의 ROUGE-L 25.92·METEOR 25.62·raw BERTScore F1 86.54가 교사 네 모델 중 가장 높다. 이는 강한 후보라는 근거이며 지식·추론 능력 전체나 최적 증류 교사라는 증명은 아니다. Gemma-IT의 post-training 이력과 9B의 NF4도 해석에 포함한다. 한 생성 seed의 관측 차이를 통계적 우월성으로 표시하지 않는다. 다른 조합의 외부 평가가 없다는 사실을 성능 열위로 해석하지 않으며, 후보별 증거 부족과 선정 이유를 명시한다.
+
+[ICLR 2026 GRACE 연구](https://proceedings.iclr.cc/paper_files/paper/2026/hash/59fa5d049b777d880fdcddba2b24738f-Abstract-Conference.html)는 LLM 수학 증류에서 최고 수행 교사를 고르는 방법과 학생에 적합한 교사를 고르는 방법의 결과가 다를 수 있음을 보고한다. 교사 자체 품질과 전달 적합성을 구분할 근거로만 참고한다. 과제·증류 경로가 다른 우리 실험의 효과를 입증하지 않으며 GRACE 구현이나 추가 학습을 도입하지 않는다. 이 기준 보완은 결과 확인 이후의 사용자 지적에 따른 검토이며 사전 등록된 선정 알고리즘으로 표시하지 않는다.
 
 **후속 실행 상태 (2026-10-19):** GPT-2·OPT SFT 4모델의 외부 3종 생성·METEOR·BERTScore·Distinct-4와 SST-2·BoolQ·ECE15 진단을 완료했다. 현재 네 원본 checkpoint의 동일 평가를 진행한다. [외부 비교표](../results/model_selection_v1/REPORT.md)·[분류 진단](../results/candidate_diagnostics_v1/REPORT.md)·[근거와 오류 사례](QUALITATIVE_REVIEW.md)를 함께 검토한다. 최종 조합은 실제 공동 GPU 점검까지 확인한 뒤 정하며 추가 SFT나 본 KD는 시작하지 않았다.

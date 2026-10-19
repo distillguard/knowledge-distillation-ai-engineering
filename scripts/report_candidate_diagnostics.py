@@ -90,7 +90,7 @@ def load_run(name, phase, data, manifest):
 
 def main():
     shortlist = original.study.read(ROOT / "results/model_selection_v1/shortlist.json")
-    chosen = {value[key] for value in shortlist["shortlisted_pairs"] for key in ("teacher", "student")}
+    chosen = {value[key] for value in shortlist["followup_pairs"] for key in ("teacher", "student")}
     names = [name for name in original.MODELS if name in chosen]
     # Only source labels/IDs are needed; the tokenizer/context audit was frozen before inference.
     data, manifest = legacy.classification_data({})

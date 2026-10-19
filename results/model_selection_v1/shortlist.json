@@ -1,9 +1,15 @@
 {
-  "status": "provisional_followup_not_final_selection",
+  "status": "all_four_pairs_eligible_followup_coverage_is_partial",
   "benchmark": "dolly",
   "n": 500,
   "seed": 10,
-  "purpose": "visible teacher/student differences for the planned KD comparison; not a universal model-quality ranking",
+  "purpose": "select a capable and compatible teacher/student pair; observed gaps describe differences but do not exclude other pairs",
+  "candidate_pairs": [
+    {"teacher": "gpt2_xl", "student": "gpt2_base"},
+    {"teacher": "opt_27b", "student": "opt_125m"},
+    {"teacher": "openllama_7b", "student": "openllama_3b"},
+    {"teacher": "gemma2_9b_it", "student": "gemma2_2b_it"}
+  ],
   "observed_sft_gaps": [
     {
       "teacher": "gpt2_xl",
@@ -34,7 +40,7 @@
       "bertscore_f1": 0.2660501122474699
     }
   ],
-  "shortlisted_pairs": [
+  "followup_pairs": [
     {
       "teacher": "gpt2_xl",
       "student": "gpt2_base",
@@ -50,11 +56,12 @@
       "bertscore_f1": 1.437129414081582
     }
   ],
-  "rule": "non-dominated observed gap vectors across the three already chosen generation measures; no weighted sum or minimum threshold",
-  "rule_scope": "post-hoc pilot screening; larger gap does not guarantee successful KD; one generation seed does not establish significant dominance",
-  "absolute_teacher_quality": "Gemma-9B has the highest SFT absolute scores among these candidates; it remains reported rather than declared inferior",
-  "additional_control": "both shortlisted teachers and students use BF16 without weight quantization",
-  "followup": "same three external generation sets and SST-2/BoolQ for original and SFT candidates, then actual joint KD feasibility and qualitative error review",
+  "rule": "review absolute teacher task performance and response quality, student compatibility and joint KD feasibility; no minimum gap or weighted sum; all four pairs remain eligible",
+  "rule_scope": "2026-10-19 user correction: gap-only screening was insufficient. This is a post-hoc pilot review, not a preregistered ranking or evidence of KD gains. followup_pairs records the current evaluation queue, not the full candidate set",
+  "previous_rule": "current GPT-2/OPT follow-up originally used non-dominated observed gap vectors across three generation measures; superseded as an exclusion rule",
+  "absolute_teacher_quality": "Gemma-9B has the highest SFT Dolly ROUGE-L, METEOR and raw BERTScore F1; no equivalent external evidence for OpenLLaMA/Gemma has been collected yet",
+  "additional_control": "both current followup teachers and students use BF16 without weight quantization; this does not establish superior teaching quality or exclude NF4 pairs",
+  "followup": "current queue: same three external generation sets and SST-2/BoolQ for original and SFT GPT-2/OPT models, then actual joint KD feasibility and qualitative error review. Missing evidence for other pairs must not be interpreted as inferior performance",
   "source_metric_fingerprints": [
     {
       "phase": "original",

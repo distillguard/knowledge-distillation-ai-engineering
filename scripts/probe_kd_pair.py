@@ -141,7 +141,7 @@ def rollout(student, tokenizer, name, row):
 def run(pair):
     assert torch.cuda.is_available() and torch.cuda.is_bf16_supported()
     teacher_name, student_name = PAIRS[pair]
-    shortlist = study.read(ROOT / "results/model_selection_v1/shortlist.json")["shortlisted_pairs"]
+    shortlist = study.read(ROOT / "results/model_selection_v1/shortlist.json")["followup_pairs"]
     assert any((r["teacher"], r["student"]) == PAIRS[pair] for r in shortlist)
     protocols = {name: study.model_protocol(name) for name in PAIRS[pair]}
     selected = {name: study.selected_record(name) for name in PAIRS[pair]}
