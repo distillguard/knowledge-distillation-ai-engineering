@@ -25,6 +25,36 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | Gemma-2-9B-IT | original | 21.13 | 26.67 | 84.06 | 0.8781 |
 | Gemma-2-9B-IT | sft | 25.92 | 25.62 | 86.54 | 0.9918 |
 
+## ROUGE-L Precision·Recall·F1
+
+위 ROUGE-L은 문항별 F1 평균 ×100이다. 25.92는 원래 척도에서 0.2592이며 정답률이 아니다. 아래 P·R·F1도 모두 ×100으로 표시한다. 문항마다 P·R·F1을 구한 뒤 각각 평균하며, 평균 P·R의 조화평균을 평균 F1로 대체하지 않는다.
+
+기존 scorer와 같은 Google ROUGE tokenizer·Porter stemming을 사용하며 reference와 응답 전체를 유지했다. 다중 reference는 F1을 최대화한 같은 reference의 P/R을 사용한다. 동률이면 첫 reference를 사용한다. 모든 문항의 F1을 기존 결과 CSV와 대조했고 추가 학습·생성은 없다. P/R은 순서가 유지되는 어휘 일치 비율이며 내용의 정오나 사실성을 판정하지 않는다.
+
+| 모델 | 단계 | Dolly n | Precision | Recall | F1 |
+|---|---|---:|---:|---:|---:|
+| GPT-2 base | original | 500 | 5.48 | 15.37 | 6.16 |
+| GPT-2 base | sft | 500 | 18.97 | 19.09 | 14.68 |
+| GPT-2 XL | original | 500 | 8.03 | 17.92 | 7.50 |
+| GPT-2 XL | sft | 500 | 24.53 | 25.25 | 20.13 |
+| OPT-125M | original | 500 | 6.61 | 17.84 | 7.40 |
+| OPT-125M | sft | 500 | 24.44 | 19.13 | 17.08 |
+| OPT-2.7B | original | 500 | 7.48 | 23.19 | 8.66 |
+| OPT-2.7B | sft | 500 | 26.78 | 26.62 | 21.52 |
+| OpenLLaMA-3B | original | 500 | 9.83 | 20.97 | 9.69 |
+| OpenLLaMA-3B | sft | 500 | 28.35 | 25.83 | 21.86 |
+| OpenLLaMA-7B | original | 500 | 12.83 | 23.17 | 12.30 |
+| OpenLLaMA-7B | sft | 500 | 29.67 | 28.71 | 23.98 |
+| Gemma-2-2B-IT | original | 500 | 17.20 | 39.14 | 19.10 |
+| Gemma-2-2B-IT | sft | 500 | 31.70 | 27.53 | 24.63 |
+| Gemma-2-9B-IT | original | 500 | 18.94 | 40.37 | 21.13 |
+| Gemma-2-9B-IT | sft | 500 | 33.36 | 29.71 | 25.92 |
+
+완료된 외부 benchmark의 P/R/F1도 [전체 요약 CSV](scores.csv)와 [구성값·설정 JSON](rougeL_components.json)에 있다. [문항별 P/R/F1 CSV](rougeL_components_per_item.csv)에는 텍스트 원문 대신 ID·선택 reference 위치·구성값을 기록한다.
+
+정의와 구현: [Google ROUGE scorer](https://github.com/google-research/google-research/blob/master/rouge/rouge_scorer.py).
+
+
 ## 후보의 외부 생성 평가
 
 완료된 조건만 표에 수록한다. 대시와 그림의 pending은 생성 또는 해당 보완 채점이 미완료라는 뜻이다. 전체 reference의 ROUGE·METEOR와 BERTScore의 길이 제한을 구분하며 benchmark 간 단순 평균으로 순위를 만들지 않는다.
@@ -37,6 +67,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | GPT-2 base | sft | self_inst | 242 | 7.60 | 7.72 | 80.24 | 0.9963 |
 | GPT-2 base | sft | sni_11 | 1694 | 12.00 | 12.97 | 81.97 | 0.9815 |
 | GPT-2 base | sft | vicuna | 80 | 11.56 | 11.20 | 81.07 | 0.9981 |
+| GPT-2 XL | original | self_inst | 242 | 5.37 | — | — | — |
 | GPT-2 XL | sft | self_inst | 242 | 12.89 | 13.15 | 82.30 | 0.9860 |
 | GPT-2 XL | sft | sni_11 | 1694 | 20.95 | 20.70 | 84.01 | 0.9625 |
 | GPT-2 XL | sft | vicuna | 80 | 14.28 | 13.66 | 82.72 | 0.9953 |
@@ -63,6 +94,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | GPT-2 XL | sft−original | dolly | ROUGE-L | +12.63 | 389 / 23 / 88 |
 | GPT-2 XL | sft−original | dolly | METEOR | +10.36 | 336 / 19 / 145 |
 | GPT-2 XL | sft−original | dolly | BERTScore F1 | +5.15 | 468 / 0 / 32 |
+| GPT-2 XL | sft−original | self_inst | ROUGE-L | +7.52 | 157 / 30 / 55 |
 | OPT-125M | sft−original | dolly | ROUGE-L | +9.68 | 326 / 34 / 140 |
 | OPT-125M | sft−original | dolly | METEOR | +5.58 | 251 / 22 / 227 |
 | OPT-125M | sft−original | dolly | BERTScore F1 | +4.24 | 459 / 0 / 41 |
@@ -89,6 +121,7 @@ ROUGE-L·METEOR·raw BERTScore F1은 ×100이다. Distinct-4는 corpus 고유/�
 | GPT-2 XL → GPT-2 base | original | dolly | ROUGE-L | +1.34 | 293 / 38 / 169 |
 | GPT-2 XL → GPT-2 base | original | dolly | METEOR | +0.73 | 245 / 28 / 227 |
 | GPT-2 XL → GPT-2 base | original | dolly | BERTScore F1 | +0.64 | 304 / 0 / 196 |
+| GPT-2 XL → GPT-2 base | original | self_inst | ROUGE-L | +0.41 | 111 / 39 / 92 |
 | GPT-2 XL → GPT-2 base | sft | dolly | ROUGE-L | +5.45 | 317 / 31 / 152 |
 | GPT-2 XL → GPT-2 base | sft | dolly | METEOR | +5.08 | 311 / 24 / 165 |
 | GPT-2 XL → GPT-2 base | sft | dolly | BERTScore F1 | +1.47 | 345 / 2 / 153 |

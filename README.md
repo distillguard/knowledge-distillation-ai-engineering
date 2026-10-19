@@ -49,11 +49,13 @@ Dolly를 고정해 모델·증류 방식의 차이에 집중한다. 실제 입�
 
 | 평가 대상 | 확인할 지표와 자료 |
 |---|---|
-| **생성 벤치마크의 교사·학생 차이 — 주 평가** | 예비 Dolly 500문항. 후보 후속은 Self-Instruct 242·S-NI (11_) 1,694·Vicuna 80문항. ROUGE-1/2/L·동일 문항의 차이와 오류. 선정 단계는 공통 생성 seed 10 한 개 |
+| **생성 벤치마크의 교사·학생 차이 — 주 평가** | 예비 Dolly 500문항. 후보 후속은 Self-Instruct 242·S-NI (11_) 1,694·Vicuna 80문항. ROUGE-1/2/L과 ROUGE-L의 Precision·Recall·F1, 동일 문항의 차이와 오류. 선정 단계는 공통 생성 seed 10 한 개 |
 | **분류 편향·확률 품질 — 보조 진단** | SST-2·BoolQ의 accuracy·macro-F1·Brier·클래스별 오류. 현재 Brier와 논문의 ECE를 구분 |
 | **증류 전후의 학생 변화** | 학생의 SFT 기준선 대비 수행 변화, 교사·학생의 확률분포, gate·불확실성·갱신 수용/거절 |
 
 자유 생성의 ROUGE를 문항 정답률로 해석하지 않는다. Revival의 지도 유익성을 분석할 때는 신뢰할 수 있는 정오 판정 기준을 별도로 마련한다. 학습·설정 선택용 검증·최종 평가의 역할을 구분하고, 이미 모델 선정에 사용한 점수를 독립적인 최종 증거로 부르지 않는다.
+
+ROUGE-L은 문항별 F1의 평균을 ×100으로 표시한다. 예를 들어 25.92는 F1 약 0.2592다. [P/R/F1 구성값](results/model_selection_v1/REPORT.md#rouge-l-precisionrecallf1)과 [문항별 CSV](results/model_selection_v1/rougeL_components_per_item.csv)를 함께 제공하며, 평균 P/R의 조화평균을 평균 F1로 대체하지 않는다.
 
 예비 생성 평가는 모델당 Dolly 500문항이며 외부 3종까지 적용한 후보는 총 2,516문항이다. 기존 Dolly 응답은 검증해 재사용한다. 자료 revision·다중 정답·전처리·실행·완료 기준은 [생성 평가 계획](docs/GENERATION_EVALUATION.md)을 따른다. 단일 생성 seed에서는 seed 간 표준편차와 오차막대를 제시하지 않는다. 최종 선정 모델 본 실험의 생성 seed는 10/20/30/40/50이며 학습 seed 반복과 구분한다.
 

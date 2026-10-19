@@ -10,6 +10,10 @@
 
 네 생성 benchmark의 ROUGE-L은 논문과 비교하는 1차 후보 평가다. 이 점수 하나로 최종 교사·학생 조합을 확정하지 않는다. 과제별 우위의 일관성, 같은 문항의 응답 오류, 의미 유사성의 보완 평가와 기존 분류 진단을 함께 검토한다. 지표를 임의 가중합하거나 최소 격차를 새로 정하지 않는다. 증류 전 단일 모델의 성능은 이후 증류 효과를 보장하지 않는다.
 
+**ROUGE-L 구성값:** 기존 `rougeL`은 문항별 LCS F1을 평균한 뒤 ×100으로 표시한 값이다. 저장된 응답에서 같은 Google ROUGE scorer·`use_stemmer=True`로 Precision·Recall·F1을 분리하고 문항별 F1을 기존 CSV와 확인한다. 다중 reference는 F1이 가장 높은 같은 reference에서 P/R을 가져오며 동률은 첫 reference를 선택한다. P/R을 각각 다른 reference에서 최대화하지 않는다. 문항별 P·R·F1을 각각 평균하므로 평균 F1과 평균 P/R의 조화평균은 다를 수 있다. [구성값 표](../results/model_selection_v1/REPORT.md#rouge-l-precisionrecallf1), [설정·source·평균 JSON](../results/model_selection_v1/rougeL_components.json), [문항별 CSV](../results/model_selection_v1/rougeL_components_per_item.csv)를 제공한다. LCS는 어휘의 순서 일치이며 지시의 핵심 내용이나 사실의 정오를 직접 판정하지 않는다. 추가 학습·응답 생성은 필요하지 않다.
+
+**원문 평가와의 구분 (2026-10-19 재확인):** [MiniLLM §3.1·Table 1](https://arxiv.org/html/2306.08543v4#S3)은 ROUGE-L과 GPT-4 상대 평가·사람 선호 판단을 함께 사용한다. [CaRE-KD §4.2](https://arxiv.org/html/2609.36734v1#S4.SS2)는 ROUGE-L의 환각 판정 한계를 명시하고 GPT-5-Mini 사실성 점수를 추가한다. 두 논문의 확인한 주요 결과표는 ROUGE-L 단일값을 보고하며 P/R을 따로 나열하지 않는다. 현재 우리의 METEOR·BERTScore는 보완 유사도 지표로, 원문의 응답 품질·사실성 평가를 대체하지 않는다. 이 조사를 LLM 평가자 API 실행이나 사람 평가 완료로 표시하지 않는다.
+
 2026-10-19 사용자 지적을 반영해 교사·학생 격차만으로 조합을 제외하지 않는다. 전체 선정 대상은 4계열·8모델이며, 교사의 절대 수행과 응답 품질·학생 적합성·공동 증류 실행 가능성을 함께 확인한다. 현재 GPT-2·OPT의 외부 후속 평가 네 모델은 평가 진행 범위다. 외부 점수가 아직 없는 OpenLLaMA·Gemma도 선정 대상에 유지하며 미평가를 열위로 해석하지 않는다. [선정 기준 보완](DOLLY_SFT_MODEL_SELECTION.md#후속-후보와-검증-범위-2026-10-19)을 따른다.
 
 [MiniLLM §2.3](https://arxiv.org/html/2306.08543v4)은 학생 초기화에 최저 검증 손실을 사용하지만 §3.1의 생성 관련 설정 탐색에는 검증 ROUGE-L을 사용하고, 최종 응답은 ROUGE-L·GPT-4 feedback·사람 평가로 확인한다. 현재의 로컬 NLL 선택을 원문의 전체 생성 평가와 동일하게 표시하지 않는다.

@@ -48,6 +48,15 @@
     },
     {
       "phase": "original",
+      "model": "gpt2_xl",
+      "benchmark": "self_inst",
+      "generation_fingerprint": "84ccac91b9c9ea03cc00007c8aa7689f712c82f697e67635205f523d08593420",
+      "raw_responses_sha256": "2023cc98b99d73a5e806b1e0c5c5d8b5fd3dbc5c9a1f8368049bbe07ee91f1bd",
+      "primary_csv_sha256": "503c4f40d0347abe129725a66bb932bbc4e9b0d6d5edaca38424faec99401d42",
+      "training_protocol_fingerprint": "3de5dbca6509d761d1996c062e4c3a74cbb5aaa0b3b9ea43d6247921f5e92898"
+    },
+    {
+      "phase": "original",
       "model": "opt_125m",
       "benchmark": "dolly",
       "generation_fingerprint": "b69f08dc9db80ab67426475956a70ce357519ae540354544b91f6606a192bb9f",
@@ -373,6 +382,16 @@
       "lower": 32
     },
     {
+      "model": "gpt2_xl",
+      "benchmark": "self_inst",
+      "metric": "rougeL",
+      "n": 242,
+      "difference": 7.515136979316306,
+      "higher": 157,
+      "tie": 30,
+      "lower": 55
+    },
+    {
       "model": "opt_125m",
       "benchmark": "dolly",
       "metric": "rougeL",
@@ -589,6 +608,18 @@
       "higher": 304,
       "tie": 0,
       "lower": 196
+    },
+    {
+      "teacher": "gpt2_xl",
+      "student": "gpt2_base",
+      "phase": "original",
+      "benchmark": "self_inst",
+      "metric": "rougeL",
+      "n": 242,
+      "difference": 0.41138077119519184,
+      "higher": 111,
+      "tie": 39,
+      "lower": 92
     },
     {
       "teacher": "gpt2_xl",

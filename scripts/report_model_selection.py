@@ -1,5 +1,7 @@
 """Compare verified original/SFT generation results without inventing missing scores."""
 import csv
+import importlib.metadata
+import math
 import statistics
 
 import matplotlib
@@ -10,10 +12,32 @@ import numpy as np
 import evaluate_supplementary_metrics as scoring
 from dolly_study import LABELS, result_dir
 from prepare_generation_benchmarks import PAIRS
+from rouge_score import rouge_scorer
 
 ROOT = scoring.ROOT
 OUT = ROOT / "results/model_selection_v1"
 DISPLAY = {"rougeL": "ROUGE-L", "meteor": "METEOR", "bertscore_f1": "BERTScore F1"}
+ROUGE_COMPONENTS = ("rougeL_precision", "rougeL_recall", "rougeL_f1")
+
+
+def rouge_components(rows, generated, primary_items):
+    assert rows and [r["id"] for r in rows] == [r["id"] for r in generated] == [r["id"] for r in primary_items], "ROUGE component IDs differ"
+    scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
+    items = []
+    for row, output, primary in zip(rows, generated, primary_items):
+        assert row["references"] and all(isinstance(r, str) and r.strip() for r in row["references"])
+        assert isinstance(output["response"], str)
+        scores = [scorer.score(ref, output["response"])["rougeL"] for ref in row["references"]]
+        index = max(range(len(scores)), key=lambda i: scores[i].fmeasure)
+        chosen = scores[index]
+        assert math.isclose(100 * chosen.fmeasure, float(primary["rougeL"]), rel_tol=0, abs_tol=1e-12), (row["id"], "ROUGE-L F1 differs")
+        items.append({"id": row["id"], "reference_index_0based": index, "reference_count": len(scores),
+                      **dict(zip(ROUGE_COMPONENTS, (100 * chosen.precision, 100 * chosen.recall, 100 * chosen.fmeasure)))})
+    return items
+
+
+def component_means(items):
+    return {key: statistics.mean(float(row[key]) for row in items) for key in ROUGE_COMPONENTS}
 
 
 def paired(left, right, metric):
@@ -39,7 +63,10 @@ def verified_sources(names, data):
                 rows = scoring.records(ROOT / "tmp/generation_benchmarks_v1/prepared" / f"{key}.jsonl")
                 identity, primary, items, generated = scoring.source(name, phase, key, data, rows)
                 precision = scoring.read(result_dir(name) / "protocol.json")["precision"][name]["base_weights"]
-                run = {"primary": primary, "items": items, "source": identity, "precision": precision, "supplementary": None}
+                components = rouge_components(rows, generated, items)
+                assert math.isclose(component_means(components)["rougeL_f1"], primary["metrics"]["rougeL"], rel_tol=0, abs_tol=1e-12)
+                run = {"primary": primary, "items": items, "source": identity, "precision": precision,
+                       "rouge_components": components, "supplementary": None}
                 folder = scoring.OUT / phase / name / key
                 if (folder / "result.json").exists():
                     spec = scoring.read(folder / "protocol.json")
@@ -59,6 +86,8 @@ def verified_sources(names, data):
 
 def values(run):
     result = dict(run["primary"]["metrics"])
+    if run.get("rouge_components"):
+        result.update(component_means(run["rouge_components"]))
     if run["supplementary"]:
         result.update(run["supplementary"]["metrics"])
         result.update(run["supplementary"]["diversity"])
@@ -76,6 +105,25 @@ def main():
     names = scoring.read(ROOT / "results/generation_benchmarks_v1/completion.json")["study_models"]
     runs = verified_sources(names, data)
     OUT.mkdir(parents=True, exist_ok=True)
+    component_rows = [{"model": name, "phase": phase, "benchmark": key, "seed": 10, **item}
+                      for (phase, name, key), run in runs.items() for item in run["rouge_components"]]
+    component_path = OUT / "rougeL_components_per_item.csv"
+    with component_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(component_rows[0]))
+        writer.writeheader(); writer.writerows(component_rows)
+    scoring.write_json(OUT / "rougeL_components.json", {
+        "data_protocol_fingerprint": data["fingerprint"], "scale": "all P/R/F1 are multiplied by 100",
+        "aggregation": "arithmetic mean of per-item precision, recall and F1 separately; mean F1 is not F1 of mean P/R",
+        "reference_selection": "same reference maximizing ROUGE-L F1; first reference on ties; do not maximize P and R independently",
+        "tokenizer": "Google ROUGE default tokenizer with use_stemmer=True; same full reference/response as primary scoring",
+        "rouge_score_version": importlib.metadata.version("rouge-score"),
+        "rouge_scorer_sha256": scoring.sha(rouge_scorer.__file__), "report_script_sha256": scoring.sha(__file__),
+        "per_item_csv": str(component_path.relative_to(ROOT)).replace("\\", "/"),
+        "per_item_csv_sha256": scoring.sha(component_path), "n_scored_responses": len(component_rows),
+        "sample_sd_across_generation_seeds": None,
+        "conditions": [{"model": name, "phase": phase, "benchmark": key, "n": len(run["rouge_components"]),
+                        "source": run["source"], **component_means(run["rouge_components"])}
+                       for (phase, name, key), run in runs.items()]})
     scores = [{"model": name, "phase": phase, "precision": run["precision"], "benchmark": key, "n": run["primary"]["n"],
                "seed": 10, **values(run)} for (phase, name, key), run in runs.items()]
     fields = list(dict.fromkeys(field for row in scores for field in row))
@@ -124,6 +172,18 @@ def main():
             distinct = scores_for_run.get("distinct4")
             lines.append(f'| {LABELS[name]} | {phase} | {" | ".join(cells)} | {distinct:.4f} |' if distinct is not None
                          else f'| {LABELS[name]} | {phase} | {" | ".join(cells)} | — |')
+    lines += ["", "## ROUGE-L Precision·Recall·F1", "",
+              "위 ROUGE-L은 문항별 F1 평균 ×100이다. 25.92는 원래 척도에서 0.2592이며 정답률이 아니다. 아래 P·R·F1도 모두 ×100으로 표시한다. 문항마다 P·R·F1을 구한 뒤 각각 평균하며, 평균 P·R의 조화평균을 평균 F1로 대체하지 않는다.", "",
+              "기존 scorer와 같은 Google ROUGE tokenizer·Porter stemming을 사용하며 reference와 응답 전체를 유지했다. 다중 reference는 F1을 최대화한 같은 reference의 P/R을 사용한다. 동률이면 첫 reference를 사용한다. 모든 문항의 F1을 기존 결과 CSV와 대조했고 추가 학습·생성은 없다. P/R은 순서가 유지되는 어휘 일치 비율이며 내용의 정오나 사실성을 판정하지 않는다.", "",
+              "| 모델 | 단계 | Dolly n | Precision | Recall | F1 |", "|---|---|---:|---:|---:|---:|"]
+    for name in names:
+        for phase in ("original", "sft"):
+            run = runs.get((phase, name, "dolly"))
+            if run:
+                mean = component_means(run["rouge_components"])
+                lines.append(f'| {LABELS[name]} | {phase} | {len(run["rouge_components"])} | {mean["rougeL_precision"]:.2f} | {mean["rougeL_recall"]:.2f} | {mean["rougeL_f1"]:.2f} |')
+    lines += ["", "완료된 외부 benchmark의 P/R/F1도 [전체 요약 CSV](scores.csv)와 [구성값·설정 JSON](rougeL_components.json)에 있다. [문항별 P/R/F1 CSV](rougeL_components_per_item.csv)에는 텍스트 원문 대신 ID·선택 reference 위치·구성값을 기록한다.", "",
+              "정의와 구현: [Google ROUGE scorer](https://github.com/google-research/google-research/blob/master/rouge/rouge_scorer.py).", ""]
     external_names = [name for name in names if any((phase, name, key) in runs
                       for phase in ("original", "sft") for key in scoring.BENCHMARKS[1:])]
     if external_names:

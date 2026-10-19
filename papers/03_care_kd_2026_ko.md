@@ -694,7 +694,9 @@ hard는 이진 분기와 zero margin, soft는 연속 가중·margin·selection g
 
 ### 원문 Table 6 — GPT2-XL → GPT2-base; 괄호는 원문 seed SD
 
-| 방법 | Dolly | Self-Inst | Super-Nat | Vicuna | 평균 |
+2026-10-19 원문 재확인: Table 6–8의 열 순서는 Dolly·Self-Inst·Vicuna·Super-Nat다. 본문 Table 1·5와 순서가 다르다. 이전 한국어 MD에서 뒤바뀐 열 제목을 교정했으며 수치는 바꾸지 않았다.
+
+| 방법 | Dolly | Self-Inst | Vicuna | Super-Nat | 평균 |
 | --- | --- | --- | --- | --- | --- |
 | SFT | 23.33 (0.22) | 10.56 (0.54) | 15.12 (0.47) | 17.08 (0.29) | 16.52 |
 | KD [ 13 ] | 23.52 (0.19) | 11.23 (0.41) | 15.92 (0.37) | 20.68 (0.14) | 17.84 |
@@ -708,7 +710,7 @@ hard는 이진 분기와 zero margin, soft는 연속 가중·margin·selection g
 
 ### 원문 Table 7 — OPT-2.7B → OPT-125M; 괄호는 원문 seed SD
 
-| 방법 | Dolly | Self-Inst | Super-Nat | Vicuna | 평균 |
+| 방법 | Dolly | Self-Inst | Vicuna | Super-Nat | 평균 |
 | --- | --- | --- | --- | --- | --- |
 | SFT | 21.78 (0.19) | 8.09 (0.39) | 14.40 (0.17) | 13.45 (0.20) | 14.43 |
 | KD [ 13 ] | 20.54 (0.38) | 9.16 (0.29) | 14.65 (0.47) | 15.79 (0.26) | 15.04 |
@@ -722,7 +724,7 @@ hard는 이진 분기와 zero margin, soft는 연속 가중·margin·selection g
 
 ### 원문 Table 8 — OpenLLaMA2-7B → 3B; 괄호는 원문 seed SD
 
-| 방법 | Dolly | Self-Inst | Super-Nat | Vicuna | 평균 |
+| 방법 | Dolly | Self-Inst | Vicuna | Super-Nat | 평균 |
 | --- | --- | --- | --- | --- | --- |
 | SFT | 25.11 (0.58) | 16.52 (0.56) | 16.33 (0.39) | 29.28 (0.45) | 21.81 |
 | KD [ 13 ] | 20.95 (0.49) | 16.12 (0.80) | 15.39 (0.39) | 27.93 (0.26) | 20.10 |
