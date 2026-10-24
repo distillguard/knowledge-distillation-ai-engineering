@@ -18,7 +18,7 @@
 
 최종 10,839문항의 입력은 지시문·서식을 포함해 129/142/186토큰, 정답·설명·EOS 응답은 62/119/190토큰이었다(중앙값/P95/최대).
 
-Qwen3.5[4]의 동결 4B 지도 미세조정(SFT) 교사로 직접(4B→0.8B)·중간(4B→2B→0.8B) 경로를 비교했다. 중간·최종 학생은 각각 동일 2B·0.8B SFT의 독립 사본에서 시작했다. 중간 교사는 해당 KL 학습 후 검증 선정·동결했다.
+Qwen3.5의 동결 4B 지도 미세조정(SFT) 교사로 직접(4B→0.8B)·중간(4B→2B→0.8B) 경로를 비교했다. 중간·최종 학생은 각각 동일 2B·0.8B SFT의 독립 사본에서 시작했다. 중간 교사는 해당 KL 학습 후 검증 선정·동결했다.
 
 ### 2.2 학습 목적과 조건
 
@@ -30,7 +30,7 @@ RKL = Σ q(v) log[q(v)/p(v)]
 
 전체 어휘 248,320개를 합산하며 FKL·RKL은 각각 p(v)·q(v)로 가중하고 RKL의 q도 미분했다. 온도 T=1의 순수 KL을 문항별로 종료 토큰(EOS)까지 응답 토큰에 평균했다. 입력·패딩은 제외했으며 log는 자연로그다.
 
-모든 선형층에 저랭크 적응(LoRA)[5] (랭크 r=8·스케일 계수 α=32·드롭아웃 0)을 적용해 각 단계 3회 반복·1,419회 갱신했다. 학습률 5×10⁻⁶·유효 배치 16·시드 10과 AdamW·선형 학습률 감소를 공통으로 적용하고, 단계마다 최적화기·스케줄러를 초기화했다.
+모든 선형층에 저랭크 적응(LoRA)[4] (랭크 r=8·스케일 계수 α=32·드롭아웃 0)을 적용해 각 단계 3회 반복·1,419회 갱신했다. 학습률 5×10⁻⁶·유효 배치 16·시드 10과 AdamW·선형 학습률 감소를 공통으로 적용하고, 단계마다 최적화기·스케줄러를 초기화했다.
 
 ### 2.3 모델 선정과 평가
 
@@ -40,7 +40,7 @@ Macro-F1은 A-E별 F1의 동일 가중 평균이다. 첫 ANSWER의 A-E 조건부
 
 NLL = -log s(g),  Brier = Σ [s(c) - y(c)]²
 
-두 점수는 문항 평균했다. Brier는 A-E에 대해 합산하며 선택지 수로 나누지 않았다[6].
+두 점수는 문항 평균했다. Brier는 A-E에 대해 합산하며 선택지 수로 나누지 않았다[5].
 
 ## 3. 결과
 
@@ -72,7 +72,7 @@ NLL = -log s(g),  Brier = Σ [s(c) - y(c)]²
 
 ## 4. 논의
 
-정답 수가 같아도 각 선택지에 부여한 확률이 달라지면 NLL·Brier는 달라질 수 있다[6]. 중간 FKL은 SFT와 정답 수가 같아도 두 확률 점수가 낮아진 사례로, 정확도만으로 드러나지 않는 차이를 보여준다. 혼동행렬은 선택지 위치별 집계 차이를 보충하며 문항별 전이를 나타내지는 않는다.
+정답 수가 같아도 각 선택지에 부여한 확률이 달라지면 NLL·Brier는 달라질 수 있다[5]. 중간 FKL은 SFT와 정답 수가 같아도 두 확률 점수가 낮아진 사례로, 정확도만으로 드러나지 않는 차이를 보여준다. 혼동행렬은 선택지 위치별 집계 차이를 보충하며 문항별 전이를 나타내지는 않는다.
 
 교사 크기·정확도·분포·학습 이력이 함께 달라져 경로 차이의 원인별 효과는 분리할 수 없다. 정보 손실·오류 잔존과 RKL의 분포 집중에 따른 설명은 미검증 가설이다. 응답 전체 학습·첫 답 평가의 차이와 ACC 우선 선정의 영향도 분리해 검증하지 않았다.
 
@@ -96,8 +96,6 @@ NLL = -log s(g),  Brier = Σ [s(c) - y(c)]²
 
 [3] Y. Gu et al., “MiniLLM: Knowledge Distillation of Large Language Models,” Proc. Int. Conf. Learn. Represent. (ICLR), 2024. https://proceedings.iclr.cc/paper_files/paper/2024/hash/8ac015d409635f196f9e3e9dcfb9a94e-Abstract-Conference.html
 
-[4] Qwen Team, “Qwen3.5: Towards Native Multimodal Agents,” Qwen Blog, Feb. 2026. [Online]. Available: https://qwen.ai/blog?id=qwen3.5
+[4] E. J. Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models,” arXiv preprint arXiv:2106.09685, Jun. 2021. https://arxiv.org/abs/2106.09685
 
-[5] E. J. Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models,” arXiv preprint arXiv:2106.09685, Jun. 2021. https://arxiv.org/abs/2106.09685
-
-[6] T. Gneiting and A. E. Raftery, “Strictly Proper Scoring Rules, Prediction, and Estimation,” J. Amer. Statist. Assoc., Vol. 102, No. 477, pp. 359-378, 2007. https://doi.org/10.1198/016214506000001437
+[5] T. Gneiting and A. E. Raftery, “Strictly Proper Scoring Rules, Prediction, and Estimation,” J. Amer. Statist. Assoc., Vol. 102, No. 477, pp. 359-378, 2007. https://doi.org/10.1198/016214506000001437

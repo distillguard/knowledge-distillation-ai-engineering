@@ -6,3 +6,4 @@
 # Generated plots are retained byte-for-byte.
 *.svg binary
 *.png binary
+docs/dcs인공지능공학논문.hwp binary

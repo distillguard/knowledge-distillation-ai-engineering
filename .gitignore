@@ -78,3 +78,6 @@
 **/*.pth
 **/*.ckpt
 **/checkpoint-*/
+
+# The user-approved conference manuscript is the only published HWP.
+!/docs/dcs인공지능공학논문.hwp
