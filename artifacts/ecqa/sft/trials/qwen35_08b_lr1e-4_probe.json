@@ -1,0 +1,25 @@
+{
+  "fingerprint": "62a6f357c0a1f610312a708c6878f36e026b71cfe90e6ec270ead57fe8c088a5",
+  "probes": [
+    {
+      "load_update_save_restore": "passed",
+      "sequence_tokens": 331,
+      "response_tokens": 180,
+      "loss": 3.0947015285491943,
+      "gradient_norm": 10.836344718933105,
+      "seconds": 1.25,
+      "peak_allocated_vram_bytes": 2188815872,
+      "probe_update_used_for_training": false
+    },
+    {
+      "load_update_save_restore": "passed",
+      "sequence_tokens": 324,
+      "response_tokens": 190,
+      "loss": 2.5979487895965576,
+      "gradient_norm": 10.201802253723145,
+      "seconds": 0.8280000000086147,
+      "peak_allocated_vram_bytes": 2222981632,
+      "probe_update_used_for_training": false
+    }
+  ]
+}

@@ -1,0 +1,737 @@
+{
+  "status": "verified_completed",
+  "created_utc": "2026-10-23T23:21:04.400593+00:00",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "single_seed": 10,
+  "explanation_factuality_reviewed": false,
+  "training_protocol_fingerprints": {
+    "ta_fkl": "e3a3449c59ee37c871514301da3b27c79af64f3a03423476fff2e8c6b09cafef",
+    "ta_rkl": "32979a9a7377616e48806f59bf1912c376eceac68bd92860fa4815c1cdcd9406",
+    "direct_fkl": "d9caf7a5344fe92863a267d9e0ec84d521658639d63e42a0277e03b202da12ad",
+    "direct_rkl": "85bfb89a537e980f67173e1490425ce23397acf1103ad376a42329b75226cc64",
+    "via_fkl": "cb6c8bf138c64268f2e0e90e2920476ecfb7c58fcff8a5c6bb3a2019da33ab4b",
+    "via_rkl": "3a6767cc8d6220a20aea2cd4a06ab87564bdcc5340eb365a22c966b93493ef85"
+  },
+  "evaluation_fingerprints": {
+    "sft_4b": "109bd92243415933612cf46f041ac6a61466a62f89048fd95bce2733f50c3443",
+    "sft_2b": "4e3c4a117a1664641a9ce72eb9c6f24ab8c42ef51187d35a256c8d60a274f62e",
+    "sft_08b": "fbb6254bc24ca12b29519d86e2b76c73e1c2aecba151831f408defb47853f44b",
+    "ta_fkl": "8eecbd0332478722a3671b2ffb7dfc42efee0d4d8d9d7e3b264294a8b76fddec",
+    "ta_rkl": "e1a20b111ae8c77a87a1db6b92e96246a193e1ea796434c88d966009eed01d3e",
+    "direct_fkl": "86a9efa13f241b17a51df957ca23c9cab2c5ee43e29856bae849692abaa25aaf",
+    "direct_rkl": "b275c0f300ee8f824833a076ce9d04d162f9e19212ca2d327b38c2828bd7e157",
+    "via_fkl": "8c47e2b01d3a246768ae5b8e212c8614078e87018fd92955405444dedbe6b869",
+    "via_rkl": "94aeda72b01c417929e4e36a859bf3fc3fd593cda0da38d7fc3456914302db86"
+  },
+  "raw_sha256_manifest_fingerprints": {
+    "sft_4b": "57623bb01d558eac69e4e4598a76e0b31c4951732317be5cf84e76f29627e4f1",
+    "sft_2b": "f23e3ff7d22daa88599c673c314567b29e580bf87022bf79a708a25432fbb70e",
+    "sft_08b": "b46dcadd27279c76aeca3c179fe5102a2a553679238b4552186efd6e0fcf5cb4",
+    "ta_fkl": "6eedbd8ac779eb8ed393947a069c464db49289c488b40e4c94f3d123b3a64209",
+    "ta_rkl": "e0d233958a0f5dc42a47494fa48ed9a93ba1fbd40706746c6873948d1e15bf3e",
+    "direct_fkl": "28782cfdca48f3b09c956f5f47cb2428d76ec786f5458a9eafba9ebfadbbda65",
+    "direct_rkl": "1cd17c3964d47a72f41a896f41a29625cb5c12abeaf34d61d8142824fc1312f9",
+    "via_fkl": "db4d0667e0e406cc3b3b818fc9bacc9877febd0d156157eb7c4115b75685cf82",
+    "via_rkl": "0c148fbab668b89552ae6e242d32738e3a145cba59bbe3cf15230e465f0dad7b"
+  },
+  "verified_test_rows_per_model": 2194,
+  "verified_test_models": 9,
+  "verified_dev_epochs": 18,
+  "final_conditions": {
+    "sft_08b": {
+      "n": 2194,
+      "correct": 1429,
+      "accuracy": 0.6513217866909754,
+      "macro_precision": 0.6511474560926418,
+      "macro_recall": 0.651078233475621,
+      "macro_f1": 0.6507993927187157,
+      "choice_nll": 1.0421668035160043,
+      "brier_score": 0.5140613187808789,
+      "per_class": {
+        "A": {
+          "support": 453,
+          "precision": 0.6886792452830188,
+          "recall": 0.6445916114790287,
+          "f1": 0.6659064994298746
+        },
+        "B": {
+          "support": 431,
+          "precision": 0.6413301662707839,
+          "recall": 0.6264501160092807,
+          "f1": 0.6338028169014085
+        },
+        "C": {
+          "support": 408,
+          "precision": 0.6211764705882353,
+          "recall": 0.6470588235294118,
+          "f1": 0.6338535414165667
+        },
+        "D": {
+          "support": 473,
+          "precision": 0.6687898089171974,
+          "recall": 0.6659619450317125,
+          "f1": 0.6673728813559322
+        },
+        "E": {
+          "support": 429,
+          "precision": 0.6357615894039735,
+          "recall": 0.6713286713286714,
+          "f1": 0.653061224489796
+        }
+      },
+      "confusion_matrix": [
+        [
+          292,
+          31,
+          41,
+          43,
+          46,
+          0
+        ],
+        [
+          44,
+          270,
+          47,
+          33,
+          37,
+          0
+        ],
+        [
+          28,
+          36,
+          264,
+          36,
+          44,
+          0
+        ],
+        [
+          31,
+          45,
+          44,
+          315,
+          38,
+          0
+        ],
+        [
+          29,
+          39,
+          29,
+          44,
+          288,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0,
+      "length_cap_count": 0,
+      "empty_explanation_count": 0,
+      "format_error_count": 0,
+      "mean_output_tokens": 64.41476754785779,
+      "total_generation_seconds": 9157.514999999752,
+      "selected_epoch": 3,
+      "dev_accuracy": 0.6617238183503243
+    },
+    "direct_fkl": {
+      "n": 2194,
+      "correct": 1430,
+      "accuracy": 0.6517775752051048,
+      "macro_precision": 0.6518054038407245,
+      "macro_recall": 0.651963198923086,
+      "macro_f1": 0.6514435267160745,
+      "choice_nll": 0.8937880767688103,
+      "brier_score": 0.47074769204043193,
+      "per_class": {
+        "A": {
+          "support": 453,
+          "precision": 0.6839622641509434,
+          "recall": 0.6401766004415012,
+          "f1": 0.6613454960091221
+        },
+        "B": {
+          "support": 431,
+          "precision": 0.6365740740740741,
+          "recall": 0.6380510440835266,
+          "f1": 0.6373117033603707
+        },
+        "C": {
+          "support": 408,
+          "precision": 0.6183908045977011,
+          "recall": 0.6593137254901961,
+          "f1": 0.638196915776987
+        },
+        "D": {
+          "support": 473,
+          "precision": 0.6851441241685144,
+          "recall": 0.653276955602537,
+          "f1": 0.6688311688311688
+        },
+        "E": {
+          "support": 429,
+          "precision": 0.6349557522123894,
+          "recall": 0.668997668997669,
+          "f1": 0.6515323496027242
+        }
+      },
+      "confusion_matrix": [
+        [
+          290,
+          35,
+          39,
+          41,
+          48,
+          0
+        ],
+        [
+          41,
+          275,
+          49,
+          30,
+          36,
+          0
+        ],
+        [
+          27,
+          40,
+          269,
+          31,
+          41,
+          0
+        ],
+        [
+          35,
+          45,
+          44,
+          309,
+          40,
+          0
+        ],
+        [
+          31,
+          37,
+          34,
+          40,
+          287,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0,
+      "length_cap_count": 5,
+      "empty_explanation_count": 0,
+      "format_error_count": 0,
+      "mean_output_tokens": 68.0063810391978,
+      "total_generation_seconds": 9372.581999999238,
+      "selected_epoch": 3,
+      "dev_accuracy": 0.6682113067655236
+    },
+    "direct_rkl": {
+      "n": 2194,
+      "correct": 1440,
+      "accuracy": 0.6563354603463992,
+      "macro_precision": 0.6562673804081881,
+      "macro_recall": 0.6565144268789054,
+      "macro_f1": 0.6560706111947975,
+      "choice_nll": 1.1150095216749956,
+      "brier_score": 0.5242611392121849,
+      "per_class": {
+        "A": {
+          "support": 453,
+          "precision": 0.687793427230047,
+          "recall": 0.6467991169977925,
+          "f1": 0.6666666666666666
+        },
+        "B": {
+          "support": 431,
+          "precision": 0.6388261851015802,
+          "recall": 0.6566125290023201,
+          "f1": 0.6475972540045767
+        },
+        "C": {
+          "support": 408,
+          "precision": 0.627906976744186,
+          "recall": 0.6617647058823529,
+          "f1": 0.6443914081145584
+        },
+        "D": {
+          "support": 473,
+          "precision": 0.6828193832599119,
+          "recall": 0.6553911205073996,
+          "f1": 0.6688241639697949
+        },
+        "E": {
+          "support": 429,
+          "precision": 0.6439909297052154,
+          "recall": 0.662004662004662,
+          "f1": 0.6528735632183909
+        }
+      },
+      "confusion_matrix": [
+        [
+          293,
+          36,
+          40,
+          39,
+          45,
+          0
+        ],
+        [
+          40,
+          283,
+          44,
+          29,
+          35,
+          0
+        ],
+        [
+          30,
+          37,
+          270,
+          33,
+          38,
+          0
+        ],
+        [
+          34,
+          47,
+          43,
+          310,
+          39,
+          0
+        ],
+        [
+          29,
+          40,
+          33,
+          43,
+          284,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0,
+      "length_cap_count": 4,
+      "empty_explanation_count": 0,
+      "format_error_count": 0,
+      "mean_output_tokens": 68.73199635369188,
+      "total_generation_seconds": 9651.225000000151,
+      "selected_epoch": 3,
+      "dev_accuracy": 0.6672845227062094
+    },
+    "via_fkl": {
+      "n": 2194,
+      "correct": 1429,
+      "accuracy": 0.6513217866909754,
+      "macro_precision": 0.6509947712326413,
+      "macro_recall": 0.6513311673532213,
+      "macro_f1": 0.6508755570914904,
+      "choice_nll": 0.8675180197950327,
+      "brier_score": 0.4594553730367071,
+      "per_class": {
+        "A": {
+          "support": 453,
+          "precision": 0.672566371681416,
+          "recall": 0.6710816777041942,
+          "f1": 0.6718232044198895
+        },
+        "B": {
+          "support": 431,
+          "precision": 0.6296296296296297,
+          "recall": 0.6310904872389791,
+          "f1": 0.630359212050985
+        },
+        "C": {
+          "support": 408,
+          "precision": 0.6183908045977011,
+          "recall": 0.6593137254901961,
+          "f1": 0.638196915776987
+        },
+        "D": {
+          "support": 473,
+          "precision": 0.6900452488687783,
+          "recall": 0.6448202959830867,
+          "f1": 0.6666666666666666
+        },
+        "E": {
+          "support": 429,
+          "precision": 0.6443418013856813,
+          "recall": 0.6503496503496503,
+          "f1": 0.6473317865429234
+        }
+      },
+      "confusion_matrix": [
+        [
+          304,
+          32,
+          36,
+          38,
+          43,
+          0
+        ],
+        [
+          45,
+          272,
+          50,
+          31,
+          33,
+          0
+        ],
+        [
+          34,
+          40,
+          269,
+          27,
+          38,
+          0
+        ],
+        [
+          37,
+          46,
+          45,
+          305,
+          40,
+          0
+        ],
+        [
+          32,
+          42,
+          35,
+          41,
+          279,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0,
+      "length_cap_count": 5,
+      "empty_explanation_count": 0,
+      "format_error_count": 0,
+      "mean_output_tokens": 68.54421148587056,
+      "total_generation_seconds": 10320.815000000352,
+      "selected_epoch": 2,
+      "dev_accuracy": 0.6645041705282669
+    },
+    "via_rkl": {
+      "n": 2194,
+      "correct": 1431,
+      "accuracy": 0.6522333637192342,
+      "macro_precision": 0.652191095886623,
+      "macro_recall": 0.6522772371020847,
+      "macro_f1": 0.6518974793003367,
+      "choice_nll": 1.1078542265792468,
+      "brier_score": 0.5200899928807615,
+      "per_class": {
+        "A": {
+          "support": 453,
+          "precision": 0.6819221967963387,
+          "recall": 0.6578366445916115,
+          "f1": 0.6696629213483146
+        },
+        "B": {
+          "support": 431,
+          "precision": 0.6302895322939867,
+          "recall": 0.6566125290023201,
+          "f1": 0.6431818181818182
+        },
+        "C": {
+          "support": 408,
+          "precision": 0.6132723112128147,
+          "recall": 0.6568627450980392,
+          "f1": 0.6343195266272189
+        },
+        "D": {
+          "support": 473,
+          "precision": 0.6807095343680709,
+          "recall": 0.6490486257928119,
+          "f1": 0.6645021645021645
+        },
+        "E": {
+          "support": 429,
+          "precision": 0.6547619047619048,
+          "recall": 0.6410256410256411,
+          "f1": 0.6478209658421673
+        }
+      },
+      "confusion_matrix": [
+        [
+          298,
+          34,
+          39,
+          39,
+          43,
+          0
+        ],
+        [
+          44,
+          283,
+          46,
+          30,
+          28,
+          0
+        ],
+        [
+          33,
+          40,
+          268,
+          31,
+          36,
+          0
+        ],
+        [
+          33,
+          47,
+          48,
+          307,
+          38,
+          0
+        ],
+        [
+          29,
+          45,
+          36,
+          44,
+          275,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0,
+      "length_cap_count": 5,
+      "empty_explanation_count": 0,
+      "format_error_count": 0,
+      "mean_output_tokens": 69.47356426618049,
+      "total_generation_seconds": 9607.532000000356,
+      "selected_epoch": 2,
+      "dev_accuracy": 0.6663577386468953
+    }
+  },
+  "paired_direct_vs_intermediate": {
+    "fkl": {
+      "n": 2194,
+      "both_correct": 1395,
+      "first_only_correct": 35,
+      "second_only_correct": 34,
+      "both_wrong": 730,
+      "same_wrong_answer": 713,
+      "second_minus_first_accuracy_pp": -0.04557885141294439
+    },
+    "rkl": {
+      "n": 2194,
+      "both_correct": 1404,
+      "first_only_correct": 36,
+      "second_only_correct": 27,
+      "both_wrong": 727,
+      "same_wrong_answer": 714,
+      "second_minus_first_accuracy_pp": -0.41020966271649956
+    }
+  },
+  "path_effects_pp": {
+    "delta_f": -0.04557885141294439,
+    "delta_r": -0.41020966271649956,
+    "delta_r_minus_delta_f": -0.3646308113035552
+  },
+  "teacher_transfer": {
+    "ta_fkl": {
+      "teacher": "sft_4b",
+      "n": 2194,
+      "both_correct": 1507,
+      "first_only_correct": 285,
+      "second_only_correct": 94,
+      "both_wrong": 308,
+      "same_wrong_answer": 252,
+      "second_minus_first_accuracy_pp": -8.70556061987238,
+      "teacher_correct": 1792,
+      "teacher_wrong": 402,
+      "correct_retention_rate": 0.8409598214285714,
+      "same_error_transfer_rate": 0.6268656716417911,
+      "teacher_error_corrected_rate": 0.23383084577114427
+    },
+    "ta_rkl": {
+      "teacher": "sft_4b",
+      "n": 2194,
+      "both_correct": 1508,
+      "first_only_correct": 284,
+      "second_only_correct": 95,
+      "both_wrong": 307,
+      "same_wrong_answer": 244,
+      "second_minus_first_accuracy_pp": -8.61440291704649,
+      "teacher_correct": 1792,
+      "teacher_wrong": 402,
+      "correct_retention_rate": 0.8415178571428571,
+      "same_error_transfer_rate": 0.6069651741293532,
+      "teacher_error_corrected_rate": 0.236318407960199
+    },
+    "direct_fkl": {
+      "teacher": "sft_4b",
+      "n": 2194,
+      "both_correct": 1333,
+      "first_only_correct": 459,
+      "second_only_correct": 97,
+      "both_wrong": 305,
+      "same_wrong_answer": 230,
+      "second_minus_first_accuracy_pp": -16.49954421148587,
+      "teacher_correct": 1792,
+      "teacher_wrong": 402,
+      "correct_retention_rate": 0.7438616071428571,
+      "same_error_transfer_rate": 0.572139303482587,
+      "teacher_error_corrected_rate": 0.24129353233830847
+    },
+    "direct_rkl": {
+      "teacher": "sft_4b",
+      "n": 2194,
+      "both_correct": 1337,
+      "first_only_correct": 455,
+      "second_only_correct": 103,
+      "both_wrong": 299,
+      "same_wrong_answer": 226,
+      "second_minus_first_accuracy_pp": -16.043755697356428,
+      "teacher_correct": 1792,
+      "teacher_wrong": 402,
+      "correct_retention_rate": 0.74609375,
+      "same_error_transfer_rate": 0.5621890547263682,
+      "teacher_error_corrected_rate": 0.2562189054726368
+    },
+    "via_fkl": {
+      "teacher": "ta_fkl",
+      "n": 2194,
+      "both_correct": 1285,
+      "first_only_correct": 316,
+      "second_only_correct": 144,
+      "both_wrong": 449,
+      "same_wrong_answer": 341,
+      "second_minus_first_accuracy_pp": -7.839562443026436,
+      "teacher_correct": 1601,
+      "teacher_wrong": 593,
+      "correct_retention_rate": 0.8026233603997501,
+      "same_error_transfer_rate": 0.5750421585160203,
+      "teacher_error_corrected_rate": 0.24283305227655985
+    },
+    "via_rkl": {
+      "teacher": "ta_rkl",
+      "n": 2194,
+      "both_correct": 1280,
+      "first_only_correct": 323,
+      "second_only_correct": 151,
+      "both_wrong": 440,
+      "same_wrong_answer": 339,
+      "second_minus_first_accuracy_pp": -7.839562443026436,
+      "teacher_correct": 1603,
+      "teacher_wrong": 591,
+      "correct_retention_rate": 0.7985028072364317,
+      "same_error_transfer_rate": 0.5736040609137056,
+      "teacher_error_corrected_rate": 0.25549915397631134
+    }
+  },
+  "costs": {
+    "by_stage": {
+      "ta_fkl": {
+        "training_dev_current_session_seconds": 14783.983999999997,
+        "training_resumed": true,
+        "prior_aborted_trainer_elapsed_seconds": 1234,
+        "test_generation_seconds": 10023.920999999886,
+        "recorded_training_dev_including_aborts_seconds": 16017.983999999997,
+        "recorded_training_dev_plus_generation_seconds": 26041.904999999882
+      },
+      "ta_rkl": {
+        "training_dev_current_session_seconds": 8773.437000000005,
+        "training_resumed": true,
+        "prior_aborted_trainer_elapsed_seconds": 9161,
+        "test_generation_seconds": 9679.194999999861,
+        "recorded_training_dev_including_aborts_seconds": 17934.437000000005,
+        "recorded_training_dev_plus_generation_seconds": 27613.631999999867
+      },
+      "direct_fkl": {
+        "training_dev_current_session_seconds": 15921.405999999959,
+        "training_resumed": false,
+        "prior_aborted_trainer_elapsed_seconds": 0,
+        "test_generation_seconds": 9372.581999999238,
+        "recorded_training_dev_including_aborts_seconds": 15921.405999999959,
+        "recorded_training_dev_plus_generation_seconds": 25293.987999999197
+      },
+      "direct_rkl": {
+        "training_dev_current_session_seconds": 15988.766000000003,
+        "training_resumed": false,
+        "prior_aborted_trainer_elapsed_seconds": 0,
+        "test_generation_seconds": 9651.225000000151,
+        "recorded_training_dev_including_aborts_seconds": 15988.766000000003,
+        "recorded_training_dev_plus_generation_seconds": 25639.991000000155
+      },
+      "via_fkl": {
+        "training_dev_current_session_seconds": 15695.015000000014,
+        "training_resumed": false,
+        "prior_aborted_trainer_elapsed_seconds": 0,
+        "test_generation_seconds": 10320.815000000352,
+        "recorded_training_dev_including_aborts_seconds": 15695.015000000014,
+        "recorded_training_dev_plus_generation_seconds": 26015.830000000366
+      },
+      "via_rkl": {
+        "training_dev_current_session_seconds": 15091.655999999959,
+        "training_resumed": false,
+        "prior_aborted_trainer_elapsed_seconds": 0,
+        "test_generation_seconds": 9607.532000000356,
+        "recorded_training_dev_including_aborts_seconds": 15091.655999999959,
+        "recorded_training_dev_plus_generation_seconds": 24699.188000000315
+      }
+    },
+    "by_branch": {
+      "direct_fkl": {
+        "stages": [
+          "direct_fkl"
+        ],
+        "recorded_training_dev_including_aborts_seconds": 15921.405999999959,
+        "test_generation_seconds": 9372.581999999238,
+        "recorded_training_dev_plus_generation_seconds": 25293.987999999197
+      },
+      "direct_rkl": {
+        "stages": [
+          "direct_rkl"
+        ],
+        "recorded_training_dev_including_aborts_seconds": 15988.766000000003,
+        "test_generation_seconds": 9651.225000000151,
+        "recorded_training_dev_plus_generation_seconds": 25639.991000000155
+      },
+      "via_fkl": {
+        "stages": [
+          "ta_fkl",
+          "via_fkl"
+        ],
+        "recorded_training_dev_including_aborts_seconds": 31712.99900000001,
+        "test_generation_seconds": 20344.736000000237,
+        "recorded_training_dev_plus_generation_seconds": 52057.73500000025
+      },
+      "via_rkl": {
+        "stages": [
+          "ta_rkl",
+          "via_rkl"
+        ],
+        "recorded_training_dev_including_aborts_seconds": 33026.092999999964,
+        "test_generation_seconds": 19286.727000000217,
+        "recorded_training_dev_plus_generation_seconds": 52312.82000000018
+      }
+    },
+    "aborted_session_evidence": [
+      {
+        "stage": "ta_fkl",
+        "last_displayed_step": 113,
+        "trainer_elapsed_seconds": 1228,
+        "log": "local/ecqa_kd_v1/recovery/20261022T034736Z/training_worker_error.log",
+        "log_sha256": "0fef19180646c1f658a7af1d3e9c5369e506aee89d8cfd3f5fe60c0a0b744f6a"
+      },
+      {
+        "stage": "ta_fkl",
+        "last_displayed_step": 0,
+        "trainer_elapsed_seconds": 6,
+        "log": "local/ecqa_kd_v1/recovery/20261022T035015Z/training_worker_error.log",
+        "log_sha256": "241b0388c9065df4775536b6872b509d5c9dae1223e1cfc54875adf7e8c1aae6"
+      },
+      {
+        "stage": "ta_rkl",
+        "last_displayed_step": 748,
+        "trainer_elapsed_seconds": 9161,
+        "log": "local/ecqa_kd_v1/recovery/20261022T132429Z/training_worker_error.log",
+        "log_sha256": "5daa7013ed7a09819554cc2eb942d29acc0779bb66a5cf992f79ce86534a5069"
+      }
+    ],
+    "recorded_training_dev_plus_generation_seconds": 155304.53399999978,
+    "kd_launch_to_last_test_wall_seconds": 156379.142008,
+    "kd_launch_utc": "2026-10-22T03:24:54.5459012Z",
+    "last_test_completed_utc": "2026-10-23T22:51:13.687909+00:00",
+    "scope": "Trainer time includes dev and recorded aborted attempts (integer-second progress logs), including repeated updates. Generation is saved per-question model generation only. Their sum excludes loading, probes, recovery diagnostics and idle/restart gaps. Wall span includes those within the KD launch-to-test interval, excludes earlier pair probes and SFT/baseline preparation, and is not measured GPU compute time."
+  },
+  "analysis_script_sha256": "f38555588add3a5350e159ad859ec0904deb8ed7ec9594ca4242cd622293dd12",
+  "training_script_sha256": "cbf1b65f43168e46ebe585726e797a25f28137b318732dd54f8cb1370481b895"
+}

@@ -1,9 +1,0 @@
-# Install only with --no-deps --target tmp/supplementary_metrics_v1/deps.
-# This isolated stack preserves BERTScore's slow RoBERTa tokenizer without changing the SFT environment.
-bert-score==0.3.13
-transformers==4.46.3
-tokenizers==0.20.3
-huggingface-hub==0.36.2
-requests==2.34.2
-charset-normalizer==3.5.2
-urllib3==2.8.0

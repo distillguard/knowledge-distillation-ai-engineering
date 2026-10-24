@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "split_counts": {
+    "test": 2194,
+    "dev": 1079,
+    "train": 7566
+  },
+  "all_training_input_ids_attention_masks_labels_identical": true,
+  "all_splits_evaluation_prompt_ids_identical": true,
+  "raw_chat_template_sources_identical": false,
+  "template_difference_handling": "Source templates differ; actual text-only non-thinking prompts and encoded full train rows match exactly for every experiment row",
+  "models": {
+    "qwen35_4b": {
+      "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "chat_template_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+      "eos_token_id": 248046,
+      "pad_token_id": 248044
+    },
+    "qwen35_2b": {
+      "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "chat_template_sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80",
+      "eos_token_id": 248046,
+      "pad_token_id": 248044
+    },
+    "qwen35_08b": {
+      "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "chat_template_sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80",
+      "eos_token_id": 248046,
+      "pad_token_id": 248044
+    }
+  },
+  "train_encoding_fingerprints": {
+    "qwen35_4b": "cb230c7f47107e73ad708ddd9c76d130decc0759599702468eafb32b5d4aa3d3",
+    "qwen35_2b": "cb230c7f47107e73ad708ddd9c76d130decc0759599702468eafb32b5d4aa3d3",
+    "qwen35_08b": "cb230c7f47107e73ad708ddd9c76d130decc0759599702468eafb32b5d4aa3d3"
+  },
+  "prompt_fingerprints": {
+    "qwen35_4b": {
+      "test": "0efbf0b2412dfff41180bd069aa96c2a3e33c6271ec04234952ab6f11d0dd89d",
+      "dev": "56468200ae65d30e118d5fb4d0714d7ad5aea149aa20f38d1dfc8b0d0008b012",
+      "train": "3d46fc6df0e862d2dee8102c1bb1eff82370904cf04cf47583f6fc21e9f34672"
+    },
+    "qwen35_2b": {
+      "test": "0efbf0b2412dfff41180bd069aa96c2a3e33c6271ec04234952ab6f11d0dd89d",
+      "dev": "56468200ae65d30e118d5fb4d0714d7ad5aea149aa20f38d1dfc8b0d0008b012",
+      "train": "3d46fc6df0e862d2dee8102c1bb1eff82370904cf04cf47583f6fc21e9f34672"
+    },
+    "qwen35_08b": {
+      "test": "0efbf0b2412dfff41180bd069aa96c2a3e33c6271ec04234952ab6f11d0dd89d",
+      "dev": "56468200ae65d30e118d5fb4d0714d7ad5aea149aa20f38d1dfc8b0d0008b012",
+      "train": "3d46fc6df0e862d2dee8102c1bb1eff82370904cf04cf47583f6fc21e9f34672"
+    }
+  },
+  "effective_generation_eos_ids": {
+    "qwen35_4b": [
+      248044,
+      248046
+    ],
+    "qwen35_2b": [
+      248044,
+      248046
+    ],
+    "qwen35_08b": [
+      248044,
+      248046
+    ]
+  }
+}

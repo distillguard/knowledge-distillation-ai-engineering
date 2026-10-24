@@ -1,0 +1,200 @@
+{
+  "status": "completed",
+  "created_utc": "2026-10-24T12:51:19.471428+00:00",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "data_sha256": {
+    "test": "8da9b5b2b605b479b2d29244bc069cda287b9b6961b281ccf042743a0fd88500",
+    "dev": "120ee04a7ad94c46032d343bd2022258834607f4ecbe54d8cdcd8d960316dffe",
+    "train": "3ef2287e2281f8e7e283398966161bcfed8d38b2c4cf15635dd84b8abda046fe"
+  },
+  "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "tokenizer_config_sha256": "49e2b6e395f959f077f1e992b338919c0d4a9732fc6e613995e06557f843500c",
+  "eos_token_id": 248046,
+  "source_script_sha256": "1d6820ffeba45e8365f1ac60e4f11a41cd65151ed73c4c83f53d7060588b84ce",
+  "helper_sha256": {
+    "ecqa_study.py": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+    "sft_ecqa.py": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103"
+  },
+  "split_counts": {
+    "train": 7566,
+    "dev": 1079,
+    "test": 2194
+  },
+  "original_author_counts": {
+    "train": 7598,
+    "dev": 1090,
+    "test": 2194
+  },
+  "excluded_lower_priority_counts": {
+    "test": 0,
+    "dev": 11,
+    "train": 32
+  },
+  "definitions": {
+    "input": "Actual sft.encode prefix: cap-256 instruction, question/A-E choices, non-thinking chat template and generation prompt; no gold/explanation.",
+    "reference_response": "ANSWER: gold + newline + EXPLANATION: unmodified canonical human explanation + one EOS; no truncation.",
+    "input_plus_reference": "Serialized input plus reference response; descriptive count, held-out records are not trained on.",
+    "bare_question_options": "Question + two newlines + A) to E) choices; excludes instruction and chat template.",
+    "percentiles": "numpy default linear interpolation; pooled across fixed final train/dev/test."
+  },
+  "groups": {
+    "all_final": {
+      "input": {
+        "n": 10839,
+        "min": 115,
+        "median": 129.0,
+        "p95": 142.0,
+        "p99": 152.0,
+        "mean": 129.66961896853954,
+        "max": 186
+      },
+      "reference_response": {
+        "n": 10839,
+        "min": 26,
+        "median": 62.0,
+        "p95": 119.0,
+        "p99": 147.0,
+        "mean": 67.32816680505582,
+        "max": 190
+      },
+      "input_plus_reference": {
+        "n": 10839,
+        "min": 147,
+        "median": 192.0,
+        "p95": 251.0,
+        "p99": 279.0,
+        "mean": 196.99778577359535,
+        "max": 331
+      },
+      "bare_question_options": {
+        "n": 10839,
+        "min": 24,
+        "median": 38.0,
+        "p95": 51.0,
+        "p99": 61.0,
+        "mean": 38.66961896853953,
+        "max": 95
+      }
+    },
+    "train": {
+      "input": {
+        "n": 7566,
+        "min": 115,
+        "median": 128.0,
+        "p95": 142.0,
+        "p99": 152.0,
+        "mean": 129.64895585514142,
+        "max": 183
+      },
+      "reference_response": {
+        "n": 7566,
+        "min": 26,
+        "median": 62.0,
+        "p95": 119.0,
+        "p99": 146.0,
+        "mean": 67.41488236849061,
+        "max": 190
+      },
+      "input_plus_reference": {
+        "n": 7566,
+        "min": 147,
+        "median": 192.0,
+        "p95": 250.0,
+        "p99": 279.0,
+        "mean": 197.06383822363205,
+        "max": 331
+      },
+      "bare_question_options": {
+        "n": 7566,
+        "min": 24,
+        "median": 37.0,
+        "p95": 51.0,
+        "p99": 61.0,
+        "mean": 38.64895585514142,
+        "max": 92
+      }
+    },
+    "dev": {
+      "input": {
+        "n": 1079,
+        "min": 118,
+        "median": 129.0,
+        "p95": 142.0,
+        "p99": 152.44000000000005,
+        "mean": 129.83410565338275,
+        "max": 170
+      },
+      "reference_response": {
+        "n": 1079,
+        "min": 30,
+        "median": 62.0,
+        "p95": 121.0,
+        "p99": 148.22000000000003,
+        "mean": 67.58943466172381,
+        "max": 175
+      },
+      "input_plus_reference": {
+        "n": 1079,
+        "min": 151,
+        "median": 192.0,
+        "p95": 252.0,
+        "p99": 279.6600000000001,
+        "mean": 197.42354031510658,
+        "max": 322
+      },
+      "bare_question_options": {
+        "n": 1079,
+        "min": 27,
+        "median": 38.0,
+        "p95": 51.0,
+        "p99": 61.440000000000055,
+        "mean": 38.834105653382764,
+        "max": 79
+      }
+    },
+    "test": {
+      "input": {
+        "n": 2194,
+        "min": 116,
+        "median": 129.0,
+        "p95": 141.0,
+        "p99": 152.0,
+        "mean": 129.65998176845943,
+        "max": 186
+      },
+      "reference_response": {
+        "n": 2194,
+        "min": 27,
+        "median": 61.0,
+        "p95": 118.0,
+        "p99": 147.07000000000016,
+        "mean": 66.90063810391977,
+        "max": 174
+      },
+      "input_plus_reference": {
+        "n": 2194,
+        "min": 150,
+        "median": 191.0,
+        "p95": 250.0,
+        "p99": 280.0,
+        "mean": 196.56061987237922,
+        "max": 305
+      },
+      "bare_question_options": {
+        "n": 2194,
+        "min": 25,
+        "median": 38.0,
+        "p95": 50.0,
+        "p99": 61.0,
+        "mean": 38.65998176845943,
+        "max": 95
+      }
+    }
+  },
+  "test_ids_unchanged": true,
+  "disjoint_ids_and_normalized_questions": true,
+  "original_text_unchanged": true,
+  "additional_training_or_generation": false,
+  "models_loaded": false,
+  "interpretation": "Reference/data lengths, not actual model generations. This post-hoc recount does not choose or change the fixed output cap."
+}

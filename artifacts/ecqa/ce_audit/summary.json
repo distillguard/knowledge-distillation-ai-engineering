@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+  "model": "Qwen/Qwen3.5-4B",
+  "aggregation": "Arithmetic mean of per-example mean response-token CE, identical weighting for train/dev",
+  "epochs": [
+    {
+      "epoch": 1,
+      "train": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 1,
+        "split": "train",
+        "n": 7566,
+        "response_ce": 1.1862985764093699,
+        "supervised_tokens": 510061,
+        "seconds": 914.170000000071
+      },
+      "dev": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 1,
+        "split": "dev",
+        "n": 1079,
+        "response_ce": 1.2789344950281325,
+        "supervised_tokens": 72929,
+        "seconds": 129.85699999998906
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 2,
+        "split": "train",
+        "n": 7566,
+        "response_ce": 1.0593157751402495,
+        "supervised_tokens": 510061,
+        "seconds": 914.8610000000335
+      },
+      "dev": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 2,
+        "split": "dev",
+        "n": 1079,
+        "response_ce": 1.2543564015676625,
+        "supervised_tokens": 72929,
+        "seconds": 130.06300000008196
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 3,
+        "split": "train",
+        "n": 7566,
+        "response_ce": 0.9919761936247995,
+        "supervised_tokens": 510061,
+        "seconds": 907.2150000000547
+      },
+      "dev": {
+        "status": "completed",
+        "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+        "epoch": 3,
+        "split": "dev",
+        "n": 1079,
+        "response_ce": 1.2688010504419214,
+        "supervised_tokens": 72929,
+        "seconds": 128.04699999996228
+      }
+    }
+  ],
+  "selection_influence": false,
+  "completed_utc": "2026-10-21T21:11:57.231583+00:00"
+}

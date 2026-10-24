@@ -1,0 +1,98 @@
+{
+  "status": "selected",
+  "fingerprint": "e3a3449c59ee37c871514301da3b27c79af64f3a03423476fff2e8c6b09cafef",
+  "selected": {
+    "fingerprint": "e3a3449c59ee37c871514301da3b27c79af64f3a03423476fff2e8c6b09cafef",
+    "epoch": 2,
+    "global_step": 946,
+    "learning_rate": 5e-06,
+    "dev": {
+      "n": 1079,
+      "correct": 787,
+      "accuracy": 0.7293790546802595,
+      "macro_precision": 0.7299816422549037,
+      "macro_recall": 0.7297035045665183,
+      "macro_f1": 0.7292345851780093,
+      "choice_nll": 0.716694087130241,
+      "brier_score": 0.3745852007085096,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.7004608294930875,
+          "recall": 0.7238095238095238,
+          "f1": 0.711943793911007
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.751219512195122,
+          "recall": 0.6936936936936937,
+          "f1": 0.721311475409836
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.721030042918455,
+          "recall": 0.7636363636363637,
+          "f1": 0.7417218543046358
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.7247706422018348,
+          "recall": 0.7596153846153846,
+          "f1": 0.7417840375586855
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.7524271844660194,
+          "recall": 0.7077625570776256,
+          "f1": 0.7294117647058824
+        }
+      },
+      "confusion_matrix": [
+        [
+          152,
+          16,
+          14,
+          12,
+          16,
+          0
+        ],
+        [
+          22,
+          154,
+          16,
+          15,
+          15,
+          0
+        ],
+        [
+          14,
+          12,
+          168,
+          17,
+          9,
+          0
+        ],
+        [
+          16,
+          10,
+          13,
+          158,
+          11,
+          0
+        ],
+        [
+          13,
+          13,
+          22,
+          16,
+          155,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_kd_v1/ta_fkl/epoch2_adapter",
+    "adapter_sha256": "ea090cccd15cb61b2be29facba98751642462f05f09a9545d1ed5262375fc29b"
+  },
+  "test_used_for_selection": false
+}

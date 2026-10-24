@@ -1,0 +1,98 @@
+{
+  "status": "selected",
+  "fingerprint": "32979a9a7377616e48806f59bf1912c376eceac68bd92860fa4815c1cdcd9406",
+  "selected": {
+    "fingerprint": "32979a9a7377616e48806f59bf1912c376eceac68bd92860fa4815c1cdcd9406",
+    "epoch": 3,
+    "global_step": 1419,
+    "learning_rate": 5e-06,
+    "dev": {
+      "n": 1079,
+      "correct": 792,
+      "accuracy": 0.7340129749768304,
+      "macro_precision": 0.7349562225993587,
+      "macro_recall": 0.7344093731764965,
+      "macro_f1": 0.7336902152197425,
+      "choice_nll": 0.8142362805062524,
+      "brier_score": 0.3935795563927594,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.7149532710280374,
+          "recall": 0.7285714285714285,
+          "f1": 0.7216981132075472
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.7638190954773869,
+          "recall": 0.6846846846846847,
+          "f1": 0.7220902612826604
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.7178423236514523,
+          "recall": 0.7863636363636364,
+          "f1": 0.7505422993492408
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.730593607305936,
+          "recall": 0.7692307692307693,
+          "f1": 0.7494145199063232
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.7475728155339806,
+          "recall": 0.7031963470319634,
+          "f1": 0.7247058823529412
+        }
+      },
+      "confusion_matrix": [
+        [
+          153,
+          15,
+          14,
+          12,
+          16,
+          0
+        ],
+        [
+          20,
+          152,
+          18,
+          16,
+          16,
+          0
+        ],
+        [
+          14,
+          10,
+          173,
+          15,
+          8,
+          0
+        ],
+        [
+          14,
+          9,
+          13,
+          160,
+          12,
+          0
+        ],
+        [
+          13,
+          13,
+          23,
+          16,
+          154,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_kd_v1/ta_rkl/epoch3_adapter",
+    "adapter_sha256": "3de9cda60e86eeea20b96e6d56f163a47ae854acce7df0a84ee81e80db06f232"
+  },
+  "test_used_for_selection": false
+}

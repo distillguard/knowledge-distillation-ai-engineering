@@ -1,0 +1,101 @@
+{
+  "status": "completed",
+  "model": "Qwen/Qwen3.5-4B",
+  "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "fingerprint": "c62402e42b2a67a28717ae1cb4c7b83c29cddac2fddff9e8dcbea50f43b5ac8a",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "max_new_tokens": 256,
+  "split": "dev_probe",
+  "overall": {
+    "n": 4,
+    "correct": 3,
+    "accuracy": 0.75,
+    "macro_precision": 0.4,
+    "macro_recall": 0.3,
+    "macro_f1": 0.3333333333333333,
+    "choice_nll": 0.22208979963761522,
+    "brier_score": 0.15721709421802194,
+    "per_class": {
+      "A": {
+        "support": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "B": {
+        "support": 2,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666
+      },
+      "C": {
+        "support": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "D": {
+        "support": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "E": {
+        "support": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ]
+    ],
+    "invalid_answer_count": 0,
+    "length_cap_count": 0,
+    "empty_explanation_count": 0,
+    "format_error_count": 0,
+    "mean_output_tokens": 43.25,
+    "total_generation_seconds": 10.093999999997322
+  },
+  "completed_utc": "2026-10-20T18:03:40.466518+00:00",
+  "explanation_factuality_reviewed": false
+}

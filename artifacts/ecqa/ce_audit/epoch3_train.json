@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f",
+  "epoch": 3,
+  "split": "train",
+  "n": 7566,
+  "response_ce": 0.9919761936247995,
+  "supervised_tokens": 510061,
+  "seconds": 907.2150000000547
+}

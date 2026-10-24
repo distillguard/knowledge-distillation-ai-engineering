@@ -1,0 +1,101 @@
+{
+  "status": "completed",
+  "model": "Qwen/Qwen3.5-4B",
+  "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "fingerprint": "109bd92243415933612cf46f041ac6a61466a62f89048fd95bce2733f50c3443",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "max_new_tokens": 256,
+  "split": "test",
+  "overall": {
+    "n": 2194,
+    "correct": 1792,
+    "accuracy": 0.8167730173199635,
+    "macro_precision": 0.8164252827303473,
+    "macro_recall": 0.8166461915792178,
+    "macro_f1": 0.8161523275335554,
+    "choice_nll": 0.522000718370197,
+    "brier_score": 0.2734681337452003,
+    "per_class": {
+      "A": {
+        "support": 453,
+        "precision": 0.852017937219731,
+        "recall": 0.8388520971302428,
+        "f1": 0.8453837597330367
+      },
+      "B": {
+        "support": 431,
+        "precision": 0.8125,
+        "recall": 0.7842227378190255,
+        "f1": 0.7981109799291616
+      },
+      "C": {
+        "support": 408,
+        "precision": 0.7657657657657657,
+        "recall": 0.8333333333333334,
+        "f1": 0.7981220657276996
+      },
+      "D": {
+        "support": 473,
+        "precision": 0.8453159041394336,
+        "recall": 0.8202959830866807,
+        "f1": 0.832618025751073
+      },
+      "E": {
+        "support": 429,
+        "precision": 0.8065268065268065,
+        "recall": 0.8065268065268065,
+        "f1": 0.8065268065268065
+      }
+    },
+    "confusion_matrix": [
+      [
+        380,
+        16,
+        18,
+        12,
+        27,
+        0
+      ],
+      [
+        23,
+        338,
+        32,
+        21,
+        17,
+        0
+      ],
+      [
+        14,
+        15,
+        340,
+        20,
+        19,
+        0
+      ],
+      [
+        10,
+        26,
+        29,
+        388,
+        20,
+        0
+      ],
+      [
+        19,
+        21,
+        25,
+        18,
+        346,
+        0
+      ]
+    ],
+    "invalid_answer_count": 0,
+    "length_cap_count": 0,
+    "empty_explanation_count": 0,
+    "format_error_count": 0,
+    "mean_output_tokens": 71.57748404740201,
+    "total_generation_seconds": 13185.708000000173
+  },
+  "completed_utc": "2026-10-21T07:37:20.424351+00:00",
+  "explanation_factuality_reviewed": false
+}

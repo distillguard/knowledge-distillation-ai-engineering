@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-10-24T13:08:45.428356+00:00",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "source_result_sha256": {
+    "artifacts\\ecqa\\sft\\qwen35_08b.json": "0c9018a5469369eb86cc4e117d379621522011ff5ea4a65eba9c672d829825fd",
+    "artifacts\\ecqa\\kd\\direct_fkl\\sft\\qwen35_08b.json": "5705cc835307d543b43d453164ef0b7ba4b072b0f398079fdd4d42b8dd988b5b",
+    "artifacts\\ecqa\\kd\\direct_rkl\\sft\\qwen35_08b.json": "96365c0a9139af931a5badeb8179af41bfca4fe78db088dd4f9f41bd7b81bc44",
+    "artifacts\\ecqa\\kd\\via_fkl\\sft\\qwen35_08b.json": "754ac79e5b4491b4bbb307c5937693c0d1c112782c456495401e0d147b0f4b58",
+    "artifacts\\ecqa\\kd\\via_rkl\\sft\\qwen35_08b.json": "00d1c665bf50a0d77d09da617e7005c10c0dbc5677a1a9bcd31d30a24d111785"
+  },
+  "ordered_raw_sha256": {
+    "sft_08b": "2f4f266e4f0bcb56c197a79a80cabe2da0088a5a6cb72ff820da26e2ed324e2f",
+    "direct_fkl": "c8527e0c4e9028f233806de2243aa8422f393abe866750db4ff23bb25cadfdcb",
+    "direct_rkl": "12e9beca10a0900604697cdf15179a0022d87f769b64c6106c0d21f07795d759",
+    "via_fkl": "fa20951c1b79a6fb0e5ae910a8f1e09ffe0d1726dc62d5cfe877f6d4991bb330",
+    "via_rkl": "0b3bf6b2438ed4f00c6b280588915653294f32df2ce3c1fdc620d689f872ea6e"
+  },
+  "responses_reparsed": 10970,
+  "confusion_diagonal_differences": [
+    {
+      "label": "직접 RKL-SFT",
+      "by_gold_position": [
+        1,
+        13,
+        6,
+        -5,
+        -4
+      ],
+      "total": 11
+    },
+    {
+      "label": "중간 FKL-직접 FKL",
+      "by_gold_position": [
+        14,
+        -3,
+        0,
+        -4,
+        -8
+      ],
+      "total": -1
+    },
+    {
+      "label": "중간 RKL-직접 RKL",
+      "by_gold_position": [
+        5,
+        0,
+        -2,
+        -3,
+        -9
+      ],
+      "total": -9
+    }
+  ],
+  "relative_reduction_percent_vs_sft": {
+    "direct_fkl": {
+      "choice_nll": 14.237521886765354,
+      "brier_score": 8.425770459284376
+    },
+    "via_fkl": {
+      "choice_nll": 16.758237081794515,
+      "brier_score": 10.622457623085209
+    }
+  },
+  "unchanged_model_selection": "dev ACC -> Macro-F1 -> lower gold NLL -> earlier epoch",
+  "emphasis": "Retrospective interpretation of fixed selections; FKL probability scores foregrounded; ACC/confusion supplementary.",
+  "additional_training_generation_or_reselection": false,
+  "scope": "First ANSWER A-E conditional probabilities; no significance, representation or calibration-only claim.",
+  "analysis_script_sha256": "165420fb5222f16c9560f381d4fe9313dea477d394a09c85e4b05b6e74e91841"
+}

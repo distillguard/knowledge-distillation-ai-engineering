@@ -1,0 +1,60 @@
+{
+  "model": "Qwen/Qwen3.5-0.8B",
+  "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "recipe": {
+    "lora_rank": 8,
+    "lora_alpha": 32,
+    "lora_dropout": 0.0,
+    "target_modules": "all-linear",
+    "microbatch": 1,
+    "gradient_accumulation": 16,
+    "learning_rates_by_model": {
+      "qwen35_4b": 5e-05,
+      "qwen35_2b": 5e-05,
+      "qwen35_08b": 0.0001
+    },
+    "epochs": 3,
+    "early_stopping": false,
+    "optimizer": "AdamW",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.0,
+    "gradient_clip": 1.0,
+    "schedule": "linear",
+    "warmup_ratio": 0.05,
+    "seed": 10,
+    "dtype": "BF16 base; FP32 trainable LoRA",
+    "quantization": null,
+    "basis": "User-fixed size-specific SFT LR inspired by MiniLLM baseline search ranges; retained LoRA recipe, not an ECQA optimum or full MiniLLM reproduction"
+  },
+  "learning_rate": 0.0001,
+  "updates_per_epoch": 473,
+  "maximum_updates": 1419,
+  "warmup_updates": 71,
+  "response_limit_during_evaluation": 256,
+  "maximum_training_sequence_tokens": 331,
+  "target": "Original ECQA gold ANSWER, original human explanation, EOS; response-only CE",
+  "selection": "dev ACC, macro-F1, lower answer-choice NLL, earlier epoch; LR fixed before SFT",
+  "fresh_lora_per_model": true,
+  "test_used_for_selection": false,
+  "truncation": false,
+  "script_sha256": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103",
+  "evaluator_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "gpu_safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "resource_safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "accelerate": "1.15.0"
+  },
+  "fingerprint": "62a6f357c0a1f610312a708c6878f36e026b71cfe90e6ec270ead57fe8c088a5"
+}

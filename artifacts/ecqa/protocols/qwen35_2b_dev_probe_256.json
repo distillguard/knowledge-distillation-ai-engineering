@@ -1,0 +1,41 @@
+{
+  "model": "Qwen/Qwen3.5-2B",
+  "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+  "training": "none; original post-trained model",
+  "split": "dev_probe",
+  "n": 4,
+  "ordered_ids_sha256": "c5bf2aa3c7fff4655ee477df7abf2d50567985f34cac58a3830497a75b26568b",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "test_used_for_selection": false,
+  "max_new_tokens": 256,
+  "instruction": "Answer the commonsense multiple-choice question. Give your selected answer FIRST, then a concise English explanation. Use exactly this format without markdown or JSON:\nANSWER: X\nEXPLANATION: Your explanation.\nReplace X with one of A, B, C, D, E. Do not repeat the question or options. Keep the entire response within 256 output tokens.\n\n\n\nA) \nB) \nC) \nD) \nE) ",
+  "dtype": "bfloat16",
+  "quantization": null,
+  "batch_size": 1,
+  "thinking": false,
+  "do_sample": false,
+  "num_beams": 1,
+  "truncation": false,
+  "temperature": null,
+  "eos_token_ids": [
+    248044,
+    248046
+  ],
+  "format": "Force ANSWER header and EXPLANATION separator; model selects A-E, explanation is free generation",
+  "choice_distribution": "A-E conditional softmax at the ANSWER position, temperature 1",
+  "tie_rule": "greedy torch.argmax, lowest vocabulary token ID",
+  "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "script_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "safetensors": "0.8.0"
+  },
+  "fingerprint": "6a8a65e215c78ac47a2db1f1c16e1e7d4f4b4cfaceaafeab2ba443ae4ce84f3a"
+}

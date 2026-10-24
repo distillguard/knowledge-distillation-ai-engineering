@@ -1,0 +1,99 @@
+{
+  "status": "selected",
+  "fingerprint": "99f0f6d3e7a94fb1c271479de826815393595b735c72dcf37a4f4d0accc2ec88",
+  "selected": {
+    "fingerprint": "99f0f6d3e7a94fb1c271479de826815393595b735c72dcf37a4f4d0accc2ec88",
+    "model": "qwen35_2b",
+    "learning_rate": 5e-05,
+    "epoch": 2,
+    "global_step": 946,
+    "dev": {
+      "n": 1079,
+      "correct": 777,
+      "accuracy": 0.7201112140871178,
+      "macro_precision": 0.7210089484730084,
+      "macro_recall": 0.7204043466714699,
+      "macro_f1": 0.7200720767011243,
+      "choice_nll": 0.7525048143137268,
+      "brier_score": 0.3875635234493376,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.6899563318777293,
+          "recall": 0.7523809523809524,
+          "f1": 0.7198177676537586
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.7391304347826086,
+          "recall": 0.6891891891891891,
+          "f1": 0.7132867132867132
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.7086956521739131,
+          "recall": 0.740909090909091,
+          "f1": 0.7244444444444446
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.7233009708737864,
+          "recall": 0.7163461538461539,
+          "f1": 0.7198067632850241
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.7439613526570048,
+          "recall": 0.7031963470319634,
+          "f1": 0.7230046948356808
+        }
+      },
+      "confusion_matrix": [
+        [
+          158,
+          14,
+          13,
+          11,
+          14,
+          0
+        ],
+        [
+          22,
+          153,
+          17,
+          14,
+          16,
+          0
+        ],
+        [
+          16,
+          14,
+          163,
+          18,
+          9,
+          0
+        ],
+        [
+          19,
+          12,
+          14,
+          149,
+          14,
+          0
+        ],
+        [
+          14,
+          14,
+          23,
+          14,
+          154,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_sft_v1/qwen35_2b/lr5e-5/epoch2_adapter",
+    "adapter_sha256": "fe45850133c3572776d2ff0b1744308fea11e87a35ab9790cfae8b6135c5fab2"
+  },
+  "test_used_for_selection": false
+}

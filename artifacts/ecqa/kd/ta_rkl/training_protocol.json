@@ -1,0 +1,272 @@
+{
+  "stage": "ta_rkl",
+  "teacher": "qwen35_4b",
+  "student": "qwen35_2b",
+  "direction": "rkl",
+  "teacher_initialization": {
+    "fingerprint": "84bab3716b41a388e0c62978140803be3755631144783be071502717892a07c9",
+    "model": "qwen35_4b",
+    "learning_rate": 5e-05,
+    "epoch": 2,
+    "global_step": 946,
+    "dev": {
+      "n": 1079,
+      "correct": 853,
+      "accuracy": 0.7905468025949953,
+      "macro_precision": 0.7913368571519042,
+      "macro_recall": 0.7909374249100276,
+      "macro_f1": 0.7901039803302785,
+      "choice_nll": 0.5738311076762107,
+      "brier_score": 0.29690787172357014,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.7980295566502463,
+          "recall": 0.7714285714285715,
+          "f1": 0.784503631961259
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.7929292929292929,
+          "recall": 0.7072072072072072,
+          "f1": 0.7476190476190476
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.7644628099173554,
+          "recall": 0.8409090909090909,
+          "f1": 0.800865800865801
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.7818181818181819,
+          "recall": 0.8269230769230769,
+          "f1": 0.8037383177570092
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.8194444444444444,
+          "recall": 0.8082191780821918,
+          "f1": 0.8137931034482759
+        }
+      },
+      "confusion_matrix": [
+        [
+          162,
+          16,
+          12,
+          9,
+          11,
+          0
+        ],
+        [
+          12,
+          157,
+          17,
+          20,
+          16,
+          0
+        ],
+        [
+          10,
+          9,
+          185,
+          11,
+          5,
+          0
+        ],
+        [
+          8,
+          9,
+          12,
+          172,
+          7,
+          0
+        ],
+        [
+          11,
+          7,
+          16,
+          8,
+          177,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_sft_v1/qwen35_4b/lr5e-5/epoch2_adapter",
+    "adapter_sha256": "20567d1b8784f49aa5e9163944fa487c3bbcf32c65b9530401d3734b2e48a732"
+  },
+  "student_initialization": {
+    "fingerprint": "99f0f6d3e7a94fb1c271479de826815393595b735c72dcf37a4f4d0accc2ec88",
+    "model": "qwen35_2b",
+    "learning_rate": 5e-05,
+    "epoch": 2,
+    "global_step": 946,
+    "dev": {
+      "n": 1079,
+      "correct": 777,
+      "accuracy": 0.7201112140871178,
+      "macro_precision": 0.7210089484730084,
+      "macro_recall": 0.7204043466714699,
+      "macro_f1": 0.7200720767011243,
+      "choice_nll": 0.7525048143137268,
+      "brier_score": 0.3875635234493376,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.6899563318777293,
+          "recall": 0.7523809523809524,
+          "f1": 0.7198177676537586
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.7391304347826086,
+          "recall": 0.6891891891891891,
+          "f1": 0.7132867132867132
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.7086956521739131,
+          "recall": 0.740909090909091,
+          "f1": 0.7244444444444446
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.7233009708737864,
+          "recall": 0.7163461538461539,
+          "f1": 0.7198067632850241
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.7439613526570048,
+          "recall": 0.7031963470319634,
+          "f1": 0.7230046948356808
+        }
+      },
+      "confusion_matrix": [
+        [
+          158,
+          14,
+          13,
+          11,
+          14,
+          0
+        ],
+        [
+          22,
+          153,
+          17,
+          14,
+          16,
+          0
+        ],
+        [
+          16,
+          14,
+          163,
+          18,
+          9,
+          0
+        ],
+        [
+          19,
+          12,
+          14,
+          149,
+          14,
+          0
+        ],
+        [
+          14,
+          14,
+          23,
+          14,
+          154,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_sft_v1/qwen35_2b/lr5e-5/epoch2_adapter",
+    "adapter_sha256": "fe45850133c3572776d2ff0b1744308fea11e87a35ab9790cfae8b6135c5fab2"
+  },
+  "base_revisions": {
+    "qwen35_4b": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "qwen35_2b": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "qwen35_08b": "2fc06364715b967f1860aea9cf38778875588b17"
+  },
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "test_ordered_ids_sha256": "25f5969c9becb16ff327c418ed99c8fb937b44ae2421aa81e37a04794d08844e",
+  "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "loss": "pure full-vocabulary response/explanation/EOS KL; prompt masked; fixed original gold prefixes",
+  "temperature": 1.0,
+  "cross_entropy_mixture": false,
+  "student_rollout": false,
+  "learning_rate": 5e-06,
+  "epochs": 3,
+  "updates_per_epoch": 473,
+  "maximum_updates": 1419,
+  "warmup_updates": 71,
+  "recipe": {
+    "lora_rank": 8,
+    "lora_alpha": 32,
+    "lora_dropout": 0.0,
+    "target_modules": "all-linear",
+    "microbatch": 1,
+    "gradient_accumulation": 16,
+    "learning_rates_by_model": null,
+    "epochs": 3,
+    "early_stopping": false,
+    "optimizer": "AdamW",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.0,
+    "gradient_clip": 1.0,
+    "schedule": "linear",
+    "warmup_ratio": 0.05,
+    "seed": 10,
+    "dtype": "BF16 base; FP32 trainable LoRA",
+    "quantization": null,
+    "basis": "User-fixed KD reference LR; not an ECQA optimum or full MiniLLM reproduction",
+    "learning_rate": 5e-06
+  },
+  "fresh_optimizer_scheduler_per_stage": true,
+  "continue_selected_sft_lora": true,
+  "test_used_for_selection": false,
+  "selection": "dev ACC, Macro-F1, lower A-E conditional NLL, earlier epoch",
+  "evaluation_max_new_tokens": 256,
+  "truncation": false,
+  "cpu_offload": false,
+  "kl_math_dtype": "float32",
+  "token_chunk": 16,
+  "student_logits_handling": "Same BF16 Accelerate autocast; omit redundant full FP32 output copy, retain FP32 KL within token chunks",
+  "runtime_environment": {
+    "PYTORCH_ALLOC_CONF": "backend:native,garbage_collection_threshold:0.8",
+    "PYTORCH_CUDA_ALLOC_CONF": "backend:native,garbage_collection_threshold:0.8",
+    "HF_HUB_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false"
+  },
+  "pair_probe_sha256": "e07c851f91549d8b3a21a981c9bab8aa53a5ed3223fd30af8989e472d64cb1d3",
+  "pair_probe_source_sha256": "1b2db30c9b7b10dd2f484b4ff50e9441c736c3e627d55d94ff9dd0c0f790516f",
+  "probe_loss_ast_matches": true,
+  "script_sha256": "cbf1b65f43168e46ebe585726e797a25f28137b318732dd54f8cb1370481b895",
+  "sft_helper_sha256": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103",
+  "evaluator_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "accelerate": "1.15.0"
+  },
+  "fingerprint": "32979a9a7377616e48806f59bf1912c376eceac68bd92860fa4815c1cdcd9406"
+}

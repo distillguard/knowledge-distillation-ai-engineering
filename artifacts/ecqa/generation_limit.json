@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "selected_max_new_tokens": 256,
+  "rule": "Start at 256 from reference maximum 190; if any model hits the cap or lacks valid explanation on deterministic dev extremes, use common 512. No expansion beyond 512.",
+  "dev_probe_ids": [
+    "19c17dfeceb5941c70f755439a0314f4",
+    "038010535de76fcdf43a0776a6f04814",
+    "b2266698eccd6456b10ab36bff5532a9",
+    "fe4432f66818aba6f6e6e11e9273238d"
+  ],
+  "probe_selection": "shortest input, longest input, longest reference output, longest combined sample; unique IDs",
+  "probe_scope": "dev extremes only; not evidence that every future generation terminates below cap",
+  "remaining_probe_caps": {
+    "Qwen/Qwen3.5-4B": 0,
+    "Qwen/Qwen3.5-2B": 0,
+    "Qwen/Qwen3.5-0.8B": 0
+  },
+  "test_used_for_selection": false,
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677"
+}

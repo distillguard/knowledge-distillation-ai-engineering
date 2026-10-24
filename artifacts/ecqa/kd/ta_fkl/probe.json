@@ -1,0 +1,39 @@
+{
+  "fingerprint": "e3a3449c59ee37c871514301da3b27c79af64f3a03423476fff2e8c6b09cafef",
+  "probes": [
+    {
+      "status": "passed",
+      "load_update_save_restore": "passed",
+      "probe_update_used_for_training": false,
+      "loss": 0.3193152844905853,
+      "gradient_norm": 3.57527756690979,
+      "memory": {
+        "stage": "stage_probe",
+        "free_vram_bytes": 2989797376,
+        "total_vram_bytes": 17102864384,
+        "allocated_bytes": 12451205120,
+        "reserved_bytes": 12507414528,
+        "peak_allocated_bytes": 12688871424,
+        "available_ram_bytes": 16142106624
+      },
+      "minimum_free_vram_bytes": 2898046976
+    },
+    {
+      "status": "passed",
+      "load_update_save_restore": "passed",
+      "probe_update_used_for_training": false,
+      "loss": 0.2789817154407501,
+      "gradient_norm": 5.5938401222229,
+      "memory": {
+        "stage": "stage_probe",
+        "free_vram_bytes": 2991763456,
+        "total_vram_bytes": 17102864384,
+        "allocated_bytes": 12455857152,
+        "reserved_bytes": 12513705984,
+        "peak_allocated_bytes": 12714041344,
+        "available_ram_bytes": 16136376320
+      },
+      "minimum_free_vram_bytes": 2891296768
+    }
+  ]
+}

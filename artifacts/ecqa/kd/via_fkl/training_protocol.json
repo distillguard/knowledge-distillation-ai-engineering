@@ -1,0 +1,271 @@
+{
+  "stage": "via_fkl",
+  "teacher": "qwen35_2b",
+  "student": "qwen35_08b",
+  "direction": "fkl",
+  "teacher_initialization": {
+    "fingerprint": "e3a3449c59ee37c871514301da3b27c79af64f3a03423476fff2e8c6b09cafef",
+    "epoch": 2,
+    "global_step": 946,
+    "learning_rate": 5e-06,
+    "dev": {
+      "n": 1079,
+      "correct": 787,
+      "accuracy": 0.7293790546802595,
+      "macro_precision": 0.7299816422549037,
+      "macro_recall": 0.7297035045665183,
+      "macro_f1": 0.7292345851780093,
+      "choice_nll": 0.716694087130241,
+      "brier_score": 0.3745852007085096,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.7004608294930875,
+          "recall": 0.7238095238095238,
+          "f1": 0.711943793911007
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.751219512195122,
+          "recall": 0.6936936936936937,
+          "f1": 0.721311475409836
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.721030042918455,
+          "recall": 0.7636363636363637,
+          "f1": 0.7417218543046358
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.7247706422018348,
+          "recall": 0.7596153846153846,
+          "f1": 0.7417840375586855
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.7524271844660194,
+          "recall": 0.7077625570776256,
+          "f1": 0.7294117647058824
+        }
+      },
+      "confusion_matrix": [
+        [
+          152,
+          16,
+          14,
+          12,
+          16,
+          0
+        ],
+        [
+          22,
+          154,
+          16,
+          15,
+          15,
+          0
+        ],
+        [
+          14,
+          12,
+          168,
+          17,
+          9,
+          0
+        ],
+        [
+          16,
+          10,
+          13,
+          158,
+          11,
+          0
+        ],
+        [
+          13,
+          13,
+          22,
+          16,
+          155,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_kd_v1/ta_fkl/epoch2_adapter",
+    "adapter_sha256": "ea090cccd15cb61b2be29facba98751642462f05f09a9545d1ed5262375fc29b"
+  },
+  "student_initialization": {
+    "fingerprint": "62a6f357c0a1f610312a708c6878f36e026b71cfe90e6ec270ead57fe8c088a5",
+    "model": "qwen35_08b",
+    "learning_rate": 0.0001,
+    "epoch": 3,
+    "global_step": 1419,
+    "dev": {
+      "n": 1079,
+      "correct": 714,
+      "accuracy": 0.6617238183503243,
+      "macro_precision": 0.6622302424622398,
+      "macro_recall": 0.6621226980473556,
+      "macro_f1": 0.6616588318077892,
+      "choice_nll": 1.0313456377937236,
+      "brier_score": 0.5006139870404346,
+      "per_class": {
+        "A": {
+          "support": 210,
+          "precision": 0.6538461538461539,
+          "recall": 0.6476190476190476,
+          "f1": 0.6507177033492824
+        },
+        "B": {
+          "support": 222,
+          "precision": 0.6666666666666666,
+          "recall": 0.6306306306306306,
+          "f1": 0.648148148148148
+        },
+        "C": {
+          "support": 220,
+          "precision": 0.6425531914893617,
+          "recall": 0.6863636363636364,
+          "f1": 0.6637362637362637
+        },
+        "D": {
+          "support": 208,
+          "precision": 0.665158371040724,
+          "recall": 0.7067307692307693,
+          "f1": 0.6853146853146853
+        },
+        "E": {
+          "support": 219,
+          "precision": 0.6829268292682927,
+          "recall": 0.639269406392694,
+          "f1": 0.660377358490566
+        }
+      },
+      "confusion_matrix": [
+        [
+          136,
+          19,
+          21,
+          16,
+          18,
+          0
+        ],
+        [
+          20,
+          140,
+          20,
+          19,
+          23,
+          0
+        ],
+        [
+          18,
+          16,
+          151,
+          22,
+          13,
+          0
+        ],
+        [
+          18,
+          12,
+          20,
+          147,
+          11,
+          0
+        ],
+        [
+          16,
+          23,
+          23,
+          17,
+          140,
+          0
+        ]
+      ],
+      "invalid_answer_count": 0
+    },
+    "adapter_path": "local/ecqa_sft_v1/qwen35_08b/lr1e-4/epoch3_adapter",
+    "adapter_sha256": "173eb348990bc9aaf6890443f934b7dbc851b88aceccc0483df9b92200074c9e"
+  },
+  "base_revisions": {
+    "qwen35_4b": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "qwen35_2b": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "qwen35_08b": "2fc06364715b967f1860aea9cf38778875588b17"
+  },
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "test_ordered_ids_sha256": "25f5969c9becb16ff327c418ed99c8fb937b44ae2421aa81e37a04794d08844e",
+  "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "loss": "pure full-vocabulary response/explanation/EOS KL; prompt masked; fixed original gold prefixes",
+  "temperature": 1.0,
+  "cross_entropy_mixture": false,
+  "student_rollout": false,
+  "learning_rate": 5e-06,
+  "epochs": 3,
+  "updates_per_epoch": 473,
+  "maximum_updates": 1419,
+  "warmup_updates": 71,
+  "recipe": {
+    "lora_rank": 8,
+    "lora_alpha": 32,
+    "lora_dropout": 0.0,
+    "target_modules": "all-linear",
+    "microbatch": 1,
+    "gradient_accumulation": 16,
+    "learning_rates_by_model": null,
+    "epochs": 3,
+    "early_stopping": false,
+    "optimizer": "AdamW",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.0,
+    "gradient_clip": 1.0,
+    "schedule": "linear",
+    "warmup_ratio": 0.05,
+    "seed": 10,
+    "dtype": "BF16 base; FP32 trainable LoRA",
+    "quantization": null,
+    "basis": "User-fixed KD reference LR; not an ECQA optimum or full MiniLLM reproduction",
+    "learning_rate": 5e-06
+  },
+  "fresh_optimizer_scheduler_per_stage": true,
+  "continue_selected_sft_lora": true,
+  "test_used_for_selection": false,
+  "selection": "dev ACC, Macro-F1, lower A-E conditional NLL, earlier epoch",
+  "evaluation_max_new_tokens": 256,
+  "truncation": false,
+  "cpu_offload": false,
+  "kl_math_dtype": "float32",
+  "token_chunk": 16,
+  "student_logits_handling": "Same BF16 Accelerate autocast; omit redundant full FP32 output copy, retain FP32 KL within token chunks",
+  "runtime_environment": {
+    "PYTORCH_ALLOC_CONF": "backend:native,garbage_collection_threshold:0.8",
+    "PYTORCH_CUDA_ALLOC_CONF": "backend:native,garbage_collection_threshold:0.8",
+    "HF_HUB_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false"
+  },
+  "pair_probe_sha256": "e07c851f91549d8b3a21a981c9bab8aa53a5ed3223fd30af8989e472d64cb1d3",
+  "pair_probe_source_sha256": "1b2db30c9b7b10dd2f484b4ff50e9441c736c3e627d55d94ff9dd0c0f790516f",
+  "probe_loss_ast_matches": true,
+  "script_sha256": "cbf1b65f43168e46ebe585726e797a25f28137b318732dd54f8cb1370481b895",
+  "sft_helper_sha256": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103",
+  "evaluator_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "accelerate": "1.15.0"
+  },
+  "fingerprint": "cb6c8bf138c64268f2e0e90e2920476ecfb7c58fcff8a5c6bb3a2019da33ab4b"
+}

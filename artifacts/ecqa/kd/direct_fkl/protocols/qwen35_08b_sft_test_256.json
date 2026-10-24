@@ -1,0 +1,139 @@
+{
+  "model": "Qwen/Qwen3.5-0.8B",
+  "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+  "training": {
+    "status": "selected",
+    "fingerprint": "d9caf7a5344fe92863a267d9e0ec84d521658639d63e42a0277e03b202da12ad",
+    "selected": {
+      "fingerprint": "d9caf7a5344fe92863a267d9e0ec84d521658639d63e42a0277e03b202da12ad",
+      "epoch": 3,
+      "global_step": 1419,
+      "learning_rate": 5e-06,
+      "dev": {
+        "n": 1079,
+        "correct": 721,
+        "accuracy": 0.6682113067655236,
+        "macro_precision": 0.6686602844299339,
+        "macro_recall": 0.6687754704877993,
+        "macro_f1": 0.6681385701472331,
+        "choice_nll": 0.8912227545292838,
+        "brier_score": 0.4637955992703352,
+        "per_class": {
+          "A": {
+            "support": 210,
+            "precision": 0.6602870813397129,
+            "recall": 0.6571428571428571,
+            "f1": 0.6587112171837709
+          },
+          "B": {
+            "support": 222,
+            "precision": 0.6538461538461539,
+            "recall": 0.6126126126126126,
+            "f1": 0.6325581395348838
+          },
+          "C": {
+            "support": 220,
+            "precision": 0.6497890295358649,
+            "recall": 0.7,
+            "f1": 0.673960612691466
+          },
+          "D": {
+            "support": 208,
+            "precision": 0.6818181818181818,
+            "recall": 0.7211538461538461,
+            "f1": 0.7009345794392523
+          },
+          "E": {
+            "support": 219,
+            "precision": 0.697560975609756,
+            "recall": 0.6529680365296804,
+            "f1": 0.6745283018867925
+          }
+        },
+        "confusion_matrix": [
+          [
+            138,
+            20,
+            23,
+            13,
+            16,
+            0
+          ],
+          [
+            21,
+            136,
+            21,
+            21,
+            23,
+            0
+          ],
+          [
+            19,
+            17,
+            154,
+            18,
+            12,
+            0
+          ],
+          [
+            16,
+            14,
+            17,
+            150,
+            11,
+            0
+          ],
+          [
+            15,
+            21,
+            22,
+            18,
+            143,
+            0
+          ]
+        ],
+        "invalid_answer_count": 0
+      },
+      "adapter_path": "local/ecqa_kd_v1/direct_fkl/epoch3_adapter",
+      "adapter_sha256": "aa85ba3f72d36f4fb1c1e6d4f0ed57085a6432e1802e9d7fe6c6db5398f925f1"
+    },
+    "test_used_for_selection": false
+  },
+  "split": "test",
+  "n": 2194,
+  "ordered_ids_sha256": "25f5969c9becb16ff327c418ed99c8fb937b44ae2421aa81e37a04794d08844e",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "test_used_for_selection": false,
+  "max_new_tokens": 256,
+  "instruction": "Answer the commonsense multiple-choice question. Give your selected answer FIRST, then a concise English explanation. Use exactly this format without markdown or JSON:\nANSWER: X\nEXPLANATION: Your explanation.\nReplace X with one of A, B, C, D, E. Do not repeat the question or options. Keep the entire response within 256 output tokens.\n\n\n\nA) \nB) \nC) \nD) \nE) ",
+  "dtype": "bfloat16",
+  "quantization": null,
+  "batch_size": 1,
+  "thinking": false,
+  "do_sample": false,
+  "num_beams": 1,
+  "truncation": false,
+  "temperature": null,
+  "eos_token_ids": [
+    248044,
+    248046
+  ],
+  "format": "Force ANSWER header and EXPLANATION separator; model selects A-E, explanation is free generation",
+  "choice_distribution": "A-E conditional softmax at the ANSWER position, temperature 1",
+  "tie_rule": "greedy torch.argmax, lowest vocabulary token ID",
+  "tokenizer_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "script_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "safetensors": "0.8.0"
+  },
+  "adapter_sha256": "aa85ba3f72d36f4fb1c1e6d4f0ed57085a6432e1802e9d7fe6c6db5398f925f1",
+  "fingerprint": "86a9efa13f241b17a51df957ca23c9cab2c5ee43e29856bae849692abaa25aaf"
+}

@@ -1,0 +1,55 @@
+{
+  "model": "Qwen/Qwen3.5-4B",
+  "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "training_fingerprint": "84bab3716b41a388e0c62978140803be3755631144783be071502717892a07c9",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "epochs": [
+    {
+      "epoch": 1,
+      "adapter_path": "local/ecqa_sft_v1/qwen35_4b/lr5e-5/epoch1_adapter",
+      "adapter_sha256": "51045fcc6fbd8f00150084972bece822ab8a2d1033bff09288ff66e52da555a1"
+    },
+    {
+      "epoch": 2,
+      "adapter_path": "local/ecqa_sft_v1/qwen35_4b/lr5e-5/epoch2_adapter",
+      "adapter_sha256": "20567d1b8784f49aa5e9163944fa487c3bbcf32c65b9530401d3734b2e48a732"
+    },
+    {
+      "epoch": 3,
+      "adapter_path": "local/ecqa_sft_v1/qwen35_4b/lr5e-5/epoch3_adapter",
+      "adapter_sha256": "f0c74eac6699c4091ad0f3113fcb016850263027a0b63cb325ded09ca19228c2"
+    }
+  ],
+  "counts": {
+    "train": 7566,
+    "dev": 1079
+  },
+  "ordered_ids_sha256": {
+    "train": "55646948189ea7aa974054b77b21ef99a79a9860d46384c036e7fabc30e65c40",
+    "dev": "93af5ebaf69b4b55243fb63460a156c66b5ec34933dc6d837b8a136f18ee6f29"
+  },
+  "loss": "Same sft_ecqa.response_loss: full-vocabulary teacher-forced response CE, including ANSWER, explanation and EOS; prompt masked",
+  "aggregation": "Arithmetic mean of per-example mean response-token CE, identical weighting for train/dev",
+  "model_mode": "eval; inference_mode; no gradient or optimizer; batch size 1",
+  "dtype": "BF16 base with original FP32 LoRA",
+  "truncation": false,
+  "prompt_output_limit": 256,
+  "generation": false,
+  "test_used": false,
+  "selection_influence": false,
+  "resource_safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "script_sha256": "80dfd58c9bc82482cae5122b4691a852f75ca237fa65b9c1120699787e282250",
+  "training_script_sha256": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103",
+  "evaluator_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "gpu_safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.19.0",
+    "peft": "0.21.2"
+  },
+  "fingerprint": "bf0c3e9acc06f041ceaf10cfe089db4f7c75871f4a859dab3037591661096c5f"
+}

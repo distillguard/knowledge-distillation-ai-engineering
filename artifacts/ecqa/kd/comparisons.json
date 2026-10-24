@@ -1,0 +1,58 @@
+{
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "paired_direct_vs_intermediate": {
+    "fkl": {
+      "n": 2194,
+      "both_correct": 1395,
+      "first_only_correct": 35,
+      "second_only_correct": 34,
+      "both_wrong": 730,
+      "same_wrong_answer": 713,
+      "second_minus_first_accuracy_pp": -0.04557885141294439
+    },
+    "rkl": {
+      "n": 2194,
+      "both_correct": 1404,
+      "first_only_correct": 36,
+      "second_only_correct": 27,
+      "both_wrong": 727,
+      "same_wrong_answer": 714,
+      "second_minus_first_accuracy_pp": -0.41020966271649956
+    }
+  },
+  "costs": {
+    "ta_fkl": {
+      "training_dev_seconds_this_session": 14783.983999999997,
+      "training_was_resumed": true,
+      "test_generation_seconds": 10023.920999999886
+    },
+    "ta_rkl": {
+      "training_dev_seconds_this_session": 8773.437000000005,
+      "training_was_resumed": true,
+      "test_generation_seconds": 9679.194999999861
+    },
+    "direct_fkl": {
+      "training_dev_seconds_this_session": 15921.405999999959,
+      "training_was_resumed": false,
+      "test_generation_seconds": 9372.581999999238
+    },
+    "direct_rkl": {
+      "training_dev_seconds_this_session": 15988.766000000003,
+      "training_was_resumed": false,
+      "test_generation_seconds": 9651.225000000151
+    },
+    "via_fkl": {
+      "training_dev_seconds_this_session": 15695.015000000014,
+      "training_was_resumed": false,
+      "test_generation_seconds": 10320.815000000352
+    },
+    "via_rkl": {
+      "training_dev_seconds_this_session": 15091.655999999959,
+      "training_was_resumed": false,
+      "test_generation_seconds": 9607.532000000356
+    }
+  },
+  "cost_scope": "Training+dev current session and saved test generation; excludes model load, probes and prior interrupted sessions",
+  "single_seed": 10,
+  "explanation_factuality_reviewed": false
+}

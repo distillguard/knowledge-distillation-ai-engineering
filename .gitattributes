@@ -1,5 +1,8 @@
-# Experiment protocols fingerprint the exact source bytes.
-scripts/*.py text eol=lf
-tests/*.py text eol=lf
-# Published CSV hashes cover exact bytes, including csv.writer's CRLF terminators.
-results/**/*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.md text eol=lf
+*.py text eol=lf
+# Preserve the bytes used by recorded result SHA-256 values.
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.txt text eol=lf
+# Generated plots are retained byte-for-byte.
+*.svg binary
+*.png binary

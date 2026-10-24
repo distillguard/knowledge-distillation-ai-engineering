@@ -1,0 +1,117 @@
+{
+  "status": "passed",
+  "teacher": "qwen35_4b",
+  "student": "qwen35_2b",
+  "teacher_frozen": true,
+  "quantization": null,
+  "cpu_offload": false,
+  "script_sha256": "1b2db30c9b7b10dd2f484b4ff50e9441c736c3e627d55d94ff9dd0c0f790516f",
+  "sft_helper_sha256": "064c605d30ce93a0e39c680cb9e320d1f247926e92be759338d82abbe251f103",
+  "evaluator_sha256": "369c09865d8032c3b5ca7cc125d2f6cfe033e760b2c3e1f48ede1f2f16719648",
+  "safety_sha256": "67eb21c36e8b11c00cbac8ac29503589d70fcb6b00b0103ffdbcb40b1ec9810c",
+  "safety": {
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "loss": "full vocabulary, fixed gold prefixes, response and EOS KL",
+  "temperature": 1.0,
+  "microbatch": 1,
+  "gradient_accumulation": 16,
+  "learning_rate": 5e-06,
+  "token_chunk": 16,
+  "probe_updates_used_for_training": false,
+  "memory": [
+    {
+      "stage": "teacher_loaded",
+      "free_vram_bytes": 7327449088,
+      "total_vram_bytes": 17102864384,
+      "allocated_bytes": 8476461056,
+      "reserved_bytes": 8554283008,
+      "peak_allocated_bytes": 8541390848,
+      "available_ram_bytes": 17573412864
+    },
+    {
+      "stage": "pair_loaded",
+      "free_vram_bytes": 3227574272,
+      "total_vram_bytes": 17102864384,
+      "allocated_bytes": 12273772544,
+      "reserved_bytes": 12312379392,
+      "peak_allocated_bytes": 12307410944,
+      "available_ram_bytes": 17647390720
+    },
+    {
+      "stage": "fkl_updated",
+      "free_vram_bytes": 3096961024,
+      "total_vram_bytes": 17102864384,
+      "allocated_bytes": 12358089216,
+      "reserved_bytes": 12417236992,
+      "peak_allocated_bytes": 12747680256,
+      "available_ram_bytes": 16630616064
+    },
+    {
+      "stage": "rkl_updated",
+      "free_vram_bytes": 3087278080,
+      "total_vram_bytes": 17102864384,
+      "allocated_bytes": 12358089216,
+      "reserved_bytes": 12417236992,
+      "peak_allocated_bytes": 12747680768,
+      "available_ram_bytes": 16657334272
+    }
+  ],
+  "updates": [
+    {
+      "direction": "fkl",
+      "effective_batch": 16,
+      "loss": 0.2991484999656677,
+      "gradient_norm": 3.360107421875,
+      "seconds": 14.171999999991385,
+      "minimum_free_vram_bytes": 2623344640,
+      "load_update_save_restore": "passed",
+      "teacher_unchanged": true
+    },
+    {
+      "direction": "rkl",
+      "effective_batch": 16,
+      "loss": 0.3320990204811096,
+      "gradient_norm": 4.122935771942139,
+      "seconds": 12.014999999984866,
+      "minimum_free_vram_bytes": 2613776384,
+      "load_update_save_restore": "passed",
+      "teacher_unchanged": true
+    }
+  ],
+  "started_utc": "2026-10-22T03:17:54.670414+00:00",
+  "dataset_fingerprint": "82bc1dd2fc2c400ca1a4f779cd68e86093fd9f792fdab27c73426bece9015677",
+  "probe_rows": [
+    {
+      "id": "2dd1b38506ea1b7753415ec9ac822727",
+      "sequence_tokens": 331,
+      "response_tokens": 180
+    },
+    {
+      "id": "f7735d721dfdc94621154951d4eaa4cf",
+      "sequence_tokens": 324,
+      "response_tokens": 190
+    }
+  ],
+  "qwen35_4b_initialization": {
+    "epoch": 2,
+    "adapter_path": "local/ecqa_sft_v1/qwen35_4b/lr5e-5/epoch2_adapter",
+    "adapter_sha256": "20567d1b8784f49aa5e9163944fa487c3bbcf32c65b9530401d3734b2e48a732"
+  },
+  "qwen35_2b_initialization": {
+    "epoch": 2,
+    "adapter_path": "local/ecqa_sft_v1/qwen35_2b/lr5e-5/epoch2_adapter",
+    "adapter_sha256": "fe45850133c3572776d2ff0b1744308fea11e87a35ab9790cfae8b6135c5fab2"
+  },
+  "allocator": {
+    "initial_free_bytes": 15908995072,
+    "total_bytes": 17102864384,
+    "allocator_fraction": 0.8046319677816139,
+    "minimum_free_vram_bytes": 2147483648,
+    "minimum_available_ram_bytes": 4294967296,
+    "maximum_seconds_per_question": 60
+  },
+  "completed_utc": "2026-10-22T03:18:34.250303+00:00"
+}
