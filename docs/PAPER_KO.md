@@ -84,16 +84,20 @@ NLL = -log s(g),  Brier = Σ [s(c) - y(c)]²
 
 향후에는 여러 시드·자료와 동일 추가 학습량의 CE 대조군으로 검증하고 문항별 확률·설명 사실성·총비용을 분석할 계획이다.
 
-## 참고문헌
+## 감사의 글
 
-[1] S. Aggarwal et al., “Explanations for CommonsenseQA: New Dataset and Models,” ACL-IJCNLP, pp. 3050-3065, 2021. https://aclanthology.org/2021.acl-long.238/
+본 연구는 2026년도 과학기술정보통신부 및 정보통신기획평가원의 SW중심대학지원사업의 연구 결과로 수행되었습니다(2024-0-00023).
 
-[2] S.-I. Mirzadeh et al., “Improved Knowledge Distillation via Teacher Assistant,” AAAI, 2020. https://arxiv.org/abs/1902.03393
+## 참고 문헌 (참고자료)
 
-[3] Y. Gu et al., “MiniLLM: Knowledge Distillation of Large Language Models,” ICLR, 2024. https://arxiv.org/abs/2306.08543v4
+[1] S. Aggarwal et al., “Explanations for CommonsenseQA: New Dataset and Models,” Proc. ACL-IJCNLP, pp. 3050-3065, Aug. 2021. https://aclanthology.org/2021.acl-long.238/
 
-[4] Qwen Team, “Qwen3.5: Towards Native Multimodal Agents,” 2026. https://qwen.ai/blog?id=qwen3.5
+[2] S. I. Mirzadeh et al., “Improved Knowledge Distillation via Teacher Assistant,” Proc. AAAI Conf. Artif. Intell., Vol. 34, No. 4, pp. 5191-5198, Apr. 2020. https://ojs.aaai.org/index.php/AAAI/article/view/5963
 
-[5] E. J. Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models,” arXiv:2106.09685, 2021. https://arxiv.org/abs/2106.09685
+[3] Y. Gu et al., “MiniLLM: Knowledge Distillation of Large Language Models,” Proc. Int. Conf. Learn. Represent. (ICLR), 2024. https://proceedings.iclr.cc/paper_files/paper/2024/hash/8ac015d409635f196f9e3e9dcfb9a94e-Abstract-Conference.html
 
-[6] T. Gneiting and A. E. Raftery, “Strictly Proper Scoring Rules, Prediction, and Estimation,” JASA, vol. 102, no. 477, pp. 359-378, 2007. https://doi.org/10.1198/016214506000001437
+[4] Qwen Team, “Qwen3.5: Towards Native Multimodal Agents,” Qwen Blog, Feb. 2026. [Online]. Available: https://qwen.ai/blog?id=qwen3.5
+
+[5] E. J. Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models,” arXiv preprint arXiv:2106.09685, Jun. 2021. https://arxiv.org/abs/2106.09685
+
+[6] T. Gneiting and A. E. Raftery, “Strictly Proper Scoring Rules, Prediction, and Estimation,” J. Amer. Statist. Assoc., Vol. 102, No. 477, pp. 359-378, 2007. https://doi.org/10.1198/016214506000001437
