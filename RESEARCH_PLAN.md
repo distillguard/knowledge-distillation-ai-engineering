@@ -6,15 +6,15 @@
 
 ## 1. 목적과 연구 질문
 
-**설명형 상식 질의응답에서 직접·중간 교사 증류 경로와 KL 방향의 상호작용 분석**
+**ECQA에서 증류 경로와 KL 방향에 따른 정확도 및 확률 점수 비교**
 
-ECQA의 공개 정답·설명으로 Qwen3.5 모델의 기준 성능을 확보하고, 4B→0.8B와 4B→2B→0.8B 경로에서 Forward KL과 Reverse KL의 영향을 비교한다. API 설명 생성은 새 본 실험에 포함하지 않는다. 이전 Dolly·MedQA·gate 연구는 본 결과에 포함하지 않는다.
+ECQA의 사람 정답·설명으로 Qwen3.5 모델의 기준 성능을 확보하고, 4B→0.8B와 4B→2B→0.8B 경로에서 정방향 KL(FKL)과 역방향 KL(RKL)을 비교했다. [최종 국문 논문](docs/PAPER_KO.md)과 같은 연구 범위이며, 이 문서는 상세 재현 조건을 보충한다.
 
 ### 연구 질문
 
 - RQ1. 같은 KL 방향에서 중간 2B 모델을 경유하면 최종 0.8B의 정답률·Macro-F1이 개선되는가?
 - RQ2. 중간 경로의 효과는 FKL과 RKL 사이에서 달라지는가?
-- RQ3. 이러한 차이는 공통 정답 NLL, 교사·학생의 문항별 정오 변화, 설명 출력의 상한 도달·형식 집계과 어떻게 함께 나타나는가?
+- RQ3. 정확도와 확률 점수(NLL·Brier)의 순위는 일치하는가? 교사·학생의 문항별 정오 중첩과 출력 상한 도달은 어떤 양상을 보이는가?
 
 새 알고리즘의 개발보다 통제된 비교와 관찰 결과를 기여로 삼는다. 한 모델 계열·한 데이터셋의 결과로 파라미터 격차 완화의 일반 법칙을 입증하지 않는다.
 
@@ -30,17 +30,7 @@ ECQA의 공개 정답·설명으로 Qwen3.5 모델의 기준 성능을 확보하
 
 원본 3개와 SFT 후 3개는 총 **6개 기준 상태**다. SFT는 4B·2B의 LR을 `5e-5`, 0.8B의 LR을 `1e-4`로 사전에 고정한다. 조기 종료 없이 각 3 epoch를 모두 학습한 뒤, 저장한 세 체크포인트 중 하나를 dev로 선정한다. test로 LR·epoch를 고르지 않는다.
 
-```mermaid
-flowchart LR
-    D[ECQA 정답과 설명] --> TS[4B SFT 및 dev 선정]
-    TS --> T[공통 동결 4B 교사]
-    T -->|FKL| DF[0.8B: D-FKL]
-    T -->|RKL| DR[0.8B: D-RKL]
-    T -->|FKL| MF[2B: TA-FKL]
-    MF -->|FKL| SF[0.8B: M-FKL 경로]
-    T -->|RKL| MR[2B: TA-RKL]
-    MR -->|RKL| SR[0.8B: M-RKL 경로]
-```
+[직접·중간 경로 도식](RESULTS_VISUALIZATION.md#1-증류-경로)을 참고한다.
 
 | 조건 | 경로 | 최종 학생 |
 |---|---|---|
@@ -68,6 +58,7 @@ CommonsenseQA의 질문·A~E 선택지·정답과 ECQA의 사람 작성 설명�
 저자 분할은 7,598/1,090/2,194건이지만 서로 같은 ID·질문이 겹친다. **test → dev → train 우선순위**로 같은 질문은 가장 높은 우선순위의 분할에만 둔다. 질문 비교는 Unicode NFKC·대소문자·공백 정규화로 한정하며 임의 유사도 임계값을 쓰지 않는다. 테스트는 원래 2,194개 ID와 순서를 보존한다.
 
 고정 분할: **train 7,566 / dev 1,079 / test 2,194건**. test ID·순서 보존, ID·정규화 질문의 분할 간 교집합 0. 원문 저자 분할에서 dev 11건·train 32건을 낮은 우선순위 분할에서 제외했다. 전처리 명세(로컬: `artifacts/ecqa/data_manifest.json`).
+
 서로 다른 설명을 가진 중복 ID 1개는 모든 설명을 보존한다. 현재 train에는 해당 ID가 없다. 123개 설명 ID는 원래 저자 분할에 포함되지 않아 추가 편입하지 않는다. 원문 자료·응답·가중치는 `local/`에만 보관한다. [데이터 라이선스](https://github.com/dair-iitd/ECQA-Dataset/blob/main/LICENSE.md).
 
 ## 4. 모델과 SFT 설정
@@ -76,10 +67,10 @@ Qwen3.5-4B·2B·0.8B는 같은 토크나이저를 사용하지만 레이어 수�
 
 | 항목 | SFT 비교 기준 | 근거와 제한 |
 |---|---|---|
-| 기준 LR | 4B·2B: `5e-5` = **0.00005**, 0.8B: `1e-4` = **0.0001** | 사용자 승인으로 사전 고정, LR 탐색 없음 |
+| 기준 LR | 4B·2B: `5e-5` = **0.00005**, 0.8B: `1e-4` = **0.0001** | 사전 고정, LR 탐색 없음 |
 | 학습량 | 각 모델 **3 epoch 전체 학습**, 매 epoch 저장·dev 평가 | **early stopping 없음**, 완료 후 체크포인트 선정 |
-| 초기화 | 원본 모델에서 모델별 fresh LoRA | 기존 MedQA adapter 재사용 없음 |
-| LoRA | r=8, alpha=32, dropout=0, all-linear | 기존 검증 코드의 기준 설정, ECQA 최적값은 아님 |
+| 초기화 | 원본 모델에서 모델별 fresh LoRA | 각 모델의 원본 가중치에서 독립 초기화 |
+| LoRA | r=8, α=32, dropout=0, all-linear | 기존 검증 코드의 기준 설정, ECQA 최적값은 아님 |
 | 배치 | microbatch 1 × gradient accumulation 16 | 유효 배치 16, 마지막 불완전 배치 포함 |
 | Optimizer | AdamW, β=(0.9,0.999), ε=1e-8 | weight decay=0, gradient clipping=1 |
 | Scheduler | linear, 전체 학습 update의 warmup 5% | 최종 분할·3 epoch 기준으로 계산 |
@@ -90,13 +81,11 @@ Qwen3.5-4B·2B·0.8B는 같은 토크나이저를 사용하지만 레이어 수�
 
 `5e-5 = 5×10^-5`, `1e-4 = 1×10^-4`이며 뒤의 값은 앞의 값의 2배다. LR 고정은 모델별 **기준·최대 학습률**을 사전에 정한다는 뜻이다. 실제 step별 LR은 유지한 linear scheduler와 warmup에 따라 변한다.
 
-MiniLLM 부록 B.1은 1.3B 미만에서 `5e-4·1e-4·5e-5`, 1.3B 이상에서 `5e-5·1e-5·5e-6`을 탐색한다. 우리는 해당 크기별 범위에서 위의 한 값을 사전에 선택한 것이며, Qwen3.5·ECQA·LoRA에서 최적임을 입증했거나 MiniLLM의 학습 조건을 완전 재현했다고 주장하지 않는다. [원문 학습 설정](https://arxiv.org/html/2306.08543v4#A2.SS1).
-
 고정 train 7,566건과 유효 배치 16에서 epoch당 473 updates, 모델당 1,419 updates, warmup 71 updates다. SFT는 총 3회·9 model-epochs·4,257 updates이며 epoch별 dev 평가는 총 9회다. 3 epoch 일정의 epoch 1은 독립적인 1 epoch 학습과 scheduler가 달라 같은 궤적이라고 표현하지 않는다. 같은 epoch라도 모델 구조·토큰 수·계산량은 같지 않다. **위 LR은 SFT용**이며 KD는 아래 별도 명세의 LR·학습량·초기화를 사용했다.
 
 ## 5. KD 손실과 학습 조건
 
-교사 분포를 p, 학생 분포를 q라 하면 FKL은 `Σ p(log p − log q)`, RKL은 `Σ q(log q − log p)`다. 교사는 동결하고 학생에만 gradient를 전달한다. T=1은 분포를 변형하지 않는 기준이며 최적 온도가 아니다. CE 혼합계수·gate·온도 탐색은 본 비교에 넣지 않는다.
+같은 응답 위치에서 어휘 v에 대한 교사 확률을 p(v), 학생 확률을 q(v)라 하면 FKL은 `Σ p(v) log[p(v)/q(v)]`, RKL은 `Σ q(v) log[q(v)/p(v)]`다. Σ는 전체 어휘에 대한 합, log는 자연로그다. 교사는 동결하고 학생에만 gradient를 전달한다. T=1은 분포를 변형하지 않는 기준이며 최적 온도가 아니다. CE 혼합이나 온도 탐색은 수행하지 않았다.
 
 응답·설명 구간의 **전체 어휘 분포**를 같은 고정 참조 prefix에서 비교했다. A~E 5개 분포만의 증류와 구분한다. 같은 tokenizer 파일 확인만으로 chat template·EOS·마스크까지 같다고 간주하지 않으며 실제 입력을 대조했다. 전체 logits를 데이터셋 단위로 저장하지 않고, 메모리·수치 안정성과 실제 load/update/save/restore를 사전에 검사했다.
 
@@ -108,11 +97,11 @@ MiniLLM 부록 B.1은 1.3B 미만에서 `5e-4·1e-4·5e-5`, 1.3B 이상에서 `5
 |---|---|
 | 학습 타깃·prefix | 원본 ECQA ANSWER·사람 설명·EOS의 모든 응답 위치; 질문·선택지와 앞선 정답/설명 token을 같은 teacher-forced prefix로 제공 |
 | 손실 | FKL `KL(p교사∥q학생)` 또는 RKL `KL(q학생∥p교사)`; 전체 어휘 248,320개, prompt·padding 제외 |
-| 온도·혼합 | T=1, 순수 KL; CE 혼합·gate·온도 탐색 없음. RKL은 q의 가중치와 log q 모두 미분 |
+| 온도·혼합 | T=1, 순수 KL; CE 혼합·온도 탐색 없음. RKL은 q의 가중치와 log q 모두 미분 |
 | KD LR | **여섯 학습 단계 모두 `5e-6` = 0.000005**, SFT LR과 구분 |
 | 학습량 | 단계당 3 epoch 전체·1,419 updates, early stopping 없음; epoch당 473 updates |
 | 선정 | 각 단계 dev 1,079건에서 ACC → Macro-F1 → 낮은 A~E 조건부 정답 NLL → 이른 epoch; test 선정 없음 |
-| LoRA | 선정된 SFT adapter의 r8·alpha32·dropout0·all-linear 유지, 각 실험의 사본만 업데이트 |
+| LoRA | 선정된 SFT adapter의 r=8·α=32·dropout=0·all-linear 유지, 각 실험의 사본만 업데이트 |
 | 배치·optimizer | microbatch1×누적16; AdamW β .9/.999·ε1e-8·weight decay0·clip1 |
 | Scheduler·seed | 단계별 새 linear·warmup71 updates(전체의 5% 올림), seed10·같은 데이터 순서 |
 | 정밀도 | BF16 base·FP32 trainable LoRA·FP32 KL, 양자화·CPU offload 없음; 교사는 eval·완전 동결 |
