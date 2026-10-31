@@ -1,17 +1,15 @@
-# Publish only the completed ECQA study and its aggregate evidence.
+# Publish versioned research documents, code and aggregate evidence.
 /*
 !/.gitignore
 !/.gitattributes
 !/README.md
-!/RESEARCH_PLAN.md
-!/RESEARCH_REPORT.md
-!/RESULTS_VISUALIZATION.md
 !/requirements.txt
-!/docs/
-/docs/*
-!/docs/ABSTRACT_KO.md
-!/docs/NOTATION.md
-!/docs/PAPER_KO.md
+!/research/
+/research/**
+!/research/v1/
+!/research/v2/
+!/research/v1/*.md
+!/research/v2/*.md
 !/scripts/
 /scripts/*
 !/scripts/analyze_ecqa_kd.py
@@ -19,12 +17,17 @@
 !/scripts/ecqa_study.py
 !/scripts/gpu_safety.py
 !/scripts/kd_ecqa.py
+!/scripts/kd_ecqa_v2.py
+!/scripts/monitor_ecqa_gpu.py
+!/scripts/final_statistics_cpu.py
 !/scripts/render_results.py
 !/scripts/sft_ecqa.py
 !/tests/
 /tests/*
 !/tests/test_ecqa_ce.py
 !/tests/test_ecqa_kd.py
+!/tests/test_ecqa_kd_v2.py
+!/tests/test_ecqa_gpu_monitor.py
 !/tests/test_ecqa_study.py
 !/artifacts/
 /artifacts/*
@@ -45,6 +48,10 @@
 /artifacts/ecqa/kd/interpretation_update.json
 /artifacts/ecqa/kd/initial_training_verification.json
 /artifacts/ecqa/kd/compute_memory_recovery.json
+
+# The full v2 audit includes operational paths and step logs; publish aggregates only.
+/artifacts/ecqa/kd_v2/**
+!/artifacts/ecqa/kd_v2/publication_summary.json
 
 # Private data, archives, model weights, responses and machine settings.
 **/local/
@@ -78,6 +85,3 @@
 **/*.pth
 **/*.ckpt
 **/checkpoint-*/
-
-# The user-approved conference manuscript is the only published HWP.
-!/docs/dcs인공지능공학논문.hwp

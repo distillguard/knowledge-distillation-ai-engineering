@@ -1,6 +1,6 @@
 # 연구 결과와 해석
 
-[문서 안내](README.md) · [방법](RESEARCH_PLAN.md) · [결과·해석](RESEARCH_REPORT.md) · [비교 요약](RESULTS_VISUALIZATION.md)
+[문서 안내](../../README.md) · [방법](RESEARCH_PLAN.md) · [결과·해석](RESEARCH_REPORT.md) · [비교 요약](RESULTS_VISUALIZATION.md)
 
 갱신일: 2026-10-24. 원본·SFT 여섯 기준 상태, 4B CE 재평가, 여섯 KD 단계의 학습·검증 자료 선정·전체 시험 평가를 완료했다. 이번 갱신은 기존 결과의 문서 정리이며 추가 실험은 수행하지 않았다.
 
@@ -111,7 +111,7 @@
 
 중간 경로는 최종 학생의 3 epoch 예산은 같아도 2B KD 학습·평가를 추가로 사용한다. 단일 seed·한 모델 계열·한 데이터셋이며, 설명 사실성은 미검토다. 추가 seed나 추가 탐색은 수행하지 않았다.
 
-[최종 집계 및 검증](artifacts/ecqa/kd/final_analysis.json)
+[최종 집계 및 검증](../../artifacts/ecqa/kd/final_analysis.json)
 <!-- KD_FINAL_END -->
 
 ## 4. 관측 결과와 원인 가설
@@ -214,7 +214,7 @@ RKL이 교사의 낮은 확률 영역에 과도한 확률을 두는 문제를 �
 | 입력 | 129 | 142 | 186 |
 | 기준 응답 | 62 | 119 | 190 |
 
-근거는 [최종 토큰 길이 집계](artifacts/ecqa/final_data_token_lengths.json)다. 기준 응답 길이는 모델이 실제 생성한 응답 길이와 다르다. 아래는 최종 분할 전 고유 원문에 대한 초기 탐색 기록이며 모집단과 입력 서식이 다르다.
+근거는 [최종 토큰 길이 집계](../../artifacts/ecqa/final_data_token_lengths.json)다. 기준 응답 길이는 모델이 실제 생성한 응답 길이와 다르다. 아래는 최종 분할 전 고유 원문에 대한 초기 탐색 기록이며 모집단과 입력 서식이 다르다.
 
 Qwen3.5 공통 tokenizer, 전체 고유 10,962문항. 출력은 ANSWER·EXPLANATION 구분자와 EOS 1개를 포함한다. 전체 길이에는 채팅 템플릿과 지시문이 아직 포함되지 않는다.
 
@@ -226,7 +226,7 @@ Qwen3.5 공통 tokenizer, 전체 고유 10,962문항. 출력은 ANSWER·EXPLANAT
 | 정답 + 설명 출력 | 26 | 190 | 67.47 | 62 | 148 |
 | 질문 + 선택지 + 출력 | 57 | 241 | 107.18 | 102 | 191 |
 
-출력 참조의 512토큰 초과는 0건이다. 256토큰 생성 상한은 참조 길이와 dev 검사에 근거해 정했지만 실제 생성의 무잘림 보장은 아니다. dev 극값 probe와 본 평가의 상한 도달 건수를 별도로 기록한다. [초기 탐색 집계](artifacts/ecqa/token_lengths.json).
+출력 참조의 512토큰 초과는 0건이다. 256토큰 생성 상한은 참조 길이와 dev 검사에 근거해 정했지만 실제 생성의 무잘림 보장은 아니다. dev 극값 probe와 본 평가의 상한 도달 건수를 별도로 기록한다. [초기 탐색 집계](../../artifacts/ecqa/token_lengths.json).
 
 ### 5.3 4B의 동일 CE 사후 점검
 
@@ -240,13 +240,13 @@ Qwen3.5 공통 tokenizer, 전체 고유 10,962문항. 출력은 ANSWER·EXPLANAT
 | 2 | 1.059316 | 1.254356 | +0.195041 |
 | 3 | 0.991976 | 1.268801 | +0.276825 |
 
-각 epoch 가중치를 고정하고 eval 모드에서 원본 정답·설명·EOS 전체를 teacher forcing으로 평가했다. prompt를 제외한 전체 어휘 token CE를 문항별 평균한 뒤 문항 간 평균했다. 학습 도중 로그 평균·A~E 조건부 NLL과 구분하며, 이 재평가로 체크포인트를 다시 선정하지 않는다. [집계 JSON](artifacts/ecqa/ce_audit/summary.json).
+각 epoch 가중치를 고정하고 eval 모드에서 원본 정답·설명·EOS 전체를 teacher forcing으로 평가했다. prompt를 제외한 전체 어휘 token CE를 문항별 평균한 뒤 문항 간 평균했다. 학습 도중 로그 평균·A~E 조건부 NLL과 구분하며, 이 재평가로 체크포인트를 다시 선정하지 않는다. [집계 JSON](../../artifacts/ecqa/ce_audit/summary.json).
 <!-- CE_AUDIT_END -->
 
 검증 CE는 2회차에서 가장 낮았다. 3회차에서 train CE는 낮아지고 dev CE는 높아진 관측은 추가 과적합의 징후와 양립한다. 이 4B SFT 점검으로 최종 KD 학생의 과적합이나 경로 차이의 원인을 진단하지 않는다.
 
 ## 6. 논문 원고와 근거 기록
 
-[공식 양식용 국문 원고](docs/PAPER_KO.md), [국문 초록](docs/ABSTRACT_KO.md), [기호·약어](docs/NOTATION.md)를 별도 문서로 정리했다. 공식 2페이지 HWP·PDF와 미리보기는 로컬에만 보관하며 저자·소속·이메일·지도교수 정보는 입력이 필요하다.
+국문 원고와 초록은 비공개로 보관하며, 연구 문서의 [기호·약어](NOTATION.md)를 별도로 정리했다. 논문 파일과 미리보기는 공개 목록에서 제외한다.
 
-최종 수치는 [최종 분석](artifacts/ecqa/kd/final_analysis.json), 완료 확인은 [완료 검증](artifacts/ecqa/kd/final_verification.json)에 보존한다. 집계·프로토콜은 공개하고 원본 응답·adapter·원시 로그·복구 기록은 로컬에 별도 보존했다. 실험 소스와 결과 수치는 이번 공개 정리에서 바꾸지 않았다. 이전 연구 파일은 현재 Git 트리에서 제거하고 과거 이력·로컬 보관본을 유지했다. 과거 연구의 수치를 이번 ECQA 결과에 포함하지 않는다.
+최종 수치는 [최종 분석](../../artifacts/ecqa/kd/final_analysis.json), 완료 확인은 [완료 검증](../../artifacts/ecqa/kd/final_verification.json)에 보존한다. 집계·프로토콜은 공개하고 원본 응답·adapter·원시 로그·복구 기록은 로컬에 별도 보존했다. 실험 소스와 결과 수치는 이번 공개 정리에서 바꾸지 않았다. 이전 연구 파일은 현재 Git 트리에서 제거하고 과거 이력·로컬 보관본을 유지했다. 과거 연구의 수치를 이번 ECQA 결과에 포함하지 않는다.
